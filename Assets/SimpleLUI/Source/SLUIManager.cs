@@ -29,6 +29,12 @@ namespace SimpleLUI
     /// </summary>
     public class SLUIManager
     {
+        public static readonly List<KeyValuePair<string, string>> AllowedNamespaces = new List<KeyValuePair<string, string>>()
+        {
+            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core"),
+            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Math")
+        };
+
         /// <summary>
         ///     Root canvas of this SLUI manager instance.
         /// </summary>
@@ -37,7 +43,7 @@ namespace SimpleLUI
         /// <summary>
         ///     Name of the SLUI manager.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; private set; } = "Unknown";
 
         /// <summary>
         ///     List of all lua files added to manager.
@@ -46,7 +52,12 @@ namespace SimpleLUI
         private readonly List<SLUIFile> _luaFiles = new List<SLUIFile>();
         private readonly List<SLUIFile> _workingFiles = new List<SLUIFile>();
 
-        private SLUIManager() { }
+        internal SLUIWorker Worker { get; }
+
+        private SLUIManager()
+        {
+            Worker = new SLUIWorker(this);
+        }
 
         /// <summary>
         ///     Adds list of lua files.
@@ -73,7 +84,7 @@ namespace SimpleLUI
             foreach (var f in _luaFiles)
                 if (f.File == luaFile)
                     return;
-   
+ 
             _luaFiles.Add(new SLUIFile(luaFile)
             {
                 LastModified = File.GetLastWriteTime(luaFile)
@@ -94,8 +105,16 @@ namespace SimpleLUI
             _workingFiles.Clear();
             using (var state = new Lua())
             {
+                Worker.ClearWorker();
+                Worker.PrepareState(state);
+
                 foreach (var f in _luaFiles)
                 {
+                    if (CheckFileForBannedNamespaces(f.File))
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         state.DoFile(f.File);
@@ -111,6 +130,38 @@ namespace SimpleLUI
             Debug.Log($"SLUI ({Name}) reloaded {_workingFiles.Count} files. ({_luaFiles.Count - _workingFiles.Count} failed)");
         }
 
+        private bool CheckFileForBannedNamespaces([NotNull] string fileName)
+        {
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+            if (!File.Exists(fileName))
+                return false;
+
+            var lines = File.ReadAllLines(fileName);
+            foreach (var l in lines)
+            {
+                if (l.ToLower().Contains("import"))
+                {
+                    bool exist = false;
+                    foreach (var c in AllowedNamespaces)
+                    {
+                        // check lib
+                        if (!l.Contains($"'{c.Key}',")) continue;
+                        if (!l.Contains($"'{c.Value}')")) continue;
+                        exist = true;
+                        break;
+                    }
+
+                    if (!exist)
+                    {
+                        Debug.LogError($"SLUI ({Name}) refused to load file '{fileName}'. Disallowed namespace detected.");
+                        return true; // any of allowed namespaces exist
+                    }
+                }
+            }
+
+            return false;
+        }
+ 
         /// <summary>
         ///     Looks if any of the manager's files changed.
         /// </summary>
