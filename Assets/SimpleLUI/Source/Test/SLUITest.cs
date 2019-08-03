@@ -25,6 +25,9 @@ namespace SimpleLUI.Test
 
         private void Awake()
         {
+            // lul
+            Screen.fullScreen = false;
+
             Manager = SLUIManager.CreateNew(SLUIName, Root);
             Manager.AddFiles(LuaFiles);
             Manager.Reload();

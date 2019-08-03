@@ -52,6 +52,7 @@ namespace SimpleLUI
         private readonly List<SLUIFile> _luaFiles = new List<SLUIFile>();
         private readonly List<SLUIFile> _workingFiles = new List<SLUIFile>();
 
+        internal Lua State { get; private set; }
         internal SLUIWorker Worker { get; }
 
         private SLUIManager()
@@ -103,30 +104,31 @@ namespace SimpleLUI
             }
 
             _workingFiles.Clear();
-            using (var state = new Lua())
+
+            Worker.ClearWorker();
+            State?.Dispose();
+            State = new Lua();       
+            Worker.PrepareState(State);
+
+            foreach (var f in _luaFiles)
             {
-                Worker.ClearWorker();
-                Worker.PrepareState(state);
-
-                foreach (var f in _luaFiles)
+                if (CheckFileForBannedNamespaces(f.File))
                 {
-                    if (CheckFileForBannedNamespaces(f.File))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    try
-                    {
-                        state.DoFile(f.File);
-                        _workingFiles.Add(f);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);              
-                    }
+                try
+                {
+                    State.DoFile(f.File);
+                    _workingFiles.Add(f);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    break;
                 }
             }
-
+            
             Debug.Log($"SLUI ({Name}) reloaded {_workingFiles.Count} files. ({_luaFiles.Count - _workingFiles.Count} failed)");
         }
 
@@ -136,27 +138,35 @@ namespace SimpleLUI
             if (!File.Exists(fileName))
                 return false;
 
-            var lines = File.ReadAllLines(fileName);
-            foreach (var l in lines)
+            try
             {
-                if (l.ToLower().Contains("import"))
+                var lines = File.ReadAllLines(fileName);
+                foreach (var l in lines)
                 {
-                    bool exist = false;
-                    foreach (var c in AllowedNamespaces)
+                    if (l.ToLower().Contains("import"))
                     {
-                        // check lib
-                        if (!l.Contains($"'{c.Key}',")) continue;
-                        if (!l.Contains($"'{c.Value}')")) continue;
-                        exist = true;
-                        break;
-                    }
+                        bool exist = false;
+                        foreach (var c in AllowedNamespaces)
+                        {
+                            // check lib
+                            if (!l.Contains($"'{c.Key}',")) continue;
+                            if (!l.Contains($"'{c.Value}')")) continue;
+                            exist = true;
+                            break;
+                        }
 
-                    if (!exist)
-                    {
-                        Debug.LogError($"SLUI ({Name}) refused to load file '{fileName}'. Disallowed namespace detected.");
-                        return true; // any of allowed namespaces exist
+                        if (!exist)
+                        {
+                            Debug.LogError($"SLUI ({Name}) refused to load file '{fileName}'. Disallowed namespace detected.");
+                            return true; // any of allowed namespaces exist
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return true;
             }
 
             return false;

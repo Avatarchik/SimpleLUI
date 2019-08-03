@@ -32,12 +32,13 @@ namespace SimpleLUI.API.Core
 
         internal virtual void OnComponentCreated() { }
 
-        internal void LoadOriginalComponent()
+        internal void LoadOriginalComponent(SLUIManager manager)
         {
             OriginalComponent = OnLoadOriginalComponent();
             if (OriginalComponent == null)
                 throw new NullReferenceException(nameof(OriginalComponent));
 
+            LoadSLUIObject(manager, OriginalComponent);
             if (OriginalComponent is Behaviour behaviour)
             {
                 OriginalBehaviour = behaviour;
@@ -46,5 +47,7 @@ namespace SimpleLUI.API.Core
 
         internal abstract Component OnLoadOriginalComponent();
         internal virtual void OnComponentLoaded() { }
+
+        public SLUIComponent AddComponent(string componentName) => gameObject.AddComponent(componentName);
     }
 }
