@@ -13,6 +13,9 @@ namespace SimpleLUI.Test
         [Header("References")]
         public Canvas Root;
 
+        [Header("Settings")]
+        public string SLUIName = "Tests";
+
         [Header("Files")]
         public string[] LuaFiles;
 
@@ -20,8 +23,9 @@ namespace SimpleLUI.Test
 
         private void Awake()
         {
-            Manager = SLUIManager.CreateNew(Root);
+            Manager = SLUIManager.CreateNew(SLUIName, Root);
             Manager.AddFiles(LuaFiles);
+            Manager.Reload();
         }
     }
 }
