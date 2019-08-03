@@ -45,5 +45,6 @@ namespace SimpleLUI.API.Core
         }
 
         internal abstract Component OnLoadOriginalComponent();
+        internal virtual void OnComponentLoaded() { }
     }
 }

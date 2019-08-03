@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace SimpleLUI.API.Core
 {
-    public sealed class SLUIGameObject : SLUIObject
+    public sealed partial class SLUIGameObject : SLUIObject
     {
         public SLUIRectTransform rectTransform { get; private set; }
 
@@ -32,6 +32,22 @@ namespace SimpleLUI.API.Core
             rectTransform = AddComponent<SLUIRectTransform>();
         }
 
+        // Casting in lua is not possible
+        // Cant return just a SLUIComponent
+        public SLUIComponent AddComponent(string componentName)
+        {
+            if (!componentName.StartsWith("SLUI"))
+            {
+                componentName = $"SLUI{componentName}";
+            }
+
+            var type = Type.GetType("SimpleLUI.API.Core." + componentName);
+            if (type == null)
+                throw new ArgumentException($"Failed to find component of type {componentName}");
+
+            return AddComponent(type);
+        }
+
         internal T AddComponent<T>() where T : SLUIComponent
         {
             return (T) AddComponent(typeof(T));
@@ -47,6 +63,7 @@ namespace SimpleLUI.API.Core
             newComponent.OnComponentCreated();
             newComponent.LoadOriginalComponent();
             Components.Add(newComponent);
+            newComponent.OnComponentLoaded();
             return newComponent;
         }
 

@@ -6,7 +6,7 @@
 
 namespace SimpleLUI.API.Core
 {
-    public abstract class SLUIGraphic : SLUIObject
+    public abstract class SLUIGraphic : SLUIComponent
     {
 
     }
