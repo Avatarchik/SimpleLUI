@@ -13,7 +13,9 @@ namespace SimpleLUI.API.Core
 {
     public sealed class SLUIGameObject : SLUIObject
     {
-        public SLUIRectTransform RectTransform { get; private set; }
+        public SLUIRectTransform rectTransform { get; private set; }
+
+        public bool activeSelf => Original.activeSelf;
 
         public new GameObject Original { get; private set; }
         public List<SLUIComponent> Components { get; } = new List<SLUIComponent>();
@@ -27,25 +29,27 @@ namespace SimpleLUI.API.Core
             Original = (GameObject) original;
 
             // collect components
-            RectTransform = AddComponent<SLUIRectTransform>();
+            rectTransform = AddComponent<SLUIRectTransform>();
         }
 
-        public T AddComponent<T>() where T : SLUIComponent
+        internal T AddComponent<T>() where T : SLUIComponent
         {
             return (T) AddComponent(typeof(T));
         }
 
-        public SLUIComponent AddComponent(Type type)
+        internal SLUIComponent AddComponent(Type type)
         {
             if (!type.IsSubclassOf(typeof(SLUIComponent)))
                 throw new ArgumentException($"Type {type.FullName} is not a subclass of {typeof(SLUIComponent)}");
 
             var newComponent = (SLUIComponent) Activator.CreateInstance(type);
-            newComponent.GameObject = this;
+            newComponent.gameObject = this;
             newComponent.OnComponentCreated();
             newComponent.LoadOriginalComponent();
             Components.Add(newComponent);
             return newComponent;
         }
+
+        public void SetActive(bool activeState) => Original.SetActive(activeState);   
     }
 }

@@ -4,9 +4,13 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using JetBrains.Annotations;
 using SimpleLUI.API.Core;
+using SimpleLUI.API.Core.Math;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace SimpleLUI.API
 {
@@ -33,15 +37,42 @@ namespace SimpleLUI.API
             Objects.Clear();
         }
 
-        public SLUIGameObject Create()
+        public SLUIGameObject Create([NotNull] string name)
         {
-            var newGameObject = new GameObject("(SLUI Object)");
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            return Create(name, SLUIVector2.Zero);
+        }
+
+        public SLUIGameObject Create([NotNull] string name, [NotNull] SLUIVector2 position)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (position == null) throw new ArgumentNullException(nameof(position));
+            return Create(name, position, SLUIVector2.Zero);
+        }
+
+        public SLUIGameObject Create([NotNull] string name, [NotNull] SLUIVector2 position, [NotNull] SLUIVector2 size)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (position == null) throw new ArgumentNullException(nameof(position));
+            if (size == null) throw new ArgumentNullException(nameof(size));
+            var newGameObject = new GameObject(name);
             InternalInitializeGameObject(newGameObject);
 
             var newReference = new SLUIGameObject();
             newReference.LoadSLUIObject(Parent.Parent, newGameObject);
             InternalInitializeObject(newReference);
             return newReference;
+        }
+
+        public void Destroy([NotNull] SLUIObject obj)
+        {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+            if (Objects.Contains(obj))
+            {
+                Objects.Remove(obj);
+            }
+
+            Object.Destroy(obj.Original);
         }
 
         private void InternalInitializeGameObject(GameObject obj)
