@@ -4,6 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using System.Collections;
 using UnityEngine;
 
 namespace SimpleLUI.Test
@@ -15,6 +16,7 @@ namespace SimpleLUI.Test
 
         [Header("Settings")]
         public string SLUIName = "Tests";
+        public float RefreshWait = 2f;
 
         [Header("Files")]
         public string[] LuaFiles;
@@ -26,6 +28,18 @@ namespace SimpleLUI.Test
             Manager = SLUIManager.CreateNew(SLUIName, Root);
             Manager.AddFiles(LuaFiles);
             Manager.Reload();
+        }
+
+        private IEnumerator Start()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(RefreshWait);
+                if (Manager.LookForChanges())
+                {
+                    Manager.Reload();
+                }
+            }
         }
     }
 }

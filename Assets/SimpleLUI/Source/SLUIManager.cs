@@ -13,6 +13,17 @@ using UnityEngine;
 
 namespace SimpleLUI
 {
+    public class SLUIFile
+    {
+        public string File { get; }
+        public DateTime LastModified { get; internal set; }
+
+        internal SLUIFile(string file)
+        {
+            File = file;
+        }
+    }
+
     /// <summary>
     ///     Main SLUI manager class.
     /// </summary>
@@ -31,9 +42,9 @@ namespace SimpleLUI
         /// <summary>
         ///     List of all lua files added to manager.
         /// </summary>
-        public IReadOnlyList<string> LuaFiles => _luaFiles;
-        private readonly List<string> _luaFiles = new List<string>();
-        private readonly List<string> _workingFiles = new List<string>();
+        public IReadOnlyList<SLUIFile> LuaFiles => _luaFiles;
+        private readonly List<SLUIFile> _luaFiles = new List<SLUIFile>();
+        private readonly List<SLUIFile> _workingFiles = new List<SLUIFile>();
 
         private SLUIManager() { }
 
@@ -59,10 +70,14 @@ namespace SimpleLUI
                 throw new FileLoadException("Invalid file extension.", luaFile);
             if (!File.Exists(luaFile))
                 throw new FileNotFoundException(null, luaFile);
-            if (_luaFiles.Contains(luaFile))
-                return;
-
-            _luaFiles.Add(luaFile);
+            foreach (var f in _luaFiles)
+                if (f.File == luaFile)
+                    return;
+   
+            _luaFiles.Add(new SLUIFile(luaFile)
+            {
+                LastModified = File.GetLastWriteTime(luaFile)
+            });
         }
 
         /// <summary>
@@ -83,20 +98,56 @@ namespace SimpleLUI
                 {
                     try
                     {
-                        state.DoFile(f);
+                        state.DoFile(f.File);
                         _workingFiles.Add(f);
                     }
                     catch (Exception e)
                     {
-                        //if (e is LuaScriptException l)
-                        //    Debug.LogException(l);
-                        //else
                         Debug.LogException(e);              
                     }
                 }
             }
 
-            Debug.Log($"SLUI ({Name}) reloaded {_workingFiles.Count} files.");
+            Debug.Log($"SLUI ({Name}) reloaded {_workingFiles.Count} files. ({_luaFiles.Count - _workingFiles.Count} failed)");
+        }
+
+        /// <summary>
+        ///     Looks if any of the manager's files changed.
+        /// </summary>
+        public bool LookForChanges(bool cleanup = true)
+        {
+            bool hasChange = false;
+            for (var index = 0; index < _luaFiles.Count; index++)
+            {
+                var f = _luaFiles[index];
+                if (!File.Exists(f.File))
+                {
+                    if (cleanup)
+                    {
+                        Debug.Log($"SLUI ({Name}) file change detected. File '{f.File}' has been removed.");
+                        _luaFiles.Remove(f);
+                        index--;
+                    }
+
+                    hasChange = true;
+                }
+                else
+                {
+                    var currentWriteTime = File.GetLastWriteTime(f.File);
+                    if (DateTime.Compare(f.LastModified, currentWriteTime) != 0)
+                    {
+                        if (cleanup)
+                        {
+                            Debug.Log($"SLUI ({Name}) file change detected. File '{f.File}' has been modified.");
+                            f.LastModified = currentWriteTime;
+                        }
+
+                        hasChange = true;
+                    }
+                }
+            }
+
+            return hasChange;
         }
 
         /// <summary>
