@@ -47,6 +47,11 @@ namespace SimpleLUI
         public string Name { get; private set; } = "Unknown";
 
         /// <summary>
+        ///     Called when files of the manager has been reloaded.
+        /// </summary>
+        public event Action OnReloaded;
+
+        /// <summary>
         ///     List of all lua files added to manager.
         /// </summary>
         public IReadOnlyList<SLUIFile> LuaFiles => _luaFiles;
@@ -94,6 +99,18 @@ namespace SimpleLUI
         }
 
         /// <summary>
+        ///     Destroy all the manager created object.
+        /// </summary>
+        public void Cleanup()
+        {
+            // clear files?
+            // _luaFiles.Clear();
+            // _workingFiles.Clear();
+
+            Worker?.ClearWorker();
+        }
+
+        /// <summary>
         ///     Reloads the manager.
         /// </summary>
         public void Reload()
@@ -131,6 +148,8 @@ namespace SimpleLUI
             }
             
             Debug.Log($"SLUI ({Name}) reloaded {_workingFiles.Count} files. ({_luaFiles.Count - _workingFiles.Count} failed)");
+
+            OnReloaded?.Invoke();
         }
 
         private bool CheckFileForBannedNamespaces([NotNull] string fileName)
