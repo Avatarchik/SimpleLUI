@@ -1,0 +1,2414 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JEM.UnityEngine</name>
+    </assembly>
+    <members>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionRectTransform.TestRectTransformCollision(UnityEngine.RectTransform,System.Boolean@)">
+            <summary>
+                Tests if mouse have collision with given rectTransform.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionAnimator">
+            <summary>
+                Set of utility extensions to Animator class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionAnimator.LerpFloat(UnityEngine.Animator,System.String,System.Single,System.Single)">
+            <summary>
+                Interpolate float value of animator.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionAudioSource">
+            <summary>
+                Set of utility extensions to GameObject class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionAudioSource.FadedOut(UnityEngine.AudioSource,System.Single,System.Action)">
+            <summary>
+                Slowly fade out audio source volume.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionAudioSource.FadedIn(UnityEngine.AudioSource,System.Single,System.Action)">
+            <summary>
+                Slowly fade in audio source volume.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionBounds">
+            <summary>
+                Set of utility extensions to Bounds class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionBounds.GetCorners(UnityEngine.Bounds)">
+            <summary>
+                Gets all 8 corners of bounds.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionBoxCollider">
+            <summary>
+                Set of utility extensions to BoxCollider class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionBoxCollider.GetRandomPoint(UnityEngine.BoxCollider,System.Boolean)">
+            <summary>
+                Gets random point from box collider bounds.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionColor">
+            <summary>
+                Set of utility extensions to Color class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionColor.MultiplyAlpha(UnityEngine.Color,System.Single)">
+            <summary>
+                Multiply color's alpha.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionGameObject">
+            <summary>
+                Set of utility extensions to GameObject class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.ChildOperation``1(UnityEngine.GameObject,System.Action{``0})">
+            <summary>
+                Invoke operation on all children GameObjects.
+            </summary>
+            <param name="gameObject">Parent of GameObjects.</param>
+            <param name="operation">Operation to invoke.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.GetComponentInParent``1(UnityEngine.GameObject)">
+            <summary>
+                Gets component from parent.
+            </summary>
+            <typeparam name="T1">Type of component.</typeparam>
+            <param name="go">GameObject to search in.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.GetComponentsInParent``1(UnityEngine.GameObject)">
+            <summary>
+                Gets components from parent.
+            </summary>
+            <typeparam name="T1">Type of component.</typeparam>
+            <param name="go">GameObject to search in.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.GetComponentsListInParent``1(UnityEngine.GameObject)">
+            <summary>
+                Gets components from parent.
+            </summary>
+            <typeparam name="T1">Type of component.</typeparam>
+            <param name="go">GameObject to search in.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.CreateChild(UnityEngine.GameObject,System.String)">
+            <summary>
+                Creates child GameObject.
+            </summary>
+            <param name="go"></param>
+            <param name="childName"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.ResolveComponent``1(UnityEngine.GameObject)">
+            <summary>
+                Gets or adds component if not exist.
+            </summary>
+            <typeparam name="T1">Type of component</typeparam>
+            <param name="go"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.LiteSetActive(UnityEngine.GameObject,System.Boolean,System.Action)">
+            <summary>
+                Activates/Deactivates the GameObject in background.
+            </summary>
+            <param name="go"></param>
+            <param name="activeState">Active state.</param>
+            <param name="onDone">Event called at end of this background operation.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.GetDebugName(UnityEngine.GameObject)">
+            <summary>
+                Gets name of game object for debug.
+            </summary>
+            <param name="go"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.GetDebugMessage(UnityEngine.GameObject)">
+            <summary>
+                Gets start debug message of given game object.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionGameObject.GetParentPath(UnityEngine.GameObject)">
+            <summary>
+                Gets path from grand parent to this gameobject.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionLayerMask">
+            <summary>
+                Set of utility extensions to LayerMask class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionLayerMask.Contains(UnityEngine.LayerMask,System.Int32)">
+            <summary>
+                Check if given layer exists in this LayerMask.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionMaterial">
+            <summary>
+                Set of utility extensions to Material class.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionMaterial.BlendMode">
+            <summary>
+                Material blend mode.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Extension.ExtensionMaterial.BlendMode.Opaque">
+            <summary>
+                Opaque.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Extension.ExtensionMaterial.BlendMode.Cutout">
+            <summary>
+                Cutout.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Extension.ExtensionMaterial.BlendMode.Fade">
+            <summary>
+                Fade.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Extension.ExtensionMaterial.BlendMode.Transparent">
+            <summary>
+                Transparent.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionMaterial.SetBlendMode(UnityEngine.Material,JEM.UnityEngine.Extension.ExtensionMaterial.BlendMode)">
+            <summary>
+                Set material blend mode.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionRenderer">
+            <summary>
+                Set of utility extensions to Renderer class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionRenderer.SetMaterials(UnityEngine.Renderer,UnityEngine.Material)">
+            <summary>
+                Sets all materials of renderer to given.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionText">
+            <summary>
+                Set of utility extensions to Text class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionText.InsertText(UnityEngine.UI.Text,System.String,System.Single)">
+            <summary>
+                Insert given text char by char.
+            </summary>
+            <param name="text"></param>
+            <param name="textToInsert">Text to insert.</param>
+            <param name="speed">Speed of inserting.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionText.InsertText(UnityEngine.UI.Text,System.String,System.Single,System.Action)">
+            <summary>
+                Insert given text char by char.
+            </summary>
+            <param name="text"></param>
+            <param name="textToInsert">Text to insert.</param>
+            <param name="speed">Speed of inserting.</param>
+            <param name="onComplete"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Extension.ExtensionTransform">
+            <summary>
+                Set of utility extensions to Transform class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionTransform.LookAtSmooth(UnityEngine.Transform,UnityEngine.Transform,System.Single)">
+            <summary>
+                Look at smooth
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionTransform.LookAtSmooth(UnityEngine.Transform,UnityEngine.Vector3,System.Single)">
+            <summary>
+                Look at smooth.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionTransform.LerpPosition(UnityEngine.Transform,UnityEngine.Vector3,System.Single)">
+            <summary>
+                Interpolate transform position.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionTransform.LerpRotation(UnityEngine.Transform,UnityEngine.Quaternion,System.Single)">
+            <summary>
+                Interpolate transform rotation.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionTransform.LerpRotation(UnityEngine.Transform,UnityEngine.Vector3,System.Single)">
+            <summary>
+                Interpolate transform rotation.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Extension.ExtensionTransform.LerpRotation(UnityEngine.Transform,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+                Interpolate transform rotation.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfacePointerEvents">
+            <inheritdoc cref="T:UnityEngine.MonoBehaviour" />
+            <summary>
+                Interface pointer events chandler.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextConfiguration">
+            <summary>
+                Configuration of new context instance.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextConfiguration.Items">
+            <summary>
+                Array of controls.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextControl">
+            <summary>
+                Item of context configuration.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextControl.ControlType">
+            <summary>
+                Type of control.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextControl.ControlType.BUTTON">
+            <summary>
+                Button control.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextControl.Identity">
+            <summary>
+                Custom identity of this control.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextControl.OnClick">
+            <summary>
+                On click event of this control.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextControl.Type">
+            <summary>
+                Type of control.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextControl.Value">
+            <summary>
+                Value/text displayed on this control.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextInstance">
+            <summary>
+                Instance of context.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextInstance.Configuration">
+            <summary>
+                Configuration of this instance.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextInstance.Instance">
+            <summary>
+                Instance of context.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextInstance.LastOnClickCallback">
+            <summary>
+                Event when item of context has been click.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextInstance.LastOnDestroyCallback">
+            <summary>
+                Event when this context gets destroyed.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextInstance.Parent">
+            <summary>
+                Parent GameObject of this context.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextInstance.Root">
+            <summary>
+                GameObject of root panel.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextItem">
+            <inheritdoc cref="T:UnityEngine.MonoBehaviour" />
+            <summary>
+                Interface context instance. (UI)
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextItem.InstanceData">
+            <summary>
+                Current instance data of this context.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextItem.Items">
+            <summary>
+                List of items of this context.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextItem.OnPointerEnter(UnityEngine.EventSystems.PointerEventData)">
+            <summary>
+                Om Pointer Enter.
+            </summary>
+            <param name="eventData"></param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextItem.OnPointerExit(UnityEngine.EventSystems.PointerEventData)">
+            <summary>
+                On Pointer Exit.
+            </summary>
+            <param name="eventData"></param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextItem.AddItem(JEM.UnityEngine.Interface.Context.InterfaceContextControl.ControlType,System.String,System.String,System.Action)">
+            <summary>
+                Adds new item.
+            </summary>
+            <param name="type">Type of item.</param>
+            <param name="value">Value of item.</param>
+            <param name="key">Key of item.</param>
+            <param name="onClickCallBack">OnClick callback.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextManager">
+            <inheritdoc />
+            <summary>
+                Manager of interface context.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextManager.ContextButtonPrefab">
+            <summary>
+                Context Button Prefab.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextManager.ContextPanelDeploy">
+            <summary>
+                Context Panel Deploy.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Context.InterfaceContextManager.ContextPanelPrefab">
+            <summary>
+                Context Panel Prefab.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextManager.IsMouseOutOfContext">
+            <summary>
+                Is mouse currently out of context?
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextManager.LastInstancedContext">
+            <summary>
+                Last instanced context.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextManager.Instance">
+            <summary>
+                Current instance of manager.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextManager.MakeContext(JEM.UnityEngine.Interface.Context.InterfaceContextConfiguration,System.Action{System.String},System.Action,UnityEngine.GameObject)">
+            <summary>
+                Create new context.
+            </summary>
+            <param name="configuration">Configuration of context.</param>
+            <param name="onItemClick">Global onclick event.</param>
+            <param name="onContextDestroyed">On destroy event.</param>
+            <param name="parent">Parent of this context.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextManager.DestroyContext">
+            <summary>
+                Destroys current context.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem">
+            <inheritdoc cref="T:UnityEngine.MonoBehaviour" />
+            <summary>
+                Context sub item.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem.Parent">
+            <summary>
+                Parent of this context sub item.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem.Key">
+            <summary>
+                Key of this context.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem.OnClickCallback">
+            <summary>
+                Onclick callback.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem.InBuildOnClick">
+            <summary>
+                Is this sub item uses in build on clicks?
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem.OnPointerClick(UnityEngine.EventSystems.PointerEventData)">
+            <summary>
+                On Cursor Click
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Context.InterfaceContextSubItem.ExecuteOnClick">
+            <summary>
+                Executes on click event.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Control.SliderToText">
+            <inheritdoc />
+            <summary>
+                Apply value from slider to text.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Control.SliderToText.Format">
+            <summary>
+                Format.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Control.SliderToText.Text">
+            <summary>
+                Source text.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfaceSliderGradient">
+            <inheritdoc />
+            <summary>
+                Interface slider gradient.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSliderGradient.Gradient">
+            <summary>
+                Gradient.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSliderGradient.Smooth">
+            <summary>
+                Speed of color interpolation.
+                If set to zero, interpolation will be ignored.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSliderGradient.Target">
+            <summary>
+                Target image.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceSliderGradient.Slider">
+            <summary>
+                Current slider.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfaceSuperSlider">
+            <inheritdoc />
+            <summary>
+                InterfaceSuperSlider.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSuperSlider.SliderBackground">
+            <summary>
+                Background slider.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSuperSlider.SliderForeground">
+            <summary>
+                Main slider.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSuperSlider.Speed">
+            <summary>
+                Speed of super slider background value.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceSuperSlider.Value">
+            <summary>
+                Value of super slider.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceSuperSlider.ForceNewState">
+            <summary>
+                Forces new state of sliders.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.CursorIconName">
+            <summary>
+                Cursor icon name.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.CursorIconName.Default">
+            <summary>
+                Default icon.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.CursorIconName.Move">
+            <summary>
+                Icon for moving something.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.CursorIconName.Resize">
+            <summary>
+                Icon for resizing something.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.CursorIconName.Rotate">
+            <summary>
+                Icon of rotating something.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceCursor">
+            <inheritdoc />
+            <summary>
+                Interface cursor.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceCursor.CursorImage">
+            <summary>
+                Cursor UI image.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceCursor.CursorIconDefault">
+            <summary>
+                Cursor icon - default.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceCursor.CursorIconMove">
+            <summary>
+                Cursor icon - move.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceCursor.CursorIconResize">
+            <summary>
+                Cursor icon - resize.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceCursor.CursorIconRotate">
+            <summary>
+                Cursor icon - rotate.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.LockCursor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+                Lock cursor under given name.
+            </summary>
+            <param name="source"></param>
+            <param name="state"></param>
+            <param name="forceNewState">Force to update cursor in this frame.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.GetCursorLock(System.String)">
+            <summary>
+                Gets state of cursor lock.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.ClearCursorLock">
+            <summary>
+                Clears cursor lock.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.SetFixedCursorPosition(UnityEngine.Vector2)">
+            <summary>
+                Moves cursor to given position in 2d space.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.GetFixedCursorPosition">
+            <summary>
+                Gets fixed cursor position in 2d space.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.SetCursorPosition(UnityEngine.Vector3)">
+            <summary>
+                Moves cursor to given position in world space.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.SetCursorPosition(UnityEngine.Camera,UnityEngine.Vector3)">
+            <summary>
+                Moves cursor to given position in world space.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceCursor.SetCursorIcon(JEM.UnityEngine.Interface.Window.CursorIconName)">
+            <summary>
+                Sets current cursor.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceCursor.Point">
+            <summary>
+                Point on screen.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceCursor.CursorLocked">
+            <summary>
+                Cursor lock state.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceCursor.UpdatePosition">
+            <summary>
+                Defines whether the position of cursor should be updated.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceCursor.CurrentCursorIconName">
+            <summary>
+                Current interface cursor.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceCursor.Instance">
+            <summary>
+                Current instance of script.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceWindowResize">
+            <inheritdoc cref="T:UnityEngine.MonoBehaviour" />
+            <summary>
+                Interface resize (button) element.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.Window">
+            <summary>
+                Target window of this size element.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.CanWorkWithWindow">
+            <summary>
+                True if this size element can work with current window.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.AnyWindowIsResized">
+            <summary>
+                True if any window is currently re-sized by user.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.OnPointerDown(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.OnPointerEnter(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.OnPointerExit(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.OnPointerUp(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowResize.Restart">
+            <summary>
+                Restarts this window element.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceWindow">
+            <inheritdoc />
+            <summary>
+                Draggable and re-sizable interface window.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.UniqueWindowName">
+            <summary>
+                An unique window name.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.RootTransform">
+            <summary>
+                Root window transform.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.AllowDragging">
+            <summary>
+                Allow to drag this window.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.AllowResize">
+            <summary>
+                Allow to resize this window.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.AlwaysMoveOnTop">
+            <summary>
+                If set to true, the window will always move on top of others if moved.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.ClampWindowSize">
+            <summary>
+                Defines whether the window size clamp feature should be enabled.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.MaxWindowSize">
+            <summary>
+                Maximal possible window size.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.MinWindowSize">
+            <summary>
+                Minimal possible window size.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.ShouldActivateGameObject">
+            <summary>
+                If set to true, system will not activate gameobject of this window. Good for custom activation behaviour.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.OnWindowActivated">
+            <summary>
+                Called on window activate.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindow.OnWindowDeactivated">
+            <summary>
+                Called on window deactivate.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindow.WindowCanvas">
+            <summary>
+                Current canvas of this window.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindow.WindowActive">
+            <summary>
+                Defines whether the window is active..
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindow.CurrentAnchorName">
+            <summary>
+                Current anchor of window.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindow.AnyWindowIsUnderMotion">
+            <summary>
+                True if any window is currently moving or re-sized by user.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.SetActive(System.Boolean)">
+            <summary>
+                Changes window active state.
+            </summary>
+            <param name="active">Active state.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.RegisterWindowCanvas(UnityEngine.Canvas)">
+            <summary>
+                Register window canvas.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.SafeWindowUpdate">
+            <summary>
+                Safe window update...
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.UpdateDisplay">
+            <summary>
+                Updates window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.Restart">
+            <summary>
+                Restarts this window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.GetRect">
+            <summary>
+                Gets Rect of this window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.SetRect(UnityEngine.Rect)">
+            <summary>
+                Sets rect of this window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.MoveOnTop">
+            <summary>
+                Moves window on top in local container.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindow.RestartAll">
+            <summary>
+                Restarts all windows.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader">
+            <inheritdoc cref="T:UnityEngine.MonoBehaviour" />
+            <summary>
+                Interface window header components.
+                Defines draggable area of window.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.Window">
+            <summary>
+                Target window of this window header.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.CanWorkWithWindow">
+            <summary>
+                True if this window header can work with current window.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.AnyHeaderIsDragging">
+            <summary>
+                True if any window header is currently moving by user.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.OnPointerDown(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.OnPointerEnter(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.OnPointerExit(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.OnPointerUp(UnityEngine.EventSystems.PointerEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowHeader.Restart">
+            <summary>
+                Restarts this window header.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceWindowAnchorName">
+            <summary>
+                Interface window anchor name.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.Window.InterfaceWindowUtil">
+            <summary>
+                Utility class for interface window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.Window.InterfaceWindowUtil.GetAnchorName(UnityEngine.RectTransform)">
+            <summary>
+                Get current anchor name of given rectTransform.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.FadeAnimationMode">
+            <summary>
+                Fade animation mode.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.FadeAnimationMode.UsingLocalScale">
+            <summary>
+                Transform localScale will be used to animate fade.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.FadeAnimationMode.UsingSizeDelta">
+            <summary>
+                RectTransform sizeDelta will be used to animate fade.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.FadeAnimationMode.Disabled">
+            <summary>
+                Disables animation on object's scale.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfaceFadeAnimation">
+            <inheritdoc />
+            <summary>
+                Activate/Deactivate interface fade animations.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeAnimation.AnimationSpeed">
+            <summary>
+                Default fade animation speed.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeAnimation.AnimationEnterScale">
+            <summary>
+                AnimationEnterScale.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeAnimation.AnimationExitScale">
+            <summary>
+                AnimationExitScale.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeAnimation.AnimationMode">
+            <summary>
+                Defines current animation mode.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.RectTransform">
+            <summary>
+                RectTransform.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.StartSizeDelta">
+            <summary>
+                Start rectTransform sizeDelta of object.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.StartLocalSize">
+            <summary>
+                Start transform size of object.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.IsLoaded">
+            <summary>
+                Defines whether the script is loaded.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.TargetActive">
+            <summary>
+                Window active state.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.IsWorking">
+            <summary>
+                Animations working state.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.WorkSessionID">
+            <summary>
+                Current wort session identity.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeAnimation.WorkingCoroutine">
+            <summary>
+                Current coroutine of work.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeAnimation.SetWindowActive(System.Boolean)">
+            <summary>
+                Sets window active state.
+            </summary>
+            <param name="activeState">New active state.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeAnimation.SetActive(System.Boolean,System.Boolean)">
+            <summary>
+                Sets window active state.
+            </summary>
+            <param name="activeState">New active state.</param>
+            <param name="forced">If true, operation will be forced.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeAnimation.ForceDeactivation">
+            <summary>
+                Forces deactivation.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeAnimation.RestartWork">
+            <summary>
+                Restarts current work.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeAnimation.ForceActiveState">
+            <summary>
+                Forces given active state.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfaceFadeElement">
+            <inheritdoc />
+            <summary>
+                Canvas Renderer Fade animation script.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeElement.IgnoreGroup">
+            <summary>
+                The element will ignore operations invoked by InterfaceFadeGroup.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeElement.AlwaysFalseRaycast">
+            <summary>
+                Target raycast of current graphic will be always false while starting fade process.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeElement.ApplyStateToGameObject">
+            <summary>
+                If GameObject of this InterfaceFadeElement is inactive, script will automaticly set it activate.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeElement.DisallowLiteActivation">
+            <summary>
+                Disallow GameObject lite activation.
+                It's sometimes helps to remove `GameObject is already being activated or deactivated.` error.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Interface.InterfaceFadeElement.FixedAlphaTarget">
+            <summary>
+                User defined graphic alpha target.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeElement.IsLoaded">
+            <summary>
+                Defines whether the element is loaded.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Interface.InterfaceFadeElement.GraphicAlpha">
+            <summary>
+                Current graphic alpha of of fade element.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeElement.InternalBreakWork">
+            <summary>
+                Breaks/Stops current work.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeElement.Force(System.Boolean)">
+            <summary>
+                Forces new state of this element.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeElement.Fade(System.Boolean,System.Single,System.Single,System.Boolean,System.Action)">
+            <summary>
+                Fade this element.
+            </summary>
+            <param name="state">Fading state.</param>
+            <param name="speed">Speed of fading.</param>
+            <param name="delay">The delay with which the fade will start.</param>
+            <param name="fixedSmooth">Fade will use smooth delta time.</param>
+            <param name="callBack">Event, called when all elements ends fading.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeElement.InternalSetRaycastTarget(System.Boolean)">
+            <summary>
+                Sets raycast target of current graphic active.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeElement.InternalUpdateGraphicAlpha(System.Single)">
+            <summary>
+                Updates current graphic alpha.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfaceFadeElementScript">
+            <inheritdoc />
+            <summary>
+                Interface Fade Element Script.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Interface.InterfaceFadeGroup">
+            <summary>
+                Fade group extension for GameObject.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeGroup.FadeGroup(UnityEngine.GameObject,System.Boolean,System.Single,UnityEngine.GameObject[])">
+            <summary>
+                Fade groups.
+            </summary>
+            <param name="gameObject">Target game object.</param>
+            <param name="state">Fading state.</param>
+            <param name="speed">Speed of fading.</param>
+            <param name="exclude">Array of GameObjects that will be excluded.</param>
+            <returns>Event, when fading ends.</returns>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeGroup.FadeGroup(UnityEngine.GameObject,System.Boolean,System.Single,System.Action,UnityEngine.GameObject[])">
+            <summary>
+                Fade groups.
+            </summary>
+            <param name="gameObject">Target game object.</param>
+            <param name="state">Fading state.</param>
+            <param name="speed">Speed of fading.</param>
+            <param name="callBack">Event, called when all elements ends fading.</param>
+            <param name="exclude">Array of GameObjects that will be excluded.</param>
+            <returns>Event, when fading ends.</returns>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeGroup.FadeGroup(UnityEngine.GameObject,System.Boolean,System.Single,System.Single,System.Action,UnityEngine.GameObject[])">
+            <summary>
+                Fade groups.
+            </summary>
+            <param name="gameObject">Target game object.</param>
+            <param name="state">Fading state.</param>
+            <param name="speed">Speed of fading.</param>
+            <param name="delay">he delay with which the fade will start.</param>
+            <param name="callBack">Event, called when all elements ends fading.</param>
+            <param name="exclude">Array of GameObjects that will be excluded.</param>
+            <returns>Event, when fading ends.</returns>
+        </member>
+        <member name="M:JEM.UnityEngine.Interface.InterfaceFadeGroup.ForceGroup(UnityEngine.GameObject,System.Boolean)">
+            <summary>
+                Forces new state of group.
+            </summary>
+            <param name="gameObject">Target GameObject.</param>
+            <param name="state">New state.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMSceneLoader">
+            <inheritdoc />
+            <summary>
+            Simple scene loader.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMSceneLoader.LoadingPanel">
+            <summary>
+            Loading panel.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMSceneLoader.LoadMode">
+            <summary>
+            Load mode.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMSceneLoader.OnLevelLoaded">
+            <summary>
+            On level loaded event.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSceneLoader.Load(System.String,System.Single)">
+            <summary>
+            Async load scene of given name.
+            </summary>
+            <param name="sceneName">Name of the scene.</param>
+            <param name="sleep"></param>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSceneLoader.SetDefaultLoader(JEM.UnityEngine.JEMSceneLoader)">
+            <summary>
+            Reset default loader.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.JEMSceneLoader.IsLoading">
+            <summary>
+            Defines if any scene is currently loading.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.JEMSceneLoader.Default">
+            <summary>
+            Current instance of script.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMSwitch">
+            <inheritdoc />
+            <summary>
+            Simple switch script.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMSwitch.IsActive">
+            <summary>
+            Defines active state.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.JEMSwitch.DefaultState">
+            <summary>
+            Default state of switch.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSwitch.Switch">
+            <summary>
+            Switch the switch!
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSwitch.Set(System.Boolean)">
+            <summary>
+            Set switch state.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSwitch.SetDefault">
+            <summary>
+            Sets default state.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMTranslator">
+            <inheritdoc />
+            <summary>
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTranslator.SetState(System.Boolean)">
+            <summary>
+            Sets state of translator.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTranslator.ForceState">
+            <summary>
+                Force current state.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMTranslatorRect">
+            <inheritdoc />
+            <summary>
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTranslatorRect.SetState(System.Boolean)">
+            <summary>
+            Sets state of translator.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.VersionManagement.JEMBuild">
+            <summary>
+                Data about current build and compilation number.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.LastCompilation">
+            <summary>
+                Data about current compilation.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.CompilationNumber">
+            <summary>
+                General number of current compilation.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.BuildNumber">
+            <summary>
+                General number of current build.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.SessionTime">
+            <summary>
+                General session time.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.Version">
+            <summary>
+                Data about current game version.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.BuildVersion">
+            <summary>
+                Name of current version.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.BuildRelease">
+            <summary>
+                Text of current version release date.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.BuildCompilationText">
+            <summary>
+                Text of current compilation.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.BuildText">
+            <summary>
+                Ready build text.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.VersionManagement.JEMBuild.BuildTextRich">
+            <summary>
+                Ready(Rich) build text.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.JEMBuild.RichTextSize">
+            <summary>
+                Size of rich text.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.JEMBuild.DrawCompilationNumber">
+            <summary>
+                Defines whether the compilation number should be drawn.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.JEMBuild.BranchName">
+            <summary>
+            Temporary text that defines name of current branch.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.VersionManagement.JEMBuild.LoadBuild">
+            <summary>
+                Initializes current game build.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEngine.VersionManagement.JEMBuild.ResolveCurrentCompilationNumber">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.VersionManagement.JEMBuild.ResolveCurrentBuildNumber">
+            <summary>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEngine.VersionManagement.JEMBuild.ResolveCurrentSessionTime">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.VersionManagement.JEMBuild.ResolveLastContributorName">
+            <summary>
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.VersionManagement.Data.Compilation">
+            <summary>
+                Build compilation data.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Compilation.BuildNumber">
+            <summary>
+                Number of build.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Compilation.BuildTime">
+            <summary>
+                Date of last build.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Compilation.CompilationNumber">
+            <summary>
+                Number of compilation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Compilation.CompilationTime">
+            <summary>
+                Date of last compilation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Compilation.SessionTime">
+            <summary>
+                Time in second that defines, how much time dev spend on project.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.VersionManagement.Data.Version">
+            <summary>
+                Build version data.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Version.VersionName">
+            <summary>
+                Version name.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.VersionManagement.Data.Version.VersionRelease">
+            <summary>
+                Version release date.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Entity.ObjectKeepOnScene">
+            <inheritdoc />
+            <summary>
+                Don't destroys target GameObject on scene load.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Controller.HNSCameraMovement">
+            <inheritdoc />
+            <summary>
+                Hack and Slash camera movement controller.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.CenterSmooth">
+            <summary>
+                Smooth of center.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.CenterTransformEfficiency">
+            <summary>
+                Efficiency of center transforms position.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.CenterTransforms">
+            <summary>
+                List of center transforms.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.Character">
+            <summary>
+                Character transform.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.CurrentDistance">
+            <summary>
+                Current distance od camera.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.NearCenter">
+            <summary>
+                Center offset while camera is near character.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.Offset">
+            <summary>
+                Offset of camera to character.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.ScrollSensitivity">
+            <summary>
+                Sensitivity of scroll input.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.HNSCameraMovement.Smooth">
+            <summary>
+                Position smooth.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Controller.HNSCameraMovement.GetCenter">
+            <summary>
+                Gets center point for camera look at.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Controller.HNSCameraMovement.AddCenter(UnityEngine.Transform)">
+            <summary>
+                Removes center transform.
+            </summary>
+            <param name="t"></param>
+        </member>
+        <member name="M:JEM.UnityEngine.Controller.HNSCameraMovement.RemoveCenter(UnityEngine.Transform)">
+            <summary>
+                Adds center transform.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Controller.TPPCameraMovement">
+            <inheritdoc />
+            <summary>
+                TPP Camera movement script.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.Border">
+            <summary>
+                Maximum and minimum X of camera.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.Camera">
+            <summary>
+                Camera transform.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.Character">
+            <summary>
+                Character transform.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.CollisionFixSpeed">
+            <summary>
+                Position fix speed by collision.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.CollisionMask">
+            <summary>
+                Camera collision mask.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.CurrentDistance">
+            <summary>
+                Current distance of camera to character.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.CurrentDistanceClamp">
+            <summary>
+                Minimum and maximum distance of camera to character.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.SpherecastSize">
+            <summary>
+                Spherecast size.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.UserDistance">
+            <summary>
+                User distance of camera to character.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.UserDistanceClamp">
+            <summary>
+                Minimum and maximum user distance of camera to character.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.UserDistanceSmooth">
+            <summary>
+                User distance smooth speed.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.YOffset">
+            <summary>
+                Offset of camera on Y axis.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.TPPCameraMovement.YSmooth">
+            <summary>
+                Smooth of Y axis.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Controller.FreeCameraMovement">
+            <inheritdoc />
+            <summary>
+                Free camera movement script.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.AllowPositionScroll">
+            <summary>
+                Allow to change camera position via scroll.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.maximumX">
+            <summary>
+                Maximal value of X axis of rotation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.maximumY">
+            <summary>
+                Maximal value of Y axis of rotation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.minimumX">
+            <summary>
+                Minimal value of X axis of rotation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.minimumY">
+            <summary>
+                Minimal value of Y axis of rotation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.OnInput">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.OnlyWhenCursorLocked">
+            <summary>
+                Camera movement will only work while cursor is locked.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.PositionSmooth">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.PositionWSADOnRightMouse">
+            <summary>
+                Camera position will can be changed by WSAD while on right mouse button.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.RotateOnlyOnRightMouse">
+            <summary>
+                Camera will rotate only on right mouse button.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.RotationSmooth">
+            <summary>
+                Smooth of camera rotation.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.scrollPositionSensitivity">
+            <summary>
+                Sensitivity of moving camera by scroll.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.scrollPositionSpeed">
+            <summary>
+                Power of moving camera position by mouse.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.scrollSensitivity">
+            <summary>
+                Sensitivity of scroll.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.scrollSensitivitySpeed">
+            <summary>
+                Smooth of moving camera by scroll.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.scrollWheelSpeed">
+            <summary>
+                Power of moving camera position by wheel.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.sensitivityX">
+            <summary>
+                Sensitivity of mouse on X axis.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.sensitivityY">
+            <summary>
+                Sensitivity of mouse in Y axis.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Controller.FreeCameraMovement.Speed">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Controller.FreeCameraMovement.UpdateRotation">
+            <summary>
+                Sets rotation from transform to camera.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Controller.FreeCameraMovement.FixAngle(System.Single)">
+            <summary>
+                Fixes angle.
+            </summary>
+            <param name="angle">Angle to clamp.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Controller.FreeCameraMovement.ClampAngle(System.Single,System.Single,System.Single)">
+            <summary>
+                Clamp angle.
+            </summary>
+            <param name="angle">Angle to clamp.</param>
+            <param name="min">Minimal angle.</param>
+            <param name="max">Maximal angle.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.Debugger.DebuggerContent">
+            <summary>
+                Debugger content class.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Debugger.DebuggerContent.DrawDebugger">
+            <summary>
+                Defines whether the debugger content should be drawn.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Debugger.DebuggerContent.DebugText">
+            <summary>
+                Current text od debugger content.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Debugger.DebuggerContent.Resolve">
+            <summary>
+                Resolves content of debugger.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Debugger.DebuggerContent.InternalBuildText">
+            <summary>
+                Builds content of debugger.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Debugger.DebuggerContent.BuildText">
+            <summary>
+                Builds content of debugger.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Debugger.DebuggerContent.CanDraw">
+            <summary>
+                Check whether the debugger content can be drawn.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Debugger.DebuggerGUI">
+            <inheritdoc />
+            <summary>
+                Script that draw debug text.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Debugger.DebuggerGUI.Debugger">
+            <summary>
+                Current debuggers.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Debugger.DebuggerGUI.AddDebugger(JEM.UnityEngine.Debugger.DebuggerContent)">
+            <summary>
+                Adds debugger.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMArea">
+            <inheritdoc />
+            <summary>
+                Area.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMArea.GroundMask">
+            <summary>
+                Ground mask.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMArea.IsUsingNavmesh">
+            <summary>
+                
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMArea.GenerationTimeout">
+            <summary>
+                
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMArea.GetRandomPoint(UnityEngine.Vector3@)">
+            <summary>
+                Gets random point from this spawn area.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMArea.GetRandomPoint(UnityEngine.Vector3@,UnityEngine.Vector3@)">
+            <summary>
+                Gets random point from this spawn area.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMArea.GetRandomPoint(UnityEngine.Vector3@,UnityEngine.Vector3@,UnityEngine.Vector3@)">
+            <summary>
+                Gets random point from this spawn area.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMArea.GetCenterPoint(UnityEngine.Vector3@,UnityEngine.Vector3@)">
+            <summary>
+                Gets point from center of area.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMArea.GetCenterPoint(UnityEngine.Vector3@,UnityEngine.Vector3@,UnityEngine.Vector3@)">
+            <summary>
+                Gets point from center of area.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMBezierRenderer">
+            <inheritdoc />
+            <summary>
+                Bezier renderer script.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMBezierRenderer.LeftTangent">
+            <summary>
+                Left tangent.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMBezierRenderer.PointA">
+            <summary>
+                Transform of point A.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMBezierRenderer.PointB">
+            <summary>
+                Transform of point B.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMBezierRenderer.RightTangent">
+            <summary>
+                Right tangent.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMBezierRenderer.SegmentCount">
+            <summary>
+                Segment count.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMBezierRenderer.UpdateInEditMode">
+            <summary>
+                Defines whether the bezier should be updated in edit mode.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMBounds">
+            <summary>
+                Set of utility methods. Bounds
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMBounds.BoundsFromMeshRenderers``1(``0[])">
+            <summary>
+                Gets bounds from array of renderer based components.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMBounds.BoundsFromColliders``1(``0[])">
+            <summary>
+                Gets bounds from array of collider based components.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMBounds.GetBoundsCorners(UnityEngine.Bounds)">
+            <summary>
+                Gets all 8 corners of bounds.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMCameraFade">
+            <inheritdoc />
+            <summary>
+                Camera fading with black in/out color.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.JEMCameraFade.Current">
+            <summary>
+                Current camera fade script.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMCameraFade.Fade(System.Single)">
+            <summary>
+                Fade in and out.
+            </summary>
+            <param name="fadeTime">Fade time.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMCameraFade.FadeIn(System.Single)">
+            <summary>
+                Fade in only
+            </summary>
+            <param name="fadeTime">Fade time.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMCameraFade.FadeOut(System.Single)">
+            <summary>
+                Fade out only.
+            </summary>
+            <param name="fadeTime">Fade time.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMChance">
+            <summary>
+                Set of utility methods. Chance.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMChance.GenerateChance(System.Double)">
+            <summary>
+                Generates chance from zero to given percentage.
+            </summary>
+            <param name="maxPercentage">Max percentage.</param>
+            <returns>Generated chance.</returns>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMChance.GenerateChance(System.Double,System.Int32)">
+            <summary>
+                Generates chance from given to given percentage.
+            </summary>
+            <param name="maxPercentage">Minimum percentage.</param>
+            <param name="generateStage">Maximum percentage.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMChance.GenerateChance(System.Double,System.Double,System.Int32)">
+            <summary>
+                Generates chance from given to given percentage.
+            </summary>
+            <param name="minPercentage">Minimum percentage.</param>
+            <param name="maxPercentage">MMaximum percentage.</param>
+            <param name="generateStage">Stage of chance generation. Use full when chance is generated for multiple items.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMDestroyAfterTime">
+            <inheritdoc />
+            <summary>
+                Simple script that will destroy gameobject after given time.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMDestroyAfterTime.Time">
+            <summary>
+                Defines how much time in seconds system need to wait.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMDestroyAfterTime.HardDestroy">
+            <summary>
+                Defines whether the default hard Object.Destroy method should be used.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMMath">
+            <summary>
+                Set of utility methods. Math.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMMath.SpringVector3(UnityEngine.Vector3@,UnityEngine.Vector3@,UnityEngine.Vector3,System.Single,System.Single,System.Single)">
+            <summary>
+                Spring function for Vector3.
+            </summary>
+            <param name="x">Value.</param>
+            <param name="v">Velocity.</param>
+            <param name="xt">Target value.</param>
+            <param name="h">Time step.</param>
+            <param name="zeta">Damping ratio.</param>
+            <param name="omega">Angular frequency.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMMath.SpringVector2(UnityEngine.Vector2@,UnityEngine.Vector2@,UnityEngine.Vector2,System.Single,System.Single,System.Single)">
+            <summary>
+                Spring function for Vector2.
+            </summary>
+            <param name="x">Value.</param>
+            <param name="v">Velocity.</param>
+            <param name="xt">Target value.</param>
+            <param name="h">Time step.</param>
+            <param name="zeta">Damping ratio.</param>
+            <param name="omega">Angular frequency.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMMath.Spring(System.Single@,System.Single@,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+                Spring function.
+            </summary>
+            <param name="x">Value.</param>
+            <param name="v">Velocity.</param>
+            <param name="xt">Target value.</param>
+            <param name="h">Time step.</param>
+            <param name="zeta">Damping ratio.</param>
+            <param name="omega">Angular frequency.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMObject">
+            <summary>
+                Set of utility methods. Object.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.LiteDestroy(UnityEngine.Object,System.Action)">
+            <summary>
+                Removes object, component or asset in background.
+            </summary>
+            <param name="obj"></param>
+            <param name="onDone">Event called at end of this background operation.</param>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.LiteInstantiate(UnityEngine.Object,UnityEngine.Vector3,UnityEngine.Quaternion,System.Action{UnityEngine.Object})">
+            <summary>
+                Clones the object original and returns the clone.
+            </summary>
+            <param name="original">An existing object that you want to make copy of.</param>
+            <param name="position">Position of the new object.</param>
+            <param name="orientation">Orientation of the new object.</param>
+            <param name="onDone">Event called at end of this background operation.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.LiteInstantiate(UnityEngine.GameObject,UnityEngine.Transform,System.Action{UnityEngine.GameObject})">
+            <summary>
+                Clones the object original and returns the clone as parent of given transform.
+            </summary>
+            <param name="original"></param>
+            <param name="parent"></param>
+            <param name="onDone">Event called at end of this background operation.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.LiteInstantiate(UnityEngine.Transform,UnityEngine.Transform,System.Action{UnityEngine.Transform})">
+            <summary>
+                Clones the object original and returns the clone as parent of given transform.
+            </summary>
+            <param name="original"></param>
+            <param name="parent"></param>
+            <param name="onDone">Event called at end of this background operation.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.LiteInstantiate(UnityEngine.RectTransform,UnityEngine.Transform,System.Action{UnityEngine.RectTransform})">
+            <summary>
+                Clones the object original and returns the clone as parent of given transform.
+            </summary>
+            <param name="original"></param>
+            <param name="parent"></param>
+            <param name="onDone">Event called at end of this background operation.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.Instantiate(UnityEngine.GameObject,UnityEngine.Transform)">
+            <summary>
+                Clones the object original and returns the clone as parent of given transform.
+            </summary>
+            <param name="original"></param>
+            <param name="parent"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.Instantiate(UnityEngine.Transform,UnityEngine.Transform)">
+            <summary>
+                Clones the object original and returns the clone as parent of given transform.
+            </summary>
+            <param name="original"></param>
+            <param name="parent"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMObject.Instantiate(UnityEngine.RectTransform,UnityEngine.Transform)">
+            <summary>
+                Clones the object original and returns the clone as parent of given transform.
+            </summary>
+            <param name="original"></param>
+            <param name="parent"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMOperation">
+            <summary>
+                Set of utility methods. Operations.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMOperation.InvokeAction(System.Single,System.Action)">
+            <summary>
+                Wait given time and invoke target action.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMOperation.StartCoroutine(System.Collections.IEnumerator)">
+            <summary>
+                Starts given coroutine on locale JEM script.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMOperationScript">
+            <inheritdoc />
+            <summary>
+                Unity Script of JEMOperation class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMOperationScript.InternalInvokeAction(System.Single,System.Action)">
+            <summary>
+            </summary>
+            <param name="sleep"></param>
+            <param name="targetAction"></param>
+            <returns></returns>
+        </member>
+        <member name="T:JEM.UnityEngine.Attribute.JEMReadOnlyAttribute">
+            <inheritdoc />
+            <summary>
+                UnityEditor read only attribute.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMSprite">
+            <summary>
+                Set of utility methods. Sprite
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSprite.FromTexture2D(UnityEngine.Texture2D)">
+            <summary>
+                Creates sprite from texture2D.
+            </summary>
+            <param name="texture2D"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSprite.FromTexture2D(UnityEngine.Texture2D,UnityEngine.Vector2)">
+            <summary>
+                Creates sprite from texture2D.
+            </summary>
+            <param name="texture2D"></param>
+            <param name="pivot"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMSprite.FromTexture2D(UnityEngine.Texture2D,UnityEngine.Vector2,System.Single)">
+            <summary>
+                Creates sprite from texture2D.
+            </summary>
+            <param name="texture2D"></param>
+            <param name="pivot"></param>
+            <param name="pixelsPerUnit"></param>
+            <returns></returns>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMTexture2D">
+            <summary>
+                Set of utility methods. Texture2D
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMTexture2D.JEMTextureFileExtension">
+            <summary>
+                Default extension of JEM Textures 2D that has been saved using WriteToFile method.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTexture2D.ToSprite(UnityEngine.Texture2D)">
+            <summary>
+                Converts this texture2D in to sprite.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTexture2D.FromBytes(System.Byte[],System.Boolean)">
+            <summary>
+                Converts bytes in to Texture2D.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTexture2D.ToBytes(UnityEngine.Texture2D)">
+            <summary>
+                Converts Texture2D in to bytes.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTexture2D.WriteToFile(System.String,UnityEngine.Texture2D)">
+            <summary>
+                Writes Texture2D to file.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTexture2D.ReadFromFile(System.String)">
+            <summary>
+                Reads Texture2D from file.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMTimerUpdate">
+            <summary>
+                Utility timer update event.
+            </summary>
+            <param name="time">Current time.</param>
+            <param name="targetTime">Target time.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMTimer">
+            <summary>
+                Timer class.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.JEMTimer.OnUpdate">
+            <summary>
+                Timer update event.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.JEMTimer.IsRunning">
+            <summary>
+                Timer running state.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTimer.CreateTimer">
+            <summary>
+                Creates new timer instance.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTimer.DestroyTimer">
+            <summary>
+                Destroys timer.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTimer.StartTimer(System.Int32)">
+            <summary>
+                Starts timer.
+            </summary>
+            <param name="targetTime">Target time of timer.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+            <exception cref="T:System.NotSupportedException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTimer.StopTimer">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMTimerScript">
+            <inheritdoc />
+            <summary>
+                Unity Script of JEMTimer class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMTimerScript.CuntDownTimer(System.Int32,System.Action{System.Int32})">
+            <summary>
+            </summary>
+            <param name="targetTime"></param>
+            <param name="onTick"></param>
+            <returns></returns>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMUnity">
+            <summary>
+                Some main methods related to UnityEngine and JEM for UnityEngine.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMUnity.PrepareJEM">
+            <summary>
+                Prepares JEM to work.
+                It mainly creates all scripts that are used by systems and need to use IEnumenator.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.JEMVector">
+            <summary>
+                Set of utility methods. Vector.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMVector.CompareDistance(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+                Compare distance between point A + B and A + C.
+            </summary>
+            <returns>Distance between two sets of points.</returns>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMVector.Multiply(UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+                Multiply two vectors axis by axis.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMVector.Snap(UnityEngine.Vector2,System.Single)">
+            <summary>
+                
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.JEMVector.Snap(UnityEngine.Vector3,System.Single)">
+            <summary>
+                
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameAsset`1">
+            <summary>
+                Game asset structure that can be get from GameResourcesPack via GetAsset method.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameAsset`1.Name">
+            <summary>
+                Name of the asset.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameAsset`1.Asset">
+            <summary>
+                Asset object.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameAsset`1.Pack">
+            <summary>
+                Source pack of this asset.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameAsset`1.#ctor(System.String,UnityEngine.Object,JEM.UnityEngine.Resource.GameResourcePack)">
+            <summary>
+                Creates new instance of game asset.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameAsset`1.Get">
+            <summary>
+                Gets asset via given type.
+            </summary>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResourcePack">
+            <summary>
+                Loaded resource pack.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResourcePack.Name">
+            <summary>
+                Name of loaded resource.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResourcePack.Description">
+            <summary>
+                Description of loaded resource.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResourcePack.File">
+            <summary>
+                Local patch.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResourcePack.Bundle">
+            <summary>
+                Loaded resources.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResourcePack.Loaded">
+            <summary>
+                Defines whether this resource pack is loaded.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcePack.AssetExist(System.String)">
+            <summary>
+                Checks if asset with given name exist.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcePack.GetAsset``1(System.String)">
+            <summary>
+                Get asset by name.
+            </summary>
+            <typeparam name="T">Type of resource.</typeparam>
+            <param name="resourceName">Name of resource</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcePack.InternalGetAsset(System.String,System.Type)">
+            <summary>
+                Get asset by name.
+            </summary>
+            <param name="resourceName">Name of resource</param>
+            <param name="resourceType">Type of resource.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResources">
+            <summary>
+                Game resources class.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResources.ResourcesLoaded">
+            <summary>
+                Delegate for resources load effect.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResources.ResourcesLoadProgress">
+            <summary>
+                Delegate for resources load progress.
+            </summary>
+            <param name="name">Name of resource that currently being loaded.</param>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResources.ResourcesLoadingEffect">
+            <summary>
+                Resources loading effect used by OnResourcesLoaded delegate.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResources.ResourcesLoadingEffect.Unknown">
+            <summary>
+                Unknown.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResources.ResourcesLoadingEffect.Success">
+            <summary>
+                Success.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResources.ResourcesLoadingEffect.BaseDirNotExist">
+            <summary>
+                Base directory not exist.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResources.ResourcesLoadingEffect.RegisteredResNotExist">
+            <summary>
+                Registered resource not exist.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResources.GameResourcePacks">
+            <summary>
+                List of loaded resources packs.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResources.GetPack(System.String)">
+            <summary>
+                Get whole resource bank.
+            </summary>
+            <param name="packName">Name of loaded resource bank.</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResources.FromStringArray(System.String[])">
+            <summary>
+                Get array of packs from array of packs names.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResources.ToStringArray(JEM.UnityEngine.Resource.GameResourcePack[])">
+            <summary>
+                Get array of packs names form array of packs.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResources.LoadResourcesInfo">
+            <summary>
+                Loads base info about resources that game can load.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResources.LoadResourcesAssets(System.String,System.Boolean,JEM.UnityEngine.Resource.GameResources.ResourcesLoaded,JEM.UnityEngine.Resource.GameResources.ResourcesLoadProgress)">
+            <summary>
+                Resources initialization function, used in start of the game.
+            </summary>
+            <param name="packName">Name of resource to load.</param>
+            <param name="async">Loading process will run asynchronously.</param>
+            <param name="loadedEvent">Loading callback with argument of effect.</param>
+            <param name="progressEvent">Loading progress event.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResources.LoadResourcesAssets(System.String[],System.Boolean,JEM.UnityEngine.Resource.GameResources.ResourcesLoaded,JEM.UnityEngine.Resource.GameResources.ResourcesLoadProgress)">
+            <summary>
+                Resources initialization function, used in start of the game.
+            </summary>
+            <param name="packList">List of resources to load.</param>
+            <param name="async">Loading process will run asynchronously.</param>
+            <param name="loadedEvent">Loading callback with argument of effect.</param>
+            <param name="progressEvent">Loading progress event.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResourcesConfiguration">
+            <summary>
+                Configuration of game resources system.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResourcesConfiguration.PackDescriptionExtension">
+            <summary>
+                Extension of every resources pack (description) in game.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResourcesConfiguration.PackDirectory">
+            <summary>
+                Path to directory of resources packs.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEngine.Resource.GameResourcesConfiguration.PackExtension">
+            <summary>
+                Extension of every resources pack in game.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEngine.Resource.GameResourcesConfiguration.Current">
+            <summary>
+                Currently loaded configuration of game resources.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcesConfiguration.Load">
+            <summary>
+                Loads configuration of game resources.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcesConfiguration.Get">
+            <summary>
+                Gets current configuration.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEngine.Resource.GameResourcesUtility">
+            <summary>
+                Set of utility methods for game resources.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcesUtility.ResolveResourceNameFromPath(System.String)">
+            <summary>
+                Converts for ex. C:/Resource Name.sarp in to resource_name
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcesUtility.ResolveResourceName(System.String)">
+            <summary>
+                Converts for ex. C:/Resource Name.sarp in to resource_name
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcesUtility.ResolveMapPath(System.String)">
+            <summary>
+                Gets full path to pack.
+            </summary>
+            <param name="packName">Raw name of pack (without extension)</param>
+        </member>
+        <member name="M:JEM.UnityEngine.Resource.GameResourcesUtility.ResolveMapDescPath(System.String)">
+            <summary>
+                Gets full path to pack description file.
+            </summary>
+            <param name="packName">Raw name of pack (without extension)</param>
+        </member>
+    </members>
+</doc>

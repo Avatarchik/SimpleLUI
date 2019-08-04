@@ -1,0 +1,975 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JEM.UnityEditor</name>
+    </assembly>
+    <members>
+        <member name="T:JEM.UnityEditor.About.JEMAboutWindow">
+            <inheritdoc />
+            <summary>
+                Asset builder configuration window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.About.JEMAboutWindow.ShowWindow">
+            <summary>
+                Show window.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.AssetBundles.AssetBuilderAddPackageWindow">
+            <summary>
+                Asset builder add package window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderAddPackageWindow.ShowWindow">
+            <summary>
+                Show window.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.AssetBundles.AssetBuilderExporter">
+            <summary>
+                Asset builder exporter class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderExporter.ExportSelectedDirectly(UnityEditor.MenuCommand)">
+            <summary>
+                Exports selected assets directly.
+            </summary>
+            <param name="menuCommand"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderExporter.ExportDirectly(System.String,UnityEngine.Object[])">
+            <summary>
+                Exports given objects directly.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderExporter.ExportPackages(JEM.UnityEditor.AssetBundles.AssetBuilderPackage[])">
+            <summary>
+                Exports list of packages.
+            </summary>
+            <param name="packages"></param>
+        </member>
+        <member name="T:JEM.UnityEditor.AssetBundles.AssetBuilderPackage">
+            <summary>
+                Asset builder package.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Assets">
+            <summary>
+                Assets of package.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Directory">
+            <summary>
+                Directory of package.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Name">
+            <summary>
+                Name of package.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.GetFile">
+            <summary>
+                Gets file of package.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.AddAsset(System.String)">
+            <summary>
+                Adds new asset.
+            </summary>
+            <param name="assetPath"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Exist(System.String)">
+            <summary>
+                Checks if asset of given path exists in this package.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Asset">
+            <summary>
+                Package asset.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Asset.Include">
+            <summary>
+                Include flag.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetBuilderPackage.Asset.Path">
+            <summary>
+                Path to asset.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.AssetBundles.AssetBuilderWindow">
+            <inheritdoc />
+            <summary>
+                Asset builder window.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.SelectedPackage">
+            <summary>
+                Currently selected package.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.PackagesCfgDirectory">
+            <summary>
+                Local file where flags are stored.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.Packages">
+            <summary>
+                Current packages
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.ShowWindow">
+            <summary>
+                Show window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.LoadPackages">
+            <summary>
+                Loads packages cfg from local disc.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.SavePackages">
+            <summary>
+                Saves packages cfg to local disc.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetBuilderWindow.GetPackage(System.String)">
+            <summary>
+                Gets package by name.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration">
+            <summary>
+                Assets builder configuration.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration.PackageExtension">
+            <summary>
+                Current extension of packages.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration.Configuration">
+            <summary>
+                Current configuration instance.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration.ConfigurationFile">
+            <summary>
+                Patch to asset builder configuration
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration.GetExtension">
+            <summary>
+                Gets current extension.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration.LoadConfiguration">
+            <summary>
+                Loads current configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.AssetBundles.AssetsBuilderConfiguration.SaveConfiguration">
+            <summary>
+                Saves current configuration.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.BetterEditorStyle">
+            <summary>
+                Custom style for better editor components
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.BetterEditorStyle.DrawName">
+            <summary>
+                Header name.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.BetterEditorStyle.ItemPrefix">
+            <summary>
+                Prefix of the content of item.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.BetterEditorStyle.ItemFixedIndex">
+            <summary>
+                Defines whether the index of list should start from 1 or 0.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.BetterEditorStyle.FoldoutHeaderType">
+            <summary>
+                Defines whether the foldout header should be drawn.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.BetterEditorStyle.#ctor(System.String,System.String)">
+            <summary>
+                 Better editor style constructor.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMBetterEditor">
+            <summary>
+                Implements better or missing controls for unity editor custom windows/editors.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.FixedPropertyName(System.String)">
+            <summary>
+                Gets fixed property name.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.FixedEndFadeGroup(System.Single)">
+            <summary>
+            </summary>
+            <param name="aValue"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.DrawSprite(UnityEngine.Sprite,System.Single)">
+            <summary>
+                Draw sprite.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.BetterList``2(System.Collections.Generic.List{``0},``1,UnityEngine.Vector2@,System.Func{``0,``0})">
+            <summary>
+                Better list is replace for unity's array/list property control.
+                Implements custom item editor and adds ability to move items in list.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.BetterList``2(System.Collections.Generic.List{``0},``1,UnityEngine.Vector2@,System.Func{``0,``0},JEM.UnityEditor.BetterEditorStyle)">
+            <summary>
+                Better list is replace for unity's array/list property control.
+                Implements custom item editor and adds ability to move items in list.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.BetterList``2(System.Collections.Generic.List{``0},``1,UnityEngine.Vector2@,JEM.UnityEditor.BetterEditorEvents{``0})">
+            <summary>
+                Better list is replace for unity's array/list property control.
+                Implements custom item editor and adds ability to move items in list.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.BetterList``2(System.Collections.Generic.List{``0},``1,UnityEngine.Vector2@,JEM.UnityEditor.BetterEditorEvents{``0},JEM.UnityEditor.BetterEditorStyle)">
+            <summary>
+                Better list is replace for unity's array/list property control.
+                Implements custom item editor and adds ability to move items in list.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.ContentList``2(System.Collections.Generic.List{``0},``1,System.Func{``0,``0})">
+            <summary>
+                Content list is a simpler 'BetterList' version without ability to move objects and is designed to draw all items at once.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.ContentList``2(System.Collections.Generic.List{``0},``1,System.Func{``0,``0},JEM.UnityEditor.BetterEditorStyle)">
+            <summary>
+                Content list is a simpler 'BetterList' version without ability to move objects and is designed to draw all items at once.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.ContentList``2(System.Collections.Generic.List{``0},``1,JEM.UnityEditor.BetterEditorEvents{``0})">
+            <summary>
+                Content list is a simpler 'BetterList' version without ability to move objects and is designed to draw all items at once.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.ContentList``2(System.Collections.Generic.List{``0},``1,JEM.UnityEditor.BetterEditorEvents{``0},JEM.UnityEditor.BetterEditorStyle)">
+            <summary>
+                Content list is a simpler 'BetterList' version without ability to move objects and is designed to draw all items at once.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.DrawProperty(System.String,System.Action)">
+            <summary>
+                Draws (fixed) property element.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.BeginFixedIndent(System.Int32,System.Boolean)">
+            <summary>
+                Begins fixed indent group.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMBetterEditor.EndFixedIndent(System.Int32)">
+            <summary>
+                Ends fixed indent group.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMBetterEditor.FixedIndentLevel">
+            <summary>
+                Fixed indent level.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.VersionManagement.JEMBuildEditor">
+            <summary>
+                Data about current build and compilation number.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildEditor.UserNameFile">
+            <summary>
+                Path to file of current contributor username.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildEditor.IsCurrentContributorNameFileExists">
+            <summary>
+                Check if username file exists.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildEditor.ResolveCurrentContributorName">
+            <summary>
+                Resolves name of current contributor.
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEditor.VersionManagement.BuildFlag">
+            <summary>
+                Build flag.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.VersionManagement.BuildFlag.Name">
+            <summary>
+                Name of flag.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.VersionManagement.BuildFlag.Enabled">
+            <summary>
+                Flag enable state.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.BuildFlag.New">
+            <summary>
+                Creates new instance of this flag.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.VersionManagement.JEMBuildFlags">
+            <summary>
+                Compilation flags.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildFlags.Flags">
+            <summary>
+                Current flags.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildFlags.File">
+            <summary>
+                Local file where flags are stored.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildFlags.LoadFlags">
+            <summary>
+                Loads flags from local file.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildFlags.SaveFlags">
+            <summary>
+                Saves flags to local file.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildFlags.AddFlag(System.String)">
+            <summary>
+                Adds flag of given name.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildFlags.RemoveFlag(System.String)">
+            <summary>
+                Removes flag of given name.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildFlags.SetFlagActive(System.String,System.Boolean)">
+            <summary>
+                Sets active state of given flag.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildFlags.ApplyFlags">
+            <summary>
+                Apply current flags to unity.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.VersionManagement.JEMBuildWindow.LastContributorFile">
+            <summary>
+                Patch to file of name of last contributor.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.VersionManagement.JEMBuildWindow.VersionFile">
+            <summary>
+                Patch to file of version.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildWindow.CompilationNumberFile">
+            <summary>
+                Patch to file of compilation number.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildWindow.CurrentVersion">
+            <summary>
+                Current build version data.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildWindow.CurrentCompilation">
+            <summary>
+                Current compilation data.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildWindow.CurrentCompilationNumber">
+            <summary>
+                Current compilation number.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.VersionManagement.JEMBuildWindow.CurrentBuildNumber">
+            <summary>
+                Current build number.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildWindow.RefreshLocalData">
+            <summary>
+                Loads local data.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildWindow.UpdateBundleVersion">
+            <summary>
+                Updates PlayerSettings.bundleVersion
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildWindow.SaveLocalData">
+            <summary>
+                Saves data to local file
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.VersionManagement.JEMBuildWindow.IncreaseBuildNumber">
+            <summary>
+            Increase build number.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal">
+            <summary>
+                Internal JEM Configuration data used by JEMConfiguration.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.UpdateBundleVersion">
+            <summary>
+                Defines whether the PlayerSettings.bundleVersion should be updated by system.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.UpdateWorkTime">
+            <summary>
+                Update work time.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.UpdateFlags">
+            <summary>
+                Enables/Disables operations on SetScriptingDefineSymbolsForGroup by JEMBuildFlags.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.Configuration">
+            <summary>
+                Currently loaded configuration of JEMConfiguration class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.ResolveConfigurationFile">
+            <summary>
+                Resolves file name of internal cfg.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.Load">
+            <summary>
+                Loads current configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Configuration.JEMEditorConfigurationInternal.Save">
+            <summary>
+                Saves current configuration.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMToolWindow">
+            <inheritdoc />
+            <summary>
+                Tool window.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMToolWindow.DrawGUI">
+            <summary>
+                Draw GUI event.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMToolWindow.ShowWindow(System.String,JEM.UnityEditor.JEMToolWindow.DrawGUI)">
+            <summary>
+                Show tool window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMToolWindow.ShowWindow(System.String,JEM.UnityEditor.JEMToolWindow.DrawGUI,UnityEngine.Rect)">
+            <summary>
+                Show tool window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMToolWindow.CloseWindow">
+            <summary>
+                Closes current tool window instance.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Extension.ExtensionAnimatorEditor">
+            <summary>
+                Set of utility extensions to String class.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Extension.ExtensionAnimatorEditor.ParameterExist(UnityEngine.Animator,System.String)">
+            <summary>
+                Checks if parameter with given name exists in animator.
+            </summary>
+            <param name="animator"></param>
+            <param name="parameterName">Name of parameter.</param>
+            <returns>Exist state.</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.NullReferenceException"></exception>
+        </member>
+        <member name="T:JEM.UnityEditor.Console.JEMConsoleSourceFilters">
+            <summary>
+                JEM Console source filters.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Console.JEMConsoleSourceFilters.ALL">
+            <summary>
+                All sources.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Console.JEMConsoleSourceFilters.INTERNAL">
+            <summary>
+                Internal sources.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Console.JEMConsoleSourceFilters.EXTERNAL">
+            <summary>
+                External sources.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Console.JEMEditorConsole">
+            <inheritdoc />
+            <summary>
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Console.JEMEditorConsole.ShowWindow">
+            <summary>
+                Show window.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph">
+            <inheritdoc />
+            <summary>
+                Node graph window.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph.NodeChanged">
+            <summary>
+                Node change event.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph.NodeDuplicate">
+            <summary>
+                Node duplicate event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.OnNodeAdded">
+            <summary>
+                Node add event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.OnNodeChanged">
+            <summary>
+                Node change event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.OnNodeDuplicate">
+            <summary>
+                Node duplicate event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.OnNodeRemoved">
+            <summary>
+                Node remove event.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.WorkspaceSize">
+            <summary>
+                Defines size of node graph workspace.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.DefaultNodeSize">
+            <summary>
+                Defines size of single node.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.ListOfAllNodes">
+            <summary>
+                List of all nodes in graph.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.OnGUI">
+            <inheritdoc cref="T:UnityEditor.EditorWindow" />
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.DrawToolbar">
+            <summary>
+                Draws toolbar content.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.ResolveFileMenu(UnityEditor.GenericMenu)">
+            <summary>
+                Resolve `File` menu data.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.ResolveEditMenu(UnityEditor.GenericMenu)">
+            <summary>
+                Resolve  `Edit` menu data.
+            </summary>
+            <param name="menu"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.ResolveContextMenu(UnityEditor.GenericMenu)">
+            <summary>
+                Resolves context menu data.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.DrawNodeWindowContent(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Draws content of node window.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.SelectAndDrawNodeInspector(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Select and draw node inspector.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.ClearAllNodesSilently(System.Boolean)">
+            <summary>
+                Clears all nodes without any event call.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.SaveGraph">
+            <summary>
+                Saves graph data.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.AddNode(System.Boolean)">
+            <summary>
+                Adds new node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.AddNode(UnityEngine.Vector2,System.Boolean)">
+            <summary>
+                Adds new node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.AddNode(UnityEngine.Vector2,UnityEngine.Vector2,System.Boolean)">
+            <summary>
+                Adds new node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.DuplicateMode(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Duplicate given node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.UpdateNodeGraphWorkspace(UnityEngine.Vector2)">
+            <summary>
+                Updates size of node graph workspace.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.UpdateIndexOfNodes">
+            <summary>
+                Updates index in all nodes.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph.Node">
+            <summary>
+                Node.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph.Node.IncomingNodesChanged">
+            <summary>
+                Incoming nodes change event.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph.Node.NodePositionChanged">
+            <summary>
+                Node position change.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraph.Node.OutgoingNodesChanged">
+            <summary>
+                Outgoing nodes change event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.BackgroundColor">
+            <summary>
+                Color of node window.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.IncomingPoint">
+            <summary>
+                Incoming point offset.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.Name">
+            <summary>
+                Name of node.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.OnIncomingNodesChanged">
+            <summary>
+                Incoming nodes change event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.OnNodePositionChanged">
+            <summary>
+                Node position change event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.OnOutgoingNodesChanged">
+            <summary>
+                Outgoing nodes change event.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.Graph.NodeGraph.Node.OutgoingPoint">
+            <summary>
+                Outgoing point offset.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.Node.#ctor(JEM.UnityEditor.Graph.NodeGraph,UnityEngine.Rect)">
+            <summary>
+                Constructor.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.Node.Rect">
+            <summary>
+                Rect of node.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.Node.Index">
+            <summary>
+                Index of this node.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.Node.OutgoingNodes">
+            <summary>
+                List of nodes that connection was created by this node.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.Node.IncomingNodes">
+            <summary>
+                List of nodes that connection was created not by this node.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraph.Node.Graph">
+            <summary>
+                Source node graph.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.Node.Destroy">
+            <summary>
+                Destroys this node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.Node.Connect(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Connects given node with this node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.Node.Disconnect(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Disconnects given node from this node.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraph.Node.GetArrayOfIncomingNames">
+            <summary>
+                Returns array of incoming names.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:JEM.UnityEditor.Graph.NodeGraphInspector">
+            <inheritdoc />
+            <summary>
+                Node graph inspector.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraphInspector.NodeTarget">
+            <summary>
+                Node target.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.Graph.NodeGraphInspector.Instance">
+            <summary>
+                Current instance of node graph.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.OnEnable">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.OnGUI">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.DrawToolbar">
+            <summary>
+                Draws toolbar of inspector.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.DrawNodeContent">
+            <summary>
+                Draws actual node content.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.DrawNodeConnections">
+            <summary>
+                Draws list of node connections.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.SetInspectorTarget(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Sets inspector target.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.LoadInspectorTarget(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Sets node as inspector target.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Graph.NodeGraphInspector.UnloadInspectorTarget(JEM.UnityEditor.Graph.NodeGraph.Node)">
+            <summary>
+                Uploads given node.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMEditorResources">
+            <summary>
+                JEM Editor resources manager.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMEditorResources.JEMIconTexture">
+            <summary>
+                JEM icon texture.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMEditorResources.ResourcesLoaded">
+            <summary>
+                Defines whether the resources are loaded.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMEditorResources.Load(System.Boolean)">
+            <summary>
+                Loads current resources.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMEditorDownloaderCallback">
+            <summary>
+                JEM Editor downloader callback.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMEditorDownloader">
+            <summary>
+                JEM Editor Downloader.
+            </summary>
+        </member>
+        <member name="F:JEM.UnityEditor.JEMEditorDownloader.LocalStoragePath">
+            <summary>
+                Path to storage of downloaded textures.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMEditorDownloader.URL">
+            <summary>
+                URL of request.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMEditorDownloader.www">
+            <summary>
+                WWW access of request.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMEditorDownloader.Callback">
+            <summary>
+                Current callback.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMEditorDownloader.NewRequest(System.String,JEM.UnityEditor.JEMEditorDownloaderCallback)">
+            <summary>
+                Creates new request.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMEditorDownloader.SaveFile(System.String,UnityEngine.Texture2D)">
+            <summary>
+                Saves given Texture2D to file.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMEditorDownloader.LoadFromFile(System.String)">
+            <summary>
+                Reads Texture2D from file.
+            </summary>
+            <param name="url"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMEditorDownloader.ResolveFilePath(System.String)">
+            <summary>
+                Resolves path to file.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMGizmosEditor">
+            <summary>
+                Set of utility methods. Gizmos.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMGizmosEditor.YellowGhost">
+            <summary>
+                Yellow with 0.3f alpha.
+            </summary>
+        </member>
+        <member name="P:JEM.UnityEditor.JEMGizmosEditor.Orange">
+            <summary>
+                Orange
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMGizmosEditor.DrawFOV(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single)">
+            <summary>
+                Draw an FOV at position in scene view.
+            </summary>
+            <param name="point"></param>
+            <param name="forward"></param>
+            <param name="fov"></param>
+            <param name="range"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMGizmosEditor.DrawWireSphere(UnityEngine.Vector3,System.Single)">
+            <summary>
+            </summary>
+            <param name="point"></param>
+            <param name="radius"></param>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMGizmosEditor.DrawArrow(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single)">
+            <summary>
+                Draws arrow.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMGizmosEditor.DrawArrow2D(UnityEngine.Vector2,UnityEngine.Vector2,System.Single,System.Single)">
+            <summary>
+                Draws arrow.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.Attribute.JEMReadOnlyAttributeDrawer">
+            <inheritdoc />
+            <summary>
+                Read only drawer.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.Attribute.JEMReadOnlyAttributeDrawer.GetPropertyHeight(UnityEditor.SerializedProperty,UnityEngine.GUIContent)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.UnityEditor.Attribute.JEMReadOnlyAttributeDrawer.OnGUI(UnityEngine.Rect,UnityEditor.SerializedProperty,UnityEngine.GUIContent)">
+            <inheritdoc />
+        </member>
+        <member name="T:JEM.UnityEditor.JEMUndo">
+            <summary>
+                Fixed undo class.
+            </summary>
+        </member>
+        <member name="T:JEM.UnityEditor.JEMUndo.FixedUndoDisplay">
+            <summary>
+                Fixed undo gui display event.
+            </summary>
+        </member>
+        <member name="M:JEM.UnityEditor.JEMUndo.RecordObject(UnityEngine.Object,JEM.UnityEditor.JEMUndo.FixedUndoDisplay,System.Type,System.String)">
+            <summary>
+                Record object.
+            </summary>
+            <param name="obj">Target of undo/redo.</param>
+            <param name="displayGui">Display gui event.</param>
+            <param name="type">Type of recorded object.</param>
+            <param name="name">Custom name.</param>
+        </member>
+    </members>
+</doc>
