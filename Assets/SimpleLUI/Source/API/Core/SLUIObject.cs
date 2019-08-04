@@ -10,9 +10,10 @@ namespace SimpleLUI.API.Core
 {
     public abstract class SLUIObject
     {
-        public Canvas Root => Manager.Canvas;
-        public SLUIManager Manager { get; private set; }
-        public Object Original { get; private set; }
+        internal Canvas Root => Manager.Canvas;
+        internal SLUIManager Manager { get; private set; }
+        internal SLUICore Core => Manager.Worker.Core;
+        internal Object Original { get; private set; }
 
         internal virtual void LoadSLUIObject(SLUIManager manager, Object original)
         {

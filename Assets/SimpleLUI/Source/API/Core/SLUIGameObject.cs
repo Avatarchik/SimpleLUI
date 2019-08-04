@@ -64,6 +64,7 @@ namespace SimpleLUI.API.Core
             newComponent.LoadOriginalComponent(Manager);
             Components.Add(newComponent);
             newComponent.OnComponentLoaded();
+            Core.InternalInitializeObject(newComponent);
             return newComponent;
         }
 

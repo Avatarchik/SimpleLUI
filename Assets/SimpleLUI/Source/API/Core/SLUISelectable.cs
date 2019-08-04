@@ -17,6 +17,12 @@ namespace SimpleLUI.API.Core
             set => Original.interactable = value;
         }
 
+        public SLUIImage targetGraphic
+        {
+            get => Original.image == null ? null : Core.GetObject<SLUIImage>(Original.image.GetInstanceID());
+            set => Original.image = value?.Original;
+        }
+
         public SLUIColor normalColor
         {
             get => Original.colors.normalColor.ToSLUIColor();

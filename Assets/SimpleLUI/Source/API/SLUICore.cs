@@ -19,6 +19,20 @@ namespace SimpleLUI.API
         internal SLUIWorker Parent { get; }
         private List<SLUIObject> Objects { get; } = new List<SLUIObject>();
 
+        public T GetObject<T>(int instanceId) where T : SLUIObject
+        {
+            foreach (var o in Objects)
+            {
+                if (o?.Original == null)
+                    continue;
+
+                if (o.Original.GetInstanceID() == instanceId)
+                    return (T) o;
+            }
+
+            return null;
+        }
+
         internal SLUICore(SLUIWorker parent)
         {
             Parent = parent;
@@ -31,7 +45,12 @@ namespace SimpleLUI.API
         {
             foreach (var obj in Objects)
             {
-                Object.Destroy(obj.Original);
+                if (obj?.Original == null)
+                    continue; 
+
+                if (obj.Original is RectTransform r)
+                    Object.Destroy(r.gameObject); // if rectTransform, destroy whole obj!
+                else Object.Destroy(obj.Original);
             }
 
             Objects.Clear();
@@ -84,7 +103,7 @@ namespace SimpleLUI.API
             obj.layer = LayerMask.NameToLayer("UI");
         }
 
-        private void InternalInitializeObject(SLUIObject obj)
+        internal void InternalInitializeObject(SLUIObject obj)
         {
             if (Objects.Contains(obj))
             {
