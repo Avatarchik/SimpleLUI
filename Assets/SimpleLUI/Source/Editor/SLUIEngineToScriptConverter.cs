@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace SimpleLUI.Editor
@@ -15,6 +16,8 @@ namespace SimpleLUI.Editor
     {
         internal static void Convert(Canvas c, string f, bool prettyPrint)
         {
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Clearing.", 5f);
+
             // clear cache
             varCache.Clear();
 
@@ -28,6 +31,8 @@ namespace SimpleLUI.Editor
             }
 
             Directory.CreateDirectory(res);
+
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Preparing.", 15f);
 
             var builder = new SLUILuaBuilder(prettyPrint, res);
 
@@ -57,6 +62,8 @@ namespace SimpleLUI.Editor
                 }
             }
 
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Generating. (1/5)", 45f);
+
             // write all objects
             builder.Space("![Definition]");
             foreach (var d in supportedComponents)
@@ -64,11 +71,15 @@ namespace SimpleLUI.Editor
                 builder.AppendDefinition(d);
             }
 
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Generating. (2/5)", 60f);
+
             builder.Space("![DefinitionExtras]");
             foreach (var d in supportedComponents)
             {
                 builder.AppendDefinitionExtras(d);
             }
+
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Generating. (3/5)", 75f);
 
             builder.Space("![Property]");
             foreach (var d in supportedComponents)
@@ -76,14 +87,20 @@ namespace SimpleLUI.Editor
                 builder.AppendProperty(d);
             }
 
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Generating. (4/5)", 85f);
+
             builder.Space("![Extras]");
             foreach (var d in supportedComponents)
             {
                 builder.AppendExtras(d);
             }
 
+            EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Finishing. (5/5)", 100f);
+
             // save the file
             File.WriteAllText(f, builder.ToString());
+
+            EditorUtility.ClearProgressBar();
         }
 
         private static void CheckAndAddVar(string var, UnityEngine.Object o)
