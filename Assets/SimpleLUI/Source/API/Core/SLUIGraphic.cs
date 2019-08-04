@@ -19,7 +19,7 @@ namespace SimpleLUI.API.Core
         internal new Graphic Original { get; private set; }
 
         /// <inheritdoc />
-        internal override void OnComponentLoaded()
+        public override void OnComponentLoaded()
         {
             Original = (Graphic) OriginalComponent;
         }

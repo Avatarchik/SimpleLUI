@@ -127,7 +127,7 @@ namespace SimpleLUI.API.Core
         
         }
 
-        internal override Component OnLoadOriginalComponent()
+        public override Component OnLoadOriginalComponent()
         {
             return Original = OriginalGameObject.CollectComponent<RectTransform>();
         }

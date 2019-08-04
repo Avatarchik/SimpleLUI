@@ -36,14 +36,23 @@ namespace SimpleLUI.API.Core
         // Cant return just a SLUIComponent
         public SLUIComponent AddComponent(string componentName)
         {
-            if (!componentName.StartsWith("SLUI"))
+            var localComponentName = componentName;
+            if (!localComponentName.StartsWith("SLUI"))
             {
-                componentName = $"SLUI{componentName}";
+                localComponentName = $"SLUI{localComponentName}";
             }
 
-            var type = Type.GetType($"SimpleLUI.API.Core.{componentName}");
+            var type = Type.GetType($"SimpleLUI.API.Core.{localComponentName}");
             if (type == null)
-                throw new ArgumentException($"Failed to find component of type {componentName}");
+            {
+                if (SLUIWorker.CustomTypes.ContainsKey(componentName))
+                {
+                    type = SLUIWorker.CustomTypes[componentName];
+                }
+
+                if (type == null)
+                    throw new ArgumentException($"Failed to find component of type {componentName}");
+            }
 
             return AddComponent(type);
         }

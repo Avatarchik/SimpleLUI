@@ -55,13 +55,13 @@ namespace SimpleLUI.API.Core
         internal new Text Original { get; private set; }
 
         /// <inheritdoc />
-        internal override Component OnLoadOriginalComponent()
+        public override Component OnLoadOriginalComponent()
         {
             return Original = OriginalGameObject.CollectComponent<Text>();
         }
 
         /// <inheritdoc />
-        internal override void OnComponentLoaded()
+        public override void OnComponentLoaded()
         {
             // invoke base method
             base.OnComponentLoaded();

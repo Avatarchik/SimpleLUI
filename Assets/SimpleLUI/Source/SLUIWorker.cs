@@ -4,16 +4,17 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using System;
+using System.Collections.Generic;
 using NLua;
 using SimpleLUI.API;
+using SimpleLUI.API.Core;
 using UnityEngine;
 
 namespace SimpleLUI
 {
-    internal class SLUIWorker
+    public class SLUIWorker
     {
-        public delegate void EventHandler(string s);
-
         internal SLUIDebugger Debugger { get; }
         internal SLUICore Core { get; }
 
@@ -29,17 +30,8 @@ namespace SimpleLUI
         internal void PrepareState(Lua state)
         {
             state.LoadCLRPackage();
-            state.RegisterFunction("setEventHandler", this, GetType().GetMethod("SetEventHandler"));
-
             state["debug"] = Debugger;
             state["core"] = Core;
-        }
-
-
-        public void SetEventHandler(EventHandler eventHandler)
-        {
-            Debug.Log("Event hanlder?");
-            eventHandler.Invoke("xd");
         }
 
         /// <summary>
@@ -49,5 +41,25 @@ namespace SimpleLUI
         {
             Core.DestroyContent();
         }
+
+        public static void LookForCustomTypes()
+        {
+            CustomTypes.Clear();
+            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var t in a.GetTypes())
+                {
+                    var attributes = t.GetCustomAttributes(typeof(SLUIComponentAttribute), true);
+                    if (attributes.Length > 0)
+                    {
+                        CustomTypes.Add(t.Name, t);
+                    }
+                }
+            }
+
+            Debug.Log($"{CustomTypes.Count} SLUI's custom component types found.");
+        }
+
+        public static Dictionary<string, Type> CustomTypes = new Dictionary<string, Type>();
     }
 }

@@ -18,13 +18,13 @@ namespace SimpleLUI.API.Core
         public SLUIButton() { }
 
         /// <inheritdoc />
-        internal override Component OnLoadOriginalComponent()
+        public override Component OnLoadOriginalComponent()
         {
             return Original = OriginalGameObject.CollectComponent<Button>();
         }
 
         /// <inheritdoc />
-        internal override void OnComponentLoaded()
+        public override void OnComponentLoaded()
         {
             // invoke base method
             base.OnComponentLoaded();

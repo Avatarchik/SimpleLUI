@@ -26,11 +26,11 @@ namespace SimpleLUI.API.Core
 
         public bool isActiveAndEnabled => OriginalBehaviour == null || OriginalBehaviour.isActiveAndEnabled;
 
-        internal GameObject OriginalGameObject => gameObject.Original;
-        internal Component OriginalComponent { get; private set; }
-        internal Behaviour OriginalBehaviour { get; private set; }
+        public GameObject OriginalGameObject => gameObject.Original;
+        public Component OriginalComponent { get; private set; }
+        public Behaviour OriginalBehaviour { get; private set; }
 
-        internal virtual void OnComponentCreated() { }
+        public virtual void OnComponentCreated() { }
 
         internal void LoadOriginalComponent(SLUIManager manager)
         {
@@ -45,8 +45,8 @@ namespace SimpleLUI.API.Core
             }
         }
 
-        internal abstract Component OnLoadOriginalComponent();
-        internal virtual void OnComponentLoaded() { }
+        public abstract Component OnLoadOriginalComponent();
+        public virtual void OnComponentLoaded() { }
 
         public SLUIComponent AddComponent(string componentName) => gameObject.AddComponent(componentName);
     }

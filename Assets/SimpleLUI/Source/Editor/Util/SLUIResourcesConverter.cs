@@ -11,9 +11,9 @@ using UnityEngine;
 
 namespace SimpleLUI.Editor.Util
 {
-    internal static class SLUIResourcesConverter
+    public static class SLUIResourcesConverter
     {
-        internal static void WriteSprite(string file, Sprite sprite)
+        public static void WriteSprite(string file, Sprite sprite)
         {
             if (File.Exists(file))
                 return;
@@ -71,7 +71,7 @@ namespace SimpleLUI.Editor.Util
             File.WriteAllText(styleFile, JsonUtility.ToJson(style, true));
         }
 
-        internal static string CollectResourceName(Sprite sprite)
+        public static string CollectResourceName(Sprite sprite)
         {
             return $"{sprite.texture.name}.png";
         }

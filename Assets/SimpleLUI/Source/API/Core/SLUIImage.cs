@@ -86,7 +86,7 @@ namespace SimpleLUI.API.Core
         }
 
         /// <inheritdoc />
-        internal override Component OnLoadOriginalComponent()
+        public override Component OnLoadOriginalComponent()
         {
             return Original = OriginalGameObject.CollectComponent<Image>();
         }

@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace SimpleLUI.API
 {
-    internal static class UEngineUtil
+    public static class UEngineUtil
     {
-        internal static T CollectComponent<T>([NotNull] this GameObject g) where T : Component
+        public static T CollectComponent<T>([NotNull] this GameObject g) where T : Component
         {
             if (g == null) throw new ArgumentNullException(nameof(g));
             var i = g.GetComponent<T>();

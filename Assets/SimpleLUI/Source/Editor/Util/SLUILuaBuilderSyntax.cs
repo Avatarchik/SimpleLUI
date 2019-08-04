@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace SimpleLUI.Editor.Util
 {
-    internal static class SLUILuaBuilderSyntax
+    public static class SLUILuaBuilderSyntax
     {
-        internal static string FixVarName(string str)
+        public static string FixVarName(string str)
         {
             char[] banned =
             {
@@ -24,17 +24,17 @@ namespace SimpleLUI.Editor.Util
             return banned.Aggregate(str, (current, c) => current.Replace(c, '_'));
         }
 
-        internal static string CollectVar(RectTransform r)
+        public static string CollectVar(RectTransform r)
         {
             return FixVarName($"obj{r.gameObject.GetInstanceID()}");
         }
 
-        internal static string CollectVar(Component c)
+        public static string CollectVar(Component c)
         {
             return FixVarName($"obj{c.gameObject.GetInstanceID()}_{c.GetType().Name.ToLower()}");
         }
 
-        internal static string CollectQuaternion(Quaternion q, bool simple = false)
+        public static string CollectQuaternion(Quaternion q, bool simple = false)
         {
             var str = $"{q.x.ToString(CultureInfo.InvariantCulture)}, " +
                       $"{q.y.ToString(CultureInfo.InvariantCulture)}, " +
@@ -46,7 +46,8 @@ namespace SimpleLUI.Editor.Util
             }
             return str;
         }
-        internal static string CollectVector2(Vector2 v, bool simple = false)
+
+        public static string CollectVector2(Vector2 v, bool simple = false)
         {
             var str = $"{v.x.ToString(CultureInfo.InvariantCulture)}, " +
                       $"{v.y.ToString(CultureInfo.InvariantCulture)}";
@@ -56,7 +57,8 @@ namespace SimpleLUI.Editor.Util
             }
             return str;
         }
-        internal static string CollectColor(Color c, bool simple = false)
+
+        public static string CollectColor(Color c, bool simple = false)
         {
             var str = $"{c.r.ToString(CultureInfo.InvariantCulture)}, " +
                       $"{c.g.ToString(CultureInfo.InvariantCulture)}, " +

@@ -97,7 +97,7 @@ namespace SimpleLUI.API.Core
         internal new Selectable Original { get; private set; }
 
         /// <inheritdoc />
-        internal override void OnComponentLoaded()
+        public override void OnComponentLoaded()
         {
             Original = (Selectable) OriginalComponent;
         }

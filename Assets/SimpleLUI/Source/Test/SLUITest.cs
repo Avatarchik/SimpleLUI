@@ -28,6 +28,8 @@ namespace SimpleLUI.Test
             // lul
             Screen.fullScreen = false;
 
+            SLUIWorker.LookForCustomTypes();
+
             Manager = SLUIManager.CreateNew(SLUIName, Root);
             Manager.AddFiles(LuaFiles);
             Manager.Reload();
