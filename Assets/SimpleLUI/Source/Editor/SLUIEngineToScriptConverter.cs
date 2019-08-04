@@ -15,7 +15,7 @@ namespace SimpleLUI.Editor
 {
     internal static class SLUIEngineToScriptConverter
     {
-        internal static void Convert(Canvas c, string f)
+        internal static void Convert(Canvas c, string f, bool prettyPrint)
         {
             // clear cache
             varCache.Clear();
@@ -31,7 +31,7 @@ namespace SimpleLUI.Editor
 
             Directory.CreateDirectory(res);
 
-            var builder = new SLUILuaBuilder();
+            var builder = new SLUILuaBuilder(prettyPrint);
 
             // write allowed namespaces
             foreach (var lib in SLUIManager.AllowedNamespaces)

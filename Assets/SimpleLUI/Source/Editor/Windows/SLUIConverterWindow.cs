@@ -14,6 +14,7 @@ namespace SimpleLUI.Editor.Windows
     {
         private Canvas Canvas;
         private string File;
+        private bool PrettyPrint = true;
 
         private void OnGUI()
         {
@@ -33,6 +34,8 @@ namespace SimpleLUI.Editor.Windows
             }
             EditorGUILayout.EndHorizontal();
 
+            PrettyPrint = EditorGUILayout.Toggle("Pretty Print", PrettyPrint);
+
             if (GUILayout.Button("Convert"))
             {
                 if (string.IsNullOrEmpty(File))
@@ -40,7 +43,7 @@ namespace SimpleLUI.Editor.Windows
 
                 if (!string.IsNullOrEmpty(File))
                 {
-                    SLUIEngineToScriptConverter.Convert(Canvas, File);
+                    SLUIEngineToScriptConverter.Convert(Canvas, File, PrettyPrint);
                 }
             }
         }

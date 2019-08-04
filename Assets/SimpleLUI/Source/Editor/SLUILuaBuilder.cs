@@ -17,14 +17,19 @@ namespace SimpleLUI.Editor
     internal class SLUILuaBuilder
     {
         public StringBuilder String { get; }
+        public bool PrettyPrint { get; }
 
-        internal SLUILuaBuilder()
+        internal SLUILuaBuilder(bool prettyPrint)
         {
             String = new StringBuilder();
+            PrettyPrint = prettyPrint;
         }
 
         public void Space(string label = null)
         {
+            if (!PrettyPrint)
+                return;
+
             String.AppendLine();
             if (!string.IsNullOrEmpty(label))
                 String.AppendLine($"-- {label}");
@@ -110,6 +115,7 @@ namespace SimpleLUI.Editor
             var name = CollectVar(b);
 
             String.AppendLine($"local {name} = {parentName}:AddComponent('Button')");
+            String.AppendLine($"{name}.targetGraphic = {(b.targetGraphic == null ? "nil" : CollectVar(b.image))}");
             if (!b.interactable)
                 String.AppendLine($"{name}.interactable = false");
             String.AppendLine($"{name}.normalColor = {CollectColor(b.colors.normalColor)}");
