@@ -27,3 +27,4 @@ Logs/
 *.sln
 
 LUI/auto_res/
+LUI/lui_script.lua

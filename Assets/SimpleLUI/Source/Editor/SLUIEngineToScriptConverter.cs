@@ -107,6 +107,22 @@ namespace SimpleLUI.Editor
                 CheckAndAddVar(newVar, i);
             }
 
+            builder.Space("buttons");
+            // apply buttons
+            foreach (var r in allRects)
+            {
+                if (r.parent == null)
+                    continue;
+
+                var b = r.GetComponent<Button>();
+                if (b == null)
+                    continue;
+
+                builder.Space($"{r.name}");
+                var newVar = builder.Button(b);
+                CheckAndAddVar(newVar, b);
+            }
+
             // save the file
             File.WriteAllText(f, builder.ToString());
         }

@@ -90,6 +90,15 @@ namespace SimpleLUI.Editor
             return name;
         }
 
+        public string Button(Button b)
+        {
+            var parentName = CollectVar(b.GetComponent<RectTransform>());
+            var name = CollectVar(b);
+
+            String.AppendLine($"local {name} = {parentName}:AddComponent('Button')");
+            return name;
+        }
+
         /// <inheritdoc />
         public override string ToString()
         {
