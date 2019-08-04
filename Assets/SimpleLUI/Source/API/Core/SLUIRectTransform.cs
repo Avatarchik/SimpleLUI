@@ -110,6 +110,15 @@ namespace SimpleLUI.API.Core
             set => Original.sizeDelta = value.ToRealVector();
         }
 
+        public SLUIRect rect
+        {
+            get => Original.rect.ToSLUIRect();
+            set
+            {
+                var r = value;
+                Original.rect.Set(r.x, r.y, r.width, r.height);
+            }
+        }
         public SLUIRectTransform Parent { get; private set; }
         internal new RectTransform Original { get; private set; }
 
@@ -145,42 +154,42 @@ namespace SimpleLUI.API.Core
         /// <summary>
         ///     Get current anchor name of given rectTransform.
         /// </summary>
-        internal static SLUIRectAnchorName GetAnchor(RectTransform rectTransform)
+        public static SLUIRectAnchorName GetAnchor(RectTransform rectTransform)
         {
             if (rectTransform == null) return SLUIRectAnchorName.Unknown;
             var min = rectTransform.anchorMin;
             var max = rectTransform.anchorMax;
-            if (min.x == 0.0f && min.y == 1.0f && max.x == 0.0f && min.y == 1.0f)
+            if (min.x == 0.0f && min.y == 1.0f && max.x == 0.0f && max.y == 1.0f)
                 return SLUIRectAnchorName.TopLeft;
-            if (min.x == 0.5f && min.y == 1.0f && max.x == 0.5f && min.y == 1.0f)
+            if (min.x == 0.5f && min.y == 1.0f && max.x == 0.5f && max.y == 1.0f)
                 return SLUIRectAnchorName.Top;
-            if (min.x == 1.0f && min.y == 1.0f && max.x == 1.0f && min.y == 1.0f)
+            if (min.x == 1.0f && min.y == 1.0f && max.x == 1.0f && max.y == 1.0f)
                 return SLUIRectAnchorName.TopRight;
-            if (min.x == 0.0f && min.y == 0.5f && max.x == 0.0f && min.y == 0.5f)
+            if (min.x == 0.0f && min.y == 0.5f && max.x == 0.0f && max.y == 0.5f)
                 return SLUIRectAnchorName.MiddleLeft;
-            if (min.x == 0.5f && min.y == 0.5f && max.x == 0.5f && min.y == 0.5f)
+            if (min.x == 0.5f && min.y == 0.5f && max.x == 0.5f && max.y == 0.5f)
                 return SLUIRectAnchorName.Middle;
-            if (min.x == 1.0f && min.y == 0.5f && max.x == 1.0f && min.y == 0.5f)
+            if (min.x == 1.0f && min.y == 0.5f && max.x == 1.0f && max.y == 0.5f)
                 return SLUIRectAnchorName.MiddleRight;
-            if (min.x == 0.0f && min.y == 0.0f && max.x == 0.0f && min.y == 0.0f)
+            if (min.x == 0.0f && min.y == 0.0f && max.x == 0.0f && max.y == 0.0f)
                 return SLUIRectAnchorName.BottomLeft;
-            if (min.x == 0.5f && min.y == 0.0f && max.x == 0.5f && min.y == 0.0f)
+            if (min.x == 0.5f && min.y == 0.0f && max.x == 0.5f && max.y == 0.0f)
                 return SLUIRectAnchorName.Bottom;
-            if (min.x == 1.0f && min.y == 0.0f && max.x == 1.0f && min.y == 0.0f)
+            if (min.x == 1.0f && min.y == 0.0f && max.x == 1.0f && max.y == 0.0f)
                 return SLUIRectAnchorName.BottomRight;
-            if (min.x == 0.0f && min.y == 0.0f && max.x == 0.0f && min.y == 1.0f)
+            if (min.x == 0.0f && min.y == 0.0f && max.x == 0.0f && max.y == 1.0f)
                 return SLUIRectAnchorName.StretchLeft;
-            if (min.x == 0.5f && min.y == 0.0f && max.x == 0.5f && min.y == 1.0f)
+            if (min.x == 0.5f && min.y == 0.0f && max.x == 0.5f && max.y == 1.0f)
                 return SLUIRectAnchorName.StretchCenter;
-            if (min.x == 1.0f && min.y == 0.0f && max.x == 1.0f && min.y == 1.0f)
+            if (min.x == 1.0f && min.y == 0.0f && max.x == 1.0f && max.y == 1.0f)
                 return SLUIRectAnchorName.StretchRight;
-            if (min.x == 0.0f && min.y == 0.0f && max.x == 1.0f && min.y == 1.0f)
+            if (min.x == 0.0f && min.y == 0.0f && max.x == 1.0f && max.y == 1.0f)
                 return SLUIRectAnchorName.Stretch;
-            if (min.x == 0.0f && min.y == 0.0f && max.x == 1.0f && min.y == 0.0f)
+            if (min.x == 0.0f && min.y == 0.0f && max.x == 1.0f && max.y == 0.0f)
                 return SLUIRectAnchorName.StretchBottom;
-            if (min.x == 0.0f && min.y == 0.5f && max.x == 1.0f && min.y == 0.5f)
+            if (min.x == 0.0f && min.y == 0.5f && max.x == 1.0f && max.y == 0.5f)
                 return SLUIRectAnchorName.StretchMiddle;
-            if (min.x == 0.0f && min.y == 1.0f && max.x == 1.0f && min.y == 1.0f)
+            if (min.x == 0.0f && min.y == 1.0f && max.x == 1.0f && max.y == 1.0f)
                 return SLUIRectAnchorName.StretchTop;
 
             return SLUIRectAnchorName.Unknown;
@@ -189,7 +198,7 @@ namespace SimpleLUI.API.Core
         /// <summary>
         ///     Set current anchor name of given rectTransform.
         /// </summary>
-        internal static void SetAnchor([NotNull] RectTransform rectTransform, SLUIRectAnchorName anchor)
+        public static void SetAnchor([NotNull] RectTransform rectTransform, SLUIRectAnchorName anchor)
         {
             if (rectTransform == null) throw new ArgumentNullException(nameof(rectTransform));
             if (!Enum.IsDefined(typeof(SLUIRectAnchorName), anchor))

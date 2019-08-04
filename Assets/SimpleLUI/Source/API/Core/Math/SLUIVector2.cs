@@ -4,10 +4,12 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using System;
 using UnityEngine;
 
 namespace SimpleLUI.API.Core.Math
 {
+    [Serializable]
     public class SLUIVector2
     {
         public float x, y;

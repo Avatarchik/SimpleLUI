@@ -25,3 +25,5 @@ Logs/
 # E
 *.csproj
 *.sln
+
+LUI/auto_res/
