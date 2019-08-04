@@ -12,7 +12,10 @@ namespace SimpleLUI.API.Core
 {
     public sealed class SLUIButton : SLUISelectable
     {
-        private string _onClickEvent;
+        public SLUIUnityEvent onClickUnityEvent;
+
+        private string _onClickEventDefault;
+
         internal new Button Original { get; private set; }
 
         public SLUIButton() { }
@@ -31,15 +34,18 @@ namespace SimpleLUI.API.Core
 
             Original.onClick.AddListener(() =>
             {
-                if (string.IsNullOrEmpty(_onClickEvent)) return;
-                var func = Manager.State[_onClickEvent] as LuaFunction;
+                if (onClickUnityEvent != null)
+                    Core.ExecuteUnityEvent(onClickUnityEvent);
+
+                if (string.IsNullOrEmpty(_onClickEventDefault)) return;
+                var func = Manager.State[_onClickEventDefault] as LuaFunction;
                 func?.Call();
             });
         }
 
         public void SetOnClick(string funcName)
         {
-            _onClickEvent = funcName;
+            _onClickEventDefault = funcName;
         }
     }
 }

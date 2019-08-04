@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SimpleLUI.API.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,12 +54,15 @@ namespace SimpleLUI.Editor
             {
                 if (d.transform.parent == null)
                     continue; // ignore root canvas
+                var t = d.GetType();
+                if (t == typeof(SLUIUnityEventHelper))
+                    continue;
 
-                if (builder.CheckForSupport(d.GetType()))
+                if (builder.CheckForSupport(t))
                     supportedComponents.Add(d);
                 else
                 {
-                    Debug.LogWarning($"Type {d.GetType()} is not supported by the {nameof(SLUILuaBuilder)} and will be ignored!", d);
+                    Debug.LogWarning($"Type {t} is not supported by the {nameof(SLUILuaBuilder)} and will be ignored!", d);
                 }
             }
 

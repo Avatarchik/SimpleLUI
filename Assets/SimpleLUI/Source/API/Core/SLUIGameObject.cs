@@ -77,6 +77,6 @@ namespace SimpleLUI.API.Core
             return newComponent;
         }
 
-        public void SetActive(bool activeState) => Original.SetActive(activeState);   
+        public void SetActive(bool activeState) => Original.SetActive(activeState);
     }
 }

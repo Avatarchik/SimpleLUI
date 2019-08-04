@@ -9,8 +9,12 @@
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "JEM.Core.dll",
+        "JEM.UnityEditor.dll",
+        "JEM.UnityEngine.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": []

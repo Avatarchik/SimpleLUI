@@ -4,6 +4,8 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using SimpleLUI.API.Core;
+using SimpleLUI.API.Util;
 using SimpleLUI.Editor.Util;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +41,12 @@ namespace SimpleLUI.Editor.API
             String.AppendLine($"{name}.pressedColor = {SLUILuaBuilderSyntax.CollectColor(b.colors.pressedColor)}");
             String.AppendLine($"{name}.selectedColor = {SLUILuaBuilderSyntax.CollectColor(b.colors.selectedColor)}");
             String.AppendLine($"{name}.disabledColor = {SLUILuaBuilderSyntax.CollectColor(b.colors.disabledColor)}");
+
+            if (b.onClick.GetPersistentEventCount() != 0)
+            {
+                String.AppendLine(SLUILuaBuilderSyntax.CollectEvent(b, b.onClick, b.GetComponent<SLUIUnityEventHelper>(), out var eventName));
+                String.AppendLine($"{name}.onClickUnityEvent = {eventName}");
+            }
         }
     }
 }

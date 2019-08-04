@@ -9,6 +9,8 @@ using SimpleLUI.API.Core;
 using SimpleLUI.API.Core.Math;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -17,7 +19,7 @@ namespace SimpleLUI.API
     internal class SLUICore
     {
         internal SLUIWorker Parent { get; }
-        private List<SLUIObject> Objects { get; } = new List<SLUIObject>();
+        internal List<SLUIObject> Objects { get; } = new List<SLUIObject>();
 
         public T GetObject<T>(int instanceId) where T : SLUIObject
         {
@@ -111,6 +113,35 @@ namespace SimpleLUI.API
             }
 
             Objects.Add(obj);
+        }
+
+        public void ExecuteUnityEvent([NotNull] SLUIUnityEvent unityEvent)
+        {
+            if (unityEvent == null) throw new ArgumentNullException(nameof(unityEvent));
+            foreach (var i in unityEvent.items)
+            {
+                ExecuteUnityEvent(i);
+            }
+        }
+
+        public void ExecuteUnityEvent([NotNull] SLUIEventItem unityEvent)
+        {
+            if (unityEvent == null) throw new ArgumentNullException(nameof(unityEvent));
+            ExecuteUnityEvent(unityEvent.target, unityEvent.methodName, unityEvent.args.ToArray());
+        }
+
+        public void ExecuteUnityEvent([NotNull] SLUIObject target, [NotNull] string methodName, params object[] args)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            var obj = target.Original;
+
+            var method = obj.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (method == null)
+                throw new ArgumentException($"Method {methodName} does not exist in object of type {obj.GetType()}.");
+
+            object[] a = args?.ToArray();
+            method.Invoke(obj, a);
         }
     }
 }

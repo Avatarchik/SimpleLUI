@@ -52,8 +52,7 @@ namespace SimpleLUI.Editor.API
                 if (File.Exists(sprite))
                     String.AppendLine($"{name}.sprite = '{sprite}'");
                 else Debug.LogError($"Sprite generation failed. Target file not exist. ({sprite})");
-            }
-            
+            }          
         }
     }
 }
