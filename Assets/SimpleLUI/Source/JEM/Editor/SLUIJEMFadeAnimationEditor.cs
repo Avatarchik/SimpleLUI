@@ -13,22 +13,22 @@ using Object = UnityEngine.Object;
 namespace SimpleLUI.JEM.Editor
 {
     [SLUIBuilderObject]
-    public sealed class SLUIJEMFadeElementEditor : SLUIBuilderObject
+    public sealed class SLUIJEMFadeAnimationEditor : SLUIBuilderObject
     {
-        public SLUIJEMFadeElementEditor() : base(typeof(InterfaceFadeElement)) { }
+        public SLUIJEMFadeAnimationEditor() : base(typeof(InterfaceFadeAnimation)) { }
 
         public override void CollectObjectDefinition(Object obj)
         {
-            var i = (InterfaceFadeElement) obj;
+            var i = (InterfaceFadeAnimation) obj;
             var name = SLUILuaBuilderSyntax.CollectVar(i);
             var parentName = SLUILuaBuilderSyntax.CollectVar(i.GetComponent<RectTransform>());
 
-            String.AppendLine($"local {name} = {parentName}:AddComponent('{nameof(SLUIJEMFadeElement)}')");
+            String.AppendLine($"local {name} = {parentName}:AddComponent('{nameof(SLUIJEMFadeAnimation)}')");
         }
 
         public override void CollectObjectProperty(Object obj)
         {
-            
+             
         }
     }
 }
