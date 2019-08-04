@@ -6,6 +6,7 @@
 
 using SimpleLUI.API.Core;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,6 +38,8 @@ namespace SimpleLUI.Editor
         {
             var name = CollectVar(t);
             String.AppendLine($"local {name} = core:Create('{t.name}')");
+            if (!t.gameObject.activeSelf)
+                String.AppendLine($"{name}:SetActive(false)");
             return name;
         }
 
@@ -67,11 +70,14 @@ namespace SimpleLUI.Editor
         {
             var name = CollectVar(t);
 
-            String.AppendLine($"{name}.rectTransform.pivot = {CollectVector2(t.pivot)}");
+            if (t.pivot.x != 0.5f || t.pivot.y != 0.5f)
+                String.AppendLine($"{name}.rectTransform.pivot = {CollectVector2(t.pivot)}");
             String.AppendLine($"{name}.rectTransform.anchoredPosition = {CollectVector2(t.anchoredPosition)}");
             String.AppendLine($"{name}.rectTransform.sizeDelta = {CollectVector2(t.sizeDelta)}");
-            String.AppendLine($"{name}.rectTransform.localRotation = {CollectQuaternion(t.localRotation)}");
-            String.AppendLine($"{name}.rectTransform.localScale = {CollectVector2(t.localScale)}");
+            if (t.localRotation != Quaternion.identity)
+                String.AppendLine($"{name}.rectTransform.localRotation = {CollectQuaternion(t.localRotation)}");
+            if (t.localScale != Vector3.one)
+                String.AppendLine($"{name}.rectTransform.localScale = {CollectVector2(t.localScale)}");
         }
 
         public string Image(Image i, string spriteName)
@@ -81,8 +87,14 @@ namespace SimpleLUI.Editor
 
             String.AppendLine($"local {name} = {parentName}:AddComponent('Image')");
             String.AppendLine($"{name}:SetType('{i.type.ToString()}')");
-            String.AppendLine($"{name}.color = {CollectColor(i.color)}");
-            if (!string.IsNullOrEmpty(spriteName))
+            if (i.color != Color.white)
+                String.AppendLine($"{name}.color = {CollectColor(i.color)}");
+            if (!i.raycastTarget)
+                String.AppendLine($"{name}.raycastTarget = false");
+            if (i.preserveAspect)
+                String.AppendLine($"{name}.preserveAspect = true");
+
+            if (File.Exists(spriteName))
             {
                 String.AppendLine($"{name}.sprite = '{spriteName}'");
             }

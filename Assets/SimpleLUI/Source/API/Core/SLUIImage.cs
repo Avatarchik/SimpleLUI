@@ -40,6 +40,12 @@ namespace SimpleLUI.API.Core
                     sprite = $"{Environment.CurrentDirectory}//{sprite}";
                 }
 
+                if (!Original.isActiveAndEnabled)
+                {
+                    // TODO
+                    return;
+                }
+
                 if (_spriteWorker != null)
                 {
                     Original.StopCoroutine(_spriteWorker);
