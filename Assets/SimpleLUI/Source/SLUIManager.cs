@@ -32,7 +32,8 @@ namespace SimpleLUI
         public static readonly List<KeyValuePair<string, string>> AllowedNamespaces = new List<KeyValuePair<string, string>>()
         {
             new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core"),
-            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Math")
+            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Math"),
+            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Extras")
         };
 
         /// <summary>

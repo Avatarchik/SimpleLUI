@@ -1,0 +1,18 @@
+{
+    "name": "SimpleLUI.Editor.JEM",
+    "references": [
+        "GUID:ead65c3c9f693024da3f5a75c885a725",
+        "GUID:593471cf5ab19bb44bdbe8e254148183"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

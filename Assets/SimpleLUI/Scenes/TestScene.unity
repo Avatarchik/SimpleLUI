@@ -205,6 +205,8 @@ GameObject:
   - component: {fileID: 640161137}
   - component: {fileID: 640161139}
   - component: {fileID: 640161138}
+  - component: {fileID: 640161141}
+  - component: {fileID: 640161140}
   m_Layer: 5
   m_Name: Panel1
   m_TagString: Untagged
@@ -270,6 +272,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640161136}
   m_CullTransparentMesh: 0
+--- !u!114 &640161140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640161136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1356066000, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AnimationSpeed: 25
+  AnimationEnterScale: 1.05
+  AnimationExitScale: 1.05
+  AnimationMode: 0
+--- !u!114 &640161141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640161136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreGroup: 0
+  AlwaysFalseRaycast: 0
+  ApplyStateToGameObject: 1
+  DisallowLiteActivation: 0
+  FixedAlphaTarget: 1
 --- !u!1 &800800667
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,6 +317,7 @@ GameObject:
   - component: {fileID: 800800671}
   - component: {fileID: 800800670}
   - component: {fileID: 800800669}
+  - component: {fileID: 800800672}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -391,6 +427,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800800667}
   m_CullTransparentMesh: 0
+--- !u!114 &800800672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800800667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreGroup: 0
+  AlwaysFalseRaycast: 0
+  ApplyStateToGameObject: 1
+  DisallowLiteActivation: 0
+  FixedAlphaTarget: 1
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +538,7 @@ GameObject:
   - component: {fileID: 1039221498}
   - component: {fileID: 1039221500}
   - component: {fileID: 1039221499}
+  - component: {fileID: 1039221501}
   m_Layer: 5
   m_Name: Panel2
   m_TagString: Untagged
@@ -549,6 +603,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1039221497}
   m_CullTransparentMesh: 0
+--- !u!114 &1039221501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039221497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreGroup: 0
+  AlwaysFalseRaycast: 0
+  ApplyStateToGameObject: 1
+  DisallowLiteActivation: 0
+  FixedAlphaTarget: 1
 --- !u!1 &1214771794
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,6 +871,7 @@ GameObject:
   - component: {fileID: 1488900175}
   - component: {fileID: 1488900177}
   - component: {fileID: 1488900176}
+  - component: {fileID: 1488900178}
   m_Layer: 5
   m_Name: Panel3
   m_TagString: Untagged
@@ -864,6 +936,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1488900174}
   m_CullTransparentMesh: 0
+--- !u!114 &1488900178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488900174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreGroup: 0
+  AlwaysFalseRaycast: 0
+  ApplyStateToGameObject: 1
+  DisallowLiteActivation: 0
+  FixedAlphaTarget: 1
 --- !u!1 &1499973185
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,6 +1196,7 @@ GameObject:
   - component: {fileID: 2100291427}
   - component: {fileID: 2100291429}
   - component: {fileID: 2100291428}
+  - component: {fileID: 2100291430}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1175,3 +1265,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2100291426}
   m_CullTransparentMesh: 0
+--- !u!114 &2100291430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100291426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreGroup: 0
+  AlwaysFalseRaycast: 0
+  ApplyStateToGameObject: 1
+  DisallowLiteActivation: 0
+  FixedAlphaTarget: 1
