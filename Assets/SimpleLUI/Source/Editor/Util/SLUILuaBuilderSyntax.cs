@@ -6,7 +6,7 @@
 
 using System.Linq;
 
-namespace SimpleLUI.Editor
+namespace SimpleLUI.Editor.Util
 {
     internal static class SLUILuaBuilderSyntax
     {

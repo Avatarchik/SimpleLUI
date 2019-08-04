@@ -8,7 +8,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace SimpleLUI.Editor
+namespace SimpleLUI.Editor.Windows
 {
     public class SLUIConverterWindow : EditorWindow
     {

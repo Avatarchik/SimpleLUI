@@ -9,7 +9,7 @@ using SimpleLUI.API.Core.Math;
 using System.IO;
 using UnityEngine;
 
-namespace SimpleLUI.Editor
+namespace SimpleLUI.Editor.Util
 {
     internal static class SLUIResourcesConverter
     {

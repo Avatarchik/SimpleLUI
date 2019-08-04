@@ -5,6 +5,7 @@
 //
 
 using SimpleLUI.API.Core;
+using SimpleLUI.Editor.Util;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -151,8 +152,17 @@ namespace SimpleLUI.Editor
             return String.ToString();
         }
 
-        private static string CollectVar(RectTransform r) => SLUILuaBuilderSyntax.FixVarName(r.name.ToLower());
-        private static string CollectVar(Component c) => SLUILuaBuilderSyntax.FixVarName(c.name.ToLower() + "_" + c.GetType().Name.ToLower());
+        private static string CollectVar(RectTransform r)
+        {
+            return SLUILuaBuilderSyntax.FixVarName($"obj{r.gameObject.GetInstanceID()}");
+            //SLUILuaBuilderSyntax.FixVarName(r.name.ToLower());
+        }
+
+        private static string CollectVar(Component c)
+        {
+            return SLUILuaBuilderSyntax.FixVarName($"obj{c.gameObject.GetInstanceID()}_{c.GetType().Name.ToLower()}"); 
+            //SLUILuaBuilderSyntax.FixVarName(c.name.ToLower() + "_" + c.GetType().Name.ToLower());
+        }
 
         private static string CollectQuaternion(Quaternion q, bool simple = false)
         {
@@ -166,7 +176,6 @@ namespace SimpleLUI.Editor
             }
             return str;
         }
-
         private static string CollectVector2(Vector2 v, bool simple = false)
         {
             var str = $"{v.x.ToString(CultureInfo.InvariantCulture)}, " +
@@ -177,7 +186,6 @@ namespace SimpleLUI.Editor
             }
             return str;
         }
-
         private static string CollectColor(Color c, bool simple = false)
         {
             var str = $"{c.r.ToString(CultureInfo.InvariantCulture)}, " +
