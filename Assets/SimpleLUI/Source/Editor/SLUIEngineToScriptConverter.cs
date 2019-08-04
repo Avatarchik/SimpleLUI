@@ -123,6 +123,21 @@ namespace SimpleLUI.Editor
                 CheckAndAddVar(newVar, b);
             }
 
+            builder.Space("texts");
+            // apply texts
+            foreach (var r in allRects)
+            {
+                if (r.parent == null)
+                    continue;
+
+                var t = r.GetComponent<Text>();
+                if (t == null)
+                    continue;
+
+                var newVar = builder.Text(t);
+                CheckAndAddVar(newVar, t);
+            }
+
             // save the file
             File.WriteAllText(f, builder.ToString());
         }

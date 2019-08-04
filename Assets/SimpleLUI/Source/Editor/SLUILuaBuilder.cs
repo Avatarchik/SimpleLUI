@@ -93,7 +93,8 @@ namespace SimpleLUI.Editor
                 String.AppendLine($"{name}.raycastTarget = false");
             if (i.preserveAspect)
                 String.AppendLine($"{name}.preserveAspect = true");
-
+            if(!i.fillCenter)
+                String.AppendLine($"{name}.fillCenter = false");
             if (File.Exists(spriteName))
             {
                 String.AppendLine($"{name}.sprite = '{spriteName}'");
@@ -108,6 +109,39 @@ namespace SimpleLUI.Editor
             var name = CollectVar(b);
 
             String.AppendLine($"local {name} = {parentName}:AddComponent('Button')");
+            if (!b.interactable)
+                String.AppendLine($"{name}.interactable = false");
+            String.AppendLine($"{name}.normalColor = {CollectColor(b.colors.normalColor)}");
+            String.AppendLine($"{name}.highlightedColor = {CollectColor(b.colors.highlightedColor)}");
+            String.AppendLine($"{name}.pressedColor = {CollectColor(b.colors.pressedColor)}");
+            String.AppendLine($"{name}.selectedColor = {CollectColor(b.colors.selectedColor)}");
+            String.AppendLine($"{name}.disabledColor = {CollectColor(b.colors.disabledColor)}");
+            return name;
+        }
+
+        public string Text(Text t)
+        {
+            var parentName = CollectVar(t.GetComponent<RectTransform>());
+            var name = CollectVar(t);
+
+            String.AppendLine($"local {name} = {parentName}:AddComponent('Text')");
+            String.AppendLine($"{name}.text = {'"'}{t.text}{'"'}");
+            if (t.fontSize != 14)
+                String.AppendLine($"{name}.fontSize = {t.fontSize}");
+            if (t.fontStyle != FontStyle.Normal)
+                String.AppendLine($"{name}:SetFontStyle('{t.fontStyle.ToString()}')");
+            if (t.alignment != TextAnchor.UpperLeft)
+                String.AppendLine($"{name}:SetAlignment('{t.alignment.ToString()}')");
+            if (t.resizeTextForBestFit)
+                String.AppendLine($"{name}.resizeTextForBestFit = true");
+            if (t.resizeTextMinSize != 10)
+                String.AppendLine($"{name}.resizeTextMinSize = {t.resizeTextMinSize}");
+            if (t.resizeTextMaxSize != 40)
+                String.AppendLine($"{name}.resizeTextMaxSize = {t.resizeTextMaxSize}");
+            String.AppendLine($"{name}.color = {CollectColor(t.color)}");
+            if (!t.raycastTarget)
+                String.AppendLine($"{name}.raycastTarget = false");
+
             return name;
         }
 

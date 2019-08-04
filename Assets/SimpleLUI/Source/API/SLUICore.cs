@@ -81,6 +81,7 @@ namespace SimpleLUI.API
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;
             obj.transform.localScale = Vector3.one;
+            obj.layer = LayerMask.NameToLayer("UI");
         }
 
         private void InternalInitializeObject(SLUIObject obj)

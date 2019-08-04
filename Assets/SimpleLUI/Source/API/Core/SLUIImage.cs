@@ -68,6 +68,12 @@ namespace SimpleLUI.API.Core
             set => Original.color = value.ToRealColor();
         }
 
+        public bool fillCenter
+        {
+            get => Original.fillCenter;
+            set => Original.fillCenter = value;
+        }
+
         public string imageType => Original.type.ToString();
 
         internal new Image Original { get; private set; }
