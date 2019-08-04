@@ -31,7 +31,7 @@ namespace SimpleLUI.Editor.Util
 
         public static string CollectVar(Component c)
         {
-            return FixVarName($"obj{c.gameObject.GetInstanceID()}_{c.GetType().Name.ToLower()}");
+            return FixVarName($"obj{c.gameObject.GetInstanceID()}_{c.GetInstanceID()}");
         }
 
         public static string CollectQuaternion(Quaternion q, bool simple = false)

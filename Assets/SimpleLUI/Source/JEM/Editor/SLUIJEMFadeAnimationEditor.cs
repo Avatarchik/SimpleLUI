@@ -7,6 +7,7 @@
 using JEM.UnityEngine.Interface;
 using SimpleLUI.Editor.API;
 using SimpleLUI.Editor.Util;
+using System.Globalization;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -28,7 +29,17 @@ namespace SimpleLUI.JEM.Editor
 
         public override void CollectObjectProperty(Object obj)
         {
-             
+            var i = (InterfaceFadeAnimation) obj;
+            var name = SLUILuaBuilderSyntax.CollectVar(i);
+
+            if (i.AnimationSpeed != 10f)
+                String.AppendLine($"{name}.animationSpeed = {i.AnimationSpeed.ToString(CultureInfo.InvariantCulture)}");
+            if (i.AnimationEnterScale != 0.9f)
+                String.AppendLine($"{name}.animationEnterScale = {i.AnimationEnterScale.ToString(CultureInfo.InvariantCulture)}");
+            if (i.AnimationEnterScale != 1.1f)
+                String.AppendLine($"{name}.animationExitScale = {i.AnimationExitScale.ToString(CultureInfo.InvariantCulture)}");
+            if (i.AnimationMode != FadeAnimationMode.UsingLocalScale)
+                String.AppendLine($"{name}:SetAnimationMode('{i.AnimationMode.ToString()}')");
         }
     }
 }
