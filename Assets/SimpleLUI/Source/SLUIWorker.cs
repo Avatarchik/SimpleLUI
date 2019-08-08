@@ -4,15 +4,16 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using System;
-using System.Collections.Generic;
 using NLua;
 using SimpleLUI.API;
 using SimpleLUI.API.Core;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SimpleLUI
 {
+    /// <summary/>
     public class SLUIWorker
     {
         internal SLUIDebugger Debugger { get; }
@@ -42,6 +43,7 @@ namespace SimpleLUI
             Core.DestroyContent();
         }
 
+        /// <summary/>
         public static void LookForCustomTypes()
         {
             CustomTypes.Clear();
@@ -60,6 +62,7 @@ namespace SimpleLUI
             Debug.Log($"{CustomTypes.Count} SLUI's custom component types found.");
         }
 
+        /// <summary/>
         public static Dictionary<string, Type> CustomTypes = new Dictionary<string, Type>();
     }
 }

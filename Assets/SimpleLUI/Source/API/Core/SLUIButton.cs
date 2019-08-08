@@ -10,14 +10,22 @@ using UnityEngine.UI;
 
 namespace SimpleLUI.API.Core
 {
+    /// <inheritdoc />
+    /// <summary>
+    ///     A standard button that can be clicked in order to trigger an event.
+    /// </summary>
     public sealed class SLUIButton : SLUISelectable
     {
+        /// <summary>
+        ///     UnityEvent that is triggered when the Button is pressed.
+        /// </summary>
         public SLUIUnityEvent onClickUnityEvent;
 
         private string _onClickEventDefault;
 
         internal new Button Original { get; private set; }
 
+        /// <summary/>
         public SLUIButton() { }
 
         /// <inheritdoc />
@@ -43,6 +51,9 @@ namespace SimpleLUI.API.Core
             });
         }
 
+        /// <summary>
+        ///     Sets the onClick event hook that is triggered when the Button is pressed.
+        /// </summary>
         public void SetOnClick(string funcName)
         {
             _onClickEventDefault = funcName;

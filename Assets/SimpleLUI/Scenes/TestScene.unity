@@ -999,7 +999,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1499973186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1014,6 +1014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Root: {fileID: 1499973189}
   SLUIName: Tests
+  WorkDirectory: LUI
   RefreshWait: 2
   LuaFiles:
   - LUI/lui_script.lua
@@ -1115,7 +1116,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2008442934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1130,6 +1131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Root: {fileID: 2008442937}
   SLUIName: Tests
+  WorkDirectory: LUI
   RefreshWait: 2
   LuaFiles:
   - LUI/test.lua

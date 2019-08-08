@@ -6,6 +6,7 @@
 
 using SimpleLUI.Editor.API;
 using System;
+using UnityEngine;
 
 namespace SimpleLUI.Editor
 {
@@ -19,17 +20,38 @@ namespace SimpleLUI.Editor
             RegisterBuilder(new SLUIBuilderText());
             RegisterBuilder(new SLUIBuilderButton());
 
-            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+            try
             {
-                foreach (var t in a.GetTypes())
+                foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    var attributes = t.GetCustomAttributes(typeof(SLUIBuilderObjectAttribute), true);
-                    if (attributes.Length > 0)
+                    try
                     {
-                        var instance = (SLUIBuilderObject) Activator.CreateInstance(t);
-                        RegisterBuilder(instance);
+                        foreach (var t in a.GetTypes())
+                        {
+                            try
+                            {
+                                var attributes = t.GetCustomAttributes(typeof(SLUIBuilderObjectAttribute), true);
+                                if (attributes.Length > 0)
+                                {
+                                    var instance = (SLUIBuilderObject) Activator.CreateInstance(t);
+                                    RegisterBuilder(instance);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogException(e);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
             }
         }
     }

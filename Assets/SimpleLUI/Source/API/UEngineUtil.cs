@@ -10,8 +10,10 @@ using UnityEngine;
 
 namespace SimpleLUI.API
 {
+    /// <summary/>
     public static class UEngineUtil
     {
+        /// <summary/>
         public static T CollectComponent<T>([NotNull] this GameObject g) where T : Component
         {
             if (g == null) throw new ArgumentNullException(nameof(g));

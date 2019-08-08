@@ -13,9 +13,13 @@ using UnityEngine;
 
 namespace SimpleLUI
 {
+    /// <summary/>
     public class SLUIFile
     {
+        /// <summary/>
         public string File { get; }
+
+        /// <summary/>
         public DateTime LastModified { get; internal set; }
 
         internal SLUIFile(string file)
@@ -29,6 +33,7 @@ namespace SimpleLUI
     /// </summary>
     public class SLUIManager
     {
+        /// <summary/>
         public static readonly List<KeyValuePair<string, string>> AllowedNamespaces = new List<KeyValuePair<string, string>>()
         {
             new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core"),
@@ -45,6 +50,16 @@ namespace SimpleLUI
         ///     Name of the SLUI manager.
         /// </summary>
         public string Name { get; private set; } = "Unknown";
+
+        /// <summary>
+        ///     Path to root directory of SLUI manager's scripts.
+        /// </summary>
+        public string Directory { get; private set; }
+
+        /// <summary>
+        ///     Called when manager is cleaning up.
+        /// </summary>
+        public event Action OnCleanup;
 
         /// <summary>
         ///     Called when files of the manager has been reloaded.
@@ -108,6 +123,7 @@ namespace SimpleLUI
             // _workingFiles.Clear();
 
             Worker?.ClearWorker();
+            OnCleanup?.Invoke();
         }
 
         /// <summary>
@@ -117,13 +133,15 @@ namespace SimpleLUI
         {
             if (_luaFiles.Count == 0)
             {
-                Debug.LogError($"Unable to reload SLUI ({Name}). No lua files has been added.");
+                Debug.LogWarning($"Unable to reload SLUI ({Name}). No lua files has been added.");
                 return;
             }
 
             _workingFiles.Clear();
 
-            Worker.ClearWorker();
+            //Worker.ClearWorker();
+            Cleanup();
+
             State?.Dispose();
             State = new Lua();       
             Worker.PrepareState(State);
@@ -234,14 +252,15 @@ namespace SimpleLUI
         /// <summary>
         ///     Creates new SLUI manager with given canvas as a root.
         /// </summary>
-        public static SLUIManager CreateNew([NotNull] string name, [NotNull] Canvas root)
+        public static SLUIManager CreateNew([NotNull] string name, [NotNull] Canvas root, string directory)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (root == null) throw new ArgumentNullException(nameof(root));
             var instance = new SLUIManager
             {
                 Name = name,
-                Canvas = root
+                Canvas = root,
+                Directory = directory
             };
 
             return instance;

@@ -9,20 +9,33 @@ using UnityEngine.UI;
 
 namespace SimpleLUI.API.Core
 {
+    /// <inheritdoc />
+    /// <summary>
+    ///     Simple selectable object - derived from to create a selectable control.
+    /// </summary>
     public abstract class SLUISelectable : SLUIComponent
     {
+        /// <summary>
+        ///     Use to enable or disable the ability to select a selectable UI element (for example, a Button).
+        /// </summary>
         public bool interactable
         {
             get => Original.interactable;
             set => Original.interactable = value;
         }
 
+        /// <summary>
+        ///     Graphic that will be transitioned upon.
+        /// </summary>
         public SLUIImage targetGraphic
         {
             get => Original.image == null ? null : Core.GetObject<SLUIImage>(Original.image.GetInstanceID());
             set => Original.image = value?.Original;
         }
 
+        /// <summary>
+        ///     Normal Color.
+        /// </summary>
         public SLUIColor normalColor
         {
             get => Original.colors.normalColor.ToSLUIColor();
@@ -37,6 +50,10 @@ namespace SimpleLUI.API.Core
                 fadeDuration = Original.colors.fadeDuration
             };
         }
+
+        /// <summary>
+        ///     Highlighted Color.
+        /// </summary>
         public SLUIColor highlightedColor
         {
             get => Original.colors.normalColor.ToSLUIColor();
@@ -51,6 +68,10 @@ namespace SimpleLUI.API.Core
                 fadeDuration = Original.colors.fadeDuration
             };
         }
+
+        /// <summary>
+        ///     Pressed Color.
+        /// </summary>
         public SLUIColor pressedColor
         {
             get => Original.colors.normalColor.ToSLUIColor();
@@ -65,6 +86,10 @@ namespace SimpleLUI.API.Core
                 fadeDuration = Original.colors.fadeDuration
             };
         }
+
+        /// <summary>
+        ///     Selected Color.
+        /// </summary>
         public SLUIColor selectedColor
         {
             get => Original.colors.normalColor.ToSLUIColor();
@@ -79,6 +104,10 @@ namespace SimpleLUI.API.Core
                 fadeDuration = Original.colors.fadeDuration
             };
         }
+
+        /// <summary>
+        ///     Disabled Color.
+        /// </summary>
         public SLUIColor disabledColor
         {
             get => Original.colors.normalColor.ToSLUIColor();

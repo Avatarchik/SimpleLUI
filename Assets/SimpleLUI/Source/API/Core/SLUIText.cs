@@ -4,52 +4,93 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using SimpleLUI.API.Core.Math;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace SimpleLUI.API.Core
 {
+    /// <inheritdoc />
+    /// <summary>
+    ///     The default Graphic to draw font data to screen.
+    /// </summary>
     public sealed class SLUIText : SLUIMaskableGraphic
     {
+        /// <summary>
+        ///     The string value this Text displays.
+        /// </summary>
         public string text
         {
             get => Original.text;
             set => Original.text = value;
         }
 
+        /// <summary>
+        ///     The size that the Font should render at.
+        /// </summary>
         public int fontSize
         {
             get => Original.fontSize;
             set => Original.fontSize = value;
         }
 
-        public string fontStyle => Original.fontStyle.ToString();
-        public string alignment => Original.alignment.ToString();
+        /// <summary>
+        ///     FontStyle used by the text.
+        /// </summary>
+        public string fontStyle
+        {
+            get => Original.fontStyle.ToString();
+            set
+            {
+                if (Enum.TryParse<FontStyle>(value, true, out var t))
+                {
+                    SetFontStyle(t);
+                }
+                else Debug.LogError($"Failed to parse '{value}' in to {typeof(FontStyle)}");
+            }
+        }
 
+        /// <summary>
+        ///     The positioning of the text reliative to its RectTransform.
+        /// </summary>
+        public string alignment
+        {
+            get => Original.alignment.ToString();
+            set
+            {
+                if (Enum.TryParse<TextAnchor>(value, true, out var t))
+                {
+                    SetAlignment(t);
+                }
+                else Debug.LogError($"Failed to parse '{value}' in to {typeof(TextAnchor)}");
+            }
+        }
+
+        /// <summary>
+        ///     Should the text be allowed to auto resized.
+        /// </summary>
         public bool resizeTextForBestFit
         {
             get => Original.resizeTextForBestFit;
             set => Original.resizeTextForBestFit = value;
         }
 
+        /// <summary>
+        ///     	The minimum size the text is allowed to be.
+        /// </summary>
         public int resizeTextMinSize
         {
             get => Original.resizeTextMinSize;
             set => Original.resizeTextMinSize = value;
         }
 
+        /// <summary>
+        ///     The maximum size the text is allowed to be. 1 = infinitly large.
+        /// </summary>
         public int resizeTextMaxSize
         {
             get => Original.resizeTextMaxSize;
             set => Original.resizeTextMaxSize = value;
-        }
-
-        public SLUIColor color
-        {
-            get => Original.color.ToSLUIColor();
-            set => Original.color = value.ToRealColor();
         }
 
         internal new Text Original { get; private set; }
@@ -70,30 +111,17 @@ namespace SimpleLUI.API.Core
             Original.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
         }
 
-        public void SetFontStyle(string style)
-        {
-            if (Enum.TryParse<FontStyle>(style, true, out var t))
-            {
-                SetFontStyle(t);
-            }
-            else Debug.LogError($"Failed to parse '{style}' in to {typeof(FontStyle)}");
-        }
-
+        /// <summary>
+        ///     Set the font style using enum.
+        /// </summary>
         public void SetFontStyle(FontStyle s)
         {
             Original.fontStyle = s;
         }
 
-
-        public void SetAlignment(string style)
-        {
-            if (Enum.TryParse<TextAnchor>(style, true, out var t))
-            {
-                SetAlignment(t);
-            }
-            else Debug.LogError($"Failed to parse '{style}' in to {typeof(TextAnchor)}");
-        }
-
+        /// <summary>
+        ///     Set the text alignment using enum.
+        /// </summary>
         public void SetAlignment(TextAnchor a)
         {
             Original.alignment = a;

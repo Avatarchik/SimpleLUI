@@ -4,10 +4,10 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using SimpleLUI.API.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using SimpleLUI.API.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,20 +22,21 @@ namespace SimpleLUI.Editor
             // clear cache
             varCache.Clear();
 
-            var dir = Path.GetDirectoryName(f);
-            var res = $"{dir}\\auto_res";
-            res = res.Remove(0, Environment.CurrentDirectory.Length + 1);
-
-            if (Directory.Exists(res))
+            var fullDir = Path.GetDirectoryName(f);
+            var fullRes = $"{fullDir}\\auto_res";
+            //fullRes = fullRes.Remove(0, Environment.CurrentDirectory.Length + 1);
+            var res = $"auto_res";
+            
+            if (Directory.Exists(fullRes))
             {
-                Directory.Delete(res, true);
+                Directory.Delete(fullRes, true);
             }
 
-            Directory.CreateDirectory(res);
+            Directory.CreateDirectory(fullRes);
 
             EditorUtility.DisplayProgressBar($"Converting UI to LUA ({c.name})", "Preparing.", 15f);
 
-            var builder = new SLUILuaBuilder(prettyPrint, res);
+            var builder = new SLUILuaBuilder(prettyPrint, res, fullRes);
 
             // write allowed namespaces
             foreach (var lib in SLUIManager.AllowedNamespaces)
@@ -103,7 +104,7 @@ namespace SimpleLUI.Editor
 
             // save the file
             File.WriteAllText(f, builder.ToString());
-
+            Debug.Log($"LUA script saved at " + f + $" (total of {supportedComponents.Count}/{allComponents.Length})");
             EditorUtility.ClearProgressBar();
         }
 

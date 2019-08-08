@@ -11,13 +11,26 @@ using Object = UnityEngine.Object;
 
 namespace SimpleLUI.API.Core
 {
+    /// <inheritdoc />
+    /// <summary>
+    ///     Base class of all entities in Unity Scenes.
+    /// </summary>
     public sealed class SLUIGameObject : SLUIObject
     {
+        /// <summary>
+        ///     The RectTransform attached to this GameObject.
+        /// </summary>
         public SLUIRectTransform rectTransform { get; private set; }
 
+        /// <summary>
+        ///     The local active state of this GameObject.
+        /// </summary>
         public bool activeSelf => Original.activeSelf;
 
+        /// <summary/>
         public new GameObject Original { get; private set; }
+
+        /// <summary/>
         public List<SLUIComponent> Components { get; } = new List<SLUIComponent>();
 
         internal override void LoadSLUIObject(SLUIManager manager, Object original)
@@ -33,7 +46,10 @@ namespace SimpleLUI.API.Core
         }
 
         // Casting in lua is not possible
-        // Cant return just a SLUIComponent
+        // Can only return just a SLUIComponent
+        /// <summary>
+        ///     Adds a component named `componentName` to the game object.
+        /// </summary>
         public SLUIComponent AddComponent(string componentName)
         {
             var localComponentName = componentName;
@@ -77,6 +93,9 @@ namespace SimpleLUI.API.Core
             return newComponent;
         }
 
+        /// <summary>
+        ///     Activates/Deactivates the GameObject, depending on the given true or false value.
+        /// </summary>
         public void SetActive(bool activeState) => Original.SetActive(activeState);
     }
 }

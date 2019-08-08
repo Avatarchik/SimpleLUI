@@ -10,15 +10,19 @@ using UnityEngine;
 
 namespace SimpleLUI.API.Util
 {
+    /// <summary/>
     [ExecuteInEditMode]
     public class SLUIUnityEventHelper : MonoBehaviour
     {
+        /// <summary/>
         [Serializable]
         public class Item
         {
+            /// <summary/>
             public List<string> obj = new List<string>();
         }
 
+        /// <summary/>
         public List<Item> Items = new List<Item>();
     }
 }

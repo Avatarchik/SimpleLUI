@@ -76,7 +76,7 @@ namespace SimpleLUI.Editor.Util
 
         public static string CollectEvent(Object parent, UnityEventBase eventBase, SLUIUnityEventHelper helper, out string varName)
         {
-            var eventVar = "e_" + parent.GetInstanceID();
+            var eventVar = FixVarName("e_" + parent.GetInstanceID());
             var sb = new StringBuilder();
             sb.AppendLine($"local {eventVar} = SLUIUnityEvent()");
 
@@ -96,7 +96,7 @@ namespace SimpleLUI.Editor.Util
                     Debug.LogWarning($"Event collecting problem. Unable to collect name of a target. ({eventTarget.name}({eventTarget.GetType()}))");
                 }
 
-                var methodVar = $"{eventVar}_m{index}";
+                var methodVar = FixVarName($"{eventVar}_m{index}");
                 sb.AppendLine($"local {methodVar} = SLUIEventItem({eventTargetName}, '{methodName}')");
                 if (helper != null && helper.Items != null && helper.Items.Count > 0)
                 {

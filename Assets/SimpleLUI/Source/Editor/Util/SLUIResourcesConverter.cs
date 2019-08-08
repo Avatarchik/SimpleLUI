@@ -58,6 +58,8 @@ namespace SimpleLUI.Editor.Util
 
                 var n = myTexture2D.EncodeToPNG();
                 File.WriteAllBytes(file, n);
+
+                Debug.Log($"resource saved at " + file);
             }
 
             var styleFile = file + ".style";

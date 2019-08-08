@@ -34,7 +34,7 @@ namespace SimpleLUI.Editor.API
             if (i.sprite != null)
             {
                 sprite = SLUIResourcesConverter.CollectResourceName(i.sprite);
-                SLUIResourcesConverter.WriteSprite($"{Parent.ResourcesPath}\\{sprite}", i.sprite);
+                SLUIResourcesConverter.WriteSprite($"{Parent.ResourcesPathFull}\\{sprite}", i.sprite);
                 sprite = $"{Parent.ResourcesPath}\\{sprite}".Replace("\\", "//");
             }
 
@@ -49,9 +49,9 @@ namespace SimpleLUI.Editor.API
                 String.AppendLine($"{name}.fillCenter = false");
             if (!string.IsNullOrEmpty(sprite))
             {
-                if (File.Exists(sprite))
+                //if (File.Exists(sprite))
                     String.AppendLine($"{name}.sprite = '{sprite}'");
-                else Debug.LogError($"Sprite generation failed. Target file not exist. ({sprite})");
+                //else Debug.LogError($"Sprite generation failed. Target file not exist. ({sprite})");
             }          
         }
     }

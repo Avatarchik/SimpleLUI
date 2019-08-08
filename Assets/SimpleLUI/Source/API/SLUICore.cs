@@ -21,6 +21,9 @@ namespace SimpleLUI.API
         internal SLUIWorker Parent { get; }
         internal List<SLUIObject> Objects { get; } = new List<SLUIObject>();
 
+        /// <summary>
+        ///     Gets object of given instanceId.
+        /// </summary>
         public T GetObject<T>(int instanceId) where T : SLUIObject
         {
             foreach (var o in Objects)
@@ -58,33 +61,47 @@ namespace SimpleLUI.API
             Objects.Clear();
         }
 
+        /// <summary>
+        ///     Creates new gameObject.
+        /// </summary>
         public SLUIGameObject Create([NotNull] string name)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             return Create(name, SLUIVector2.Zero);
         }
 
-        public SLUIGameObject Create([NotNull] string name, [NotNull] SLUIVector2 position)
+        /// <summary>
+        ///     Creates new gameObject at given anchoredPosition.
+        /// </summary>
+        public SLUIGameObject Create([NotNull] string name, [NotNull] SLUIVector2 anchoredPosition)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (position == null) throw new ArgumentNullException(nameof(position));
-            return Create(name, position, SLUIVector2.Zero);
+            if (anchoredPosition == null) throw new ArgumentNullException(nameof(anchoredPosition));
+            return Create(name, anchoredPosition, SLUIVector2.Zero);
         }
 
-        public SLUIGameObject Create([NotNull] string name, [NotNull] SLUIVector2 position, [NotNull] SLUIVector2 size)
+        /// <summary>
+        ///     Creates new gameObject at given anchoredPosition and size.
+        /// </summary>
+        public SLUIGameObject Create([NotNull] string name, [NotNull] SLUIVector2 anchoredPosition, [NotNull] SLUIVector2 sizeDelta)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (position == null) throw new ArgumentNullException(nameof(position));
-            if (size == null) throw new ArgumentNullException(nameof(size));
+            if (anchoredPosition == null) throw new ArgumentNullException(nameof(anchoredPosition));
+            if (sizeDelta == null) throw new ArgumentNullException(nameof(sizeDelta));
             var newGameObject = new GameObject(name);
             InternalInitializeGameObject(newGameObject);
 
             var newReference = new SLUIGameObject();
             newReference.LoadSLUIObject(Parent.Parent, newGameObject);
             InternalInitializeObject(newReference);
+            newReference.rectTransform.anchoredPosition = anchoredPosition;
+            newReference.rectTransform.sizeDelta = sizeDelta;
             return newReference;
         }
 
+        /// <summary>
+        ///     Destroy selected object.
+        /// </summary>
         public void Destroy([NotNull] SLUIObject obj)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
@@ -115,6 +132,9 @@ namespace SimpleLUI.API
             Objects.Add(obj);
         }
 
+        /// <summary>
+        ///     Execute group of unity's event.
+        /// </summary>
         public void ExecuteUnityEvent([NotNull] SLUIUnityEvent unityEvent)
         {
             if (unityEvent == null) throw new ArgumentNullException(nameof(unityEvent));
@@ -124,12 +144,18 @@ namespace SimpleLUI.API
             }
         }
 
+        /// <summary>
+        ///     Execute unity event.
+        /// </summary>
         public void ExecuteUnityEvent([NotNull] SLUIEventItem unityEvent)
         {
             if (unityEvent == null) throw new ArgumentNullException(nameof(unityEvent));
             ExecuteUnityEvent(unityEvent.target, unityEvent.methodName, unityEvent.args.ToArray());
         }
 
+        /// <summary>
+        ///     Direct unity event execution.
+        /// </summary>
         public void ExecuteUnityEvent([NotNull] SLUIObject target, [NotNull] string methodName, params object[] args)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));

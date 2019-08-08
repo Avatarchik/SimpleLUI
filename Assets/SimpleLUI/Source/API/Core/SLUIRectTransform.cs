@@ -13,103 +13,141 @@ using Component = UnityEngine.Component;
 
 namespace SimpleLUI.API.Core
 {
+    /// <inheritdoc />
     /// <summary>
-    ///     Interface window anchor name.
+    ///     Position, rotation, scale, size, anchor and pivot information for a object.
     /// </summary>
-    public enum SLUIRectAnchorName
-    {
-        Unknown,
-        TopLeft,
-        Top,
-        TopRight,
-        MiddleLeft,
-        Middle,
-        MiddleRight,
-        BottomLeft,
-        Bottom,
-        BottomRight,
-        Stretch,
-        StretchLeft,
-        StretchCenter,
-        StretchRight,
-        StretchBottom,
-        StretchMiddle,
-        StretchTop
-    }
-
     public sealed class SLUIRectTransform : SLUIComponent
     {
+        /// <summary>
+        ///     The world space position of the RectTransform.
+        /// </summary>
         public SLUIVector2 position
         {
             get => Original.position.ToSLUIVector();
             set => Original.position = value.ToRealVector3();
         }
+
+        /// <summary>
+        ///     Position of the rectTransform relative to the parent rectTransform.
+        /// </summary>
         public SLUIVector2 localPosition
         {
             get => Original.localPosition.ToSLUIVector();
             set => Original.localPosition = value.ToRealVector3();
         }
 
+        /// <summary>
+        ///     A quaternion that stores the rotation of the RectTransform in world space.
+        /// </summary>
         public SLUIQuaternion rotation
         {
             get => Original.rotation.ToSLUIQuaternion();
             set => Original.rotation = value.ToRealQuaternion();
         }
+
+        /// <summary>
+        ///     The rotation of the rectTransform relative to the rectTransform rotation of the parent.
+        /// </summary>
         public SLUIQuaternion localRotation
         {
             get => Original.localRotation.ToSLUIQuaternion();
             set => Original.localRotation = value.ToRealQuaternion();
         }
 
+        /// <summary>
+        ///     The rotation as Euler angles in degrees.
+        /// </summary>
         public SLUIVector2 eulerAngles
         {
             get => Original.eulerAngles.ToSLUIVector();
             set => Original.eulerAngles = value.ToRealVector3();
         }
+
+        /// <summary>
+        ///     The rotation as Euler angles in degrees relative to the parent rectTransform's rotation.
+        /// </summary>
         public SLUIVector2 localEulerAngles
         {
             get => Original.localEulerAngles.ToSLUIVector();
             set => Original.localEulerAngles = value.ToRealVector3();
         }
 
+        /// <summary>
+        ///     The scale of the rectTransform relative to the parent.
+        /// </summary>
         public SLUIVector2 localScale
         {
             get => Original.localScale.ToSLUIVector();
             set => Original.localScale = value.ToRealVector3();
         }
 
+        /// <summary>
+        ///     The position of the pivot of this rectTransform relative to the anchor reference point.
+        /// </summary>
         public SLUIVector2 anchoredPosition
         {
             get => Original.anchoredPosition.ToSLUIVector();
             set => Original.anchoredPosition = value.ToRealVector();
         }
+
+        /// <summary>
+        ///     The normalized position in the parent rectTransform that the upper right corner is anchored to.
+        /// </summary>
         public SLUIVector2 anchorMax
         {
             get => Original.anchorMax.ToSLUIVector();
             set => Original.anchorMax = value.ToRealVector();
         }
+
+        /// <summary>
+        ///     The normalized position in the parent rectTransform that the lower left corner is anchored to.
+        /// </summary>
         public SLUIVector2 anchorMin
         {
             get => Original.anchorMin.ToSLUIVector();
             set => Original.anchorMin = value.ToRealVector();
         }
 
+        /// <summary>
+        ///     The offset of the upper right corner of the rectangle relative to the upper right anchor.
+        /// </summary>
         public SLUIVector2 offsetMax
         {
             get => Original.offsetMax.ToSLUIVector();
+            set => Original.offsetMax = value.ToRealVector();
+        }
+
+        /// <summary>
+        ///     The offset of the lower left corner of the rectangle relative to the lower left anchor.
+        /// </summary>
+        public SLUIVector2 offsetMin
+        {
+            get => Original.offsetMin.ToSLUIVector();
             set => Original.offsetMin = value.ToRealVector();
         }
+
+        /// <summary>
+        ///     The normalized position in this rectTransform that it rotates around.
+        /// </summary>
         public SLUIVector2 pivot
         {
             get => Original.pivot.ToSLUIVector();
             set => Original.pivot = value.ToRealVector();
         }
+
+        /// <summary>
+        ///     The size of this rectTransform relative to the distances between the anchors.
+        /// </summary>
         public SLUIVector2 sizeDelta
         {
             get => Original.sizeDelta.ToSLUIVector();
             set => Original.sizeDelta = value.ToRealVector();
         }
 
+        /// <summary>
+        ///     The calculated rectangle in the local space of the RectTransform.
+        /// </summary>
         public SLUIRect rect
         {
             get => Original.rect.ToSLUIRect();
@@ -119,27 +157,42 @@ namespace SimpleLUI.API.Core
                 Original.rect.Set(r.x, r.y, r.width, r.height);
             }
         }
+
+        /// <summary>
+        ///     The parent of the RectRransform.
+        /// </summary>
         public SLUIRectTransform Parent { get; private set; }
         internal new RectTransform Original { get; private set; }
 
+        /// <summary/>
         public SLUIRectTransform()
         {
         
         }
 
+        /// <inheritdoc />
         public override Component OnLoadOriginalComponent()
         {
             return Original = OriginalGameObject.CollectComponent<RectTransform>();
         }
 
+        /// <summary>
+        ///     Set the parent of rectTransform.
+        /// </summary>
         public void SetParent(SLUIRectTransform parent)
         {
             Parent = parent;
             Original.SetParent(parent?.Original);
         }
 
+        /// <summary>
+        ///     Get the current anchor name of rectTransform.
+        /// </summary>
         public SLUIRectAnchorName GetAnchor() => GetAnchor(Original);
 
+        /// <summary>
+        ///     Set current anchor of rectTransform using string of SLUIRectAnchorName.
+        /// </summary>
         public void SetAnchor(string anchor)
         {
             if (Enum.TryParse<SLUIRectAnchorName>(anchor, true, out var t))
@@ -148,7 +201,14 @@ namespace SimpleLUI.API.Core
             } else Debug.LogError($"Failed to parse '{anchor}' in to {typeof(SLUIRectAnchorName)}");
         }
 
+        /// <summary>
+        ///     Set current anchor of rectTransform using index of SLUIRectAnchorName.
+        /// </summary>
         public void SetAnchor(int anchor) => SetAnchor(Original, (SLUIRectAnchorName) anchor);
+
+        /// <summary>
+        ///     Set current anchor of rectTransform using SLUIRectAnchorName.
+        /// </summary>
         public void SetAnchor(SLUIRectAnchorName anchor) => SetAnchor(Original, anchor);
 
         /// <summary>

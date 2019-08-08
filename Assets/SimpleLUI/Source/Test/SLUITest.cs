@@ -4,6 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ namespace SimpleLUI.Test
 
         [Header("Settings")]
         public string SLUIName = "Tests";
+        public string WorkDirectory = "LUI";
         public float RefreshWait = 2f;
 
         [Header("Files")]
@@ -30,7 +32,7 @@ namespace SimpleLUI.Test
 
             SLUIWorker.LookForCustomTypes();
 
-            Manager = SLUIManager.CreateNew(SLUIName, Root);
+            Manager = SLUIManager.CreateNew(SLUIName, Root, Environment.CurrentDirectory + "\\" + WorkDirectory);
             Manager.AddFiles(LuaFiles);
             Manager.Reload();
         }

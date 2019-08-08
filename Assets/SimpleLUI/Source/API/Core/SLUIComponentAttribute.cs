@@ -8,9 +8,7 @@ using System;
 
 namespace SimpleLUI.API.Core
 {
+    /// <summary/>
     [AttributeUsage(AttributeTargets.Class)]
-    public class SLUIComponentAttribute : Attribute
-    {
-
-    }
+    public class SLUIComponentAttribute : Attribute { }
 }

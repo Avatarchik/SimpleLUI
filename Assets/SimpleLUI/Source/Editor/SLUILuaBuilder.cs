@@ -17,14 +17,16 @@ namespace SimpleLUI.Editor
         public StringBuilder String { get; }
         public bool PrettyPrint { get; }
         public string ResourcesPath { get; }
+        public string ResourcesPathFull { get; }
 
         private List<SLUIBuilderObject> Builders { get; } = new List<SLUIBuilderObject>();
 
-        internal SLUILuaBuilder(bool prettyPrint, string resourcesPath)
+        internal SLUILuaBuilder(bool prettyPrint, string resourcesPath, string resourcesPathFull)
         {
             String = new StringBuilder();
             PrettyPrint = prettyPrint;
             ResourcesPath = resourcesPath;
+            ResourcesPathFull = resourcesPathFull;
 
             RegisterBuilders();
         }
