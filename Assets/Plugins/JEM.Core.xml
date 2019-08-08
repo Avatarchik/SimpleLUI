@@ -637,11 +637,6 @@
                 Log file extension.
             </summary>
         </member>
-        <member name="F:JEM.Core.Debugging.JEMLogger.BuildWithDateTime">
-            <summary>
-                Build files with current datetime.
-            </summary>
-        </member>
         <member name="P:JEM.Core.Debugging.JEMLogger.LoggerCustomRootDirectory">
             <summary>
                 Logger's custom root directory.
@@ -656,11 +651,6 @@
         <member name="P:JEM.Core.Debugging.JEMLogger.TotalStackTrace">
             <summary>
                 Is total stack trace of every log type enabled.
-            </summary>
-        </member>
-        <member name="P:JEM.Core.Debugging.JEMLogger.DateTimeNowFile">
-            <summary>
-                DateTime.Now string formatted for file name.
             </summary>
         </member>
         <member name="P:JEM.Core.Debugging.JEMLogger.DateTimeNowText">
