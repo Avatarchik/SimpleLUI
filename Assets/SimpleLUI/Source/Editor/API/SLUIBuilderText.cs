@@ -33,9 +33,9 @@ namespace SimpleLUI.Editor.API
             if (t.fontSize != 14)
                 String.AppendLine($"{name}.fontSize = {t.fontSize}");
             if (t.fontStyle != FontStyle.Normal)
-                String.AppendLine($"{name}:SetFontStyle('{t.fontStyle.ToString()}')");
+                String.AppendLine($"{name}.fontStyle = '{t.fontStyle.ToString()}'");
             if (t.alignment != TextAnchor.UpperLeft)
-                String.AppendLine($"{name}:SetAlignment('{t.alignment.ToString()}')");
+                String.AppendLine($"{name}.alignment = '{t.alignment.ToString()}'");
             if (t.resizeTextForBestFit)
                 String.AppendLine($"{name}.resizeTextForBestFit = true");
             if (t.resizeTextMinSize != 10)

@@ -5,7 +5,6 @@
 //
 
 using SimpleLUI.Editor.Util;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -38,7 +37,7 @@ namespace SimpleLUI.Editor.API
                 sprite = $"{Parent.ResourcesPath}\\{sprite}".Replace("\\", "//");
             }
 
-            String.AppendLine($"{name}:SetType('{i.type.ToString()}')");
+            String.AppendLine($"{name}.imageType = '{i.type.ToString()}'");
             if (i.color != Color.white)
                 String.AppendLine($"{name}.color = {SLUILuaBuilderSyntax.CollectColor(i.color)}");
             if (!i.raycastTarget)

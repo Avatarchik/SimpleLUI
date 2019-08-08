@@ -42,11 +42,11 @@ namespace SimpleLUI.API.Core
             get => Original.fontStyle.ToString();
             set
             {
-                if (Enum.TryParse<FontStyle>(value, true, out var t))
+                if (Enum.TryParse<SLUIFontStyle>(value, true, out var t))
                 {
                     SetFontStyle(t);
                 }
-                else Debug.LogError($"Failed to parse '{value}' in to {typeof(FontStyle)}");
+                else Debug.LogError($"Failed to parse '{value}' in to {typeof(SLUIFontStyle)}");
             }
         }
 
@@ -58,11 +58,11 @@ namespace SimpleLUI.API.Core
             get => Original.alignment.ToString();
             set
             {
-                if (Enum.TryParse<TextAnchor>(value, true, out var t))
+                if (Enum.TryParse<SLUITextAnchor>(value, true, out var t))
                 {
                     SetAlignment(t);
                 }
-                else Debug.LogError($"Failed to parse '{value}' in to {typeof(TextAnchor)}");
+                else Debug.LogError($"Failed to parse '{value}' in to {typeof(SLUITextAnchor)}");
             }
         }
 
@@ -114,17 +114,17 @@ namespace SimpleLUI.API.Core
         /// <summary>
         ///     Set the font style using enum.
         /// </summary>
-        public void SetFontStyle(FontStyle s)
+        public void SetFontStyle(SLUIFontStyle s)
         {
-            Original.fontStyle = s;
+            Original.fontStyle = (FontStyle) s;
         }
 
         /// <summary>
         ///     Set the text alignment using enum.
         /// </summary>
-        public void SetAlignment(TextAnchor a)
+        public void SetAlignment(SLUITextAnchor a)
         {
-            Original.alignment = a;
+            Original.alignment = (TextAnchor) a;
         }
     }
 }

@@ -46,7 +46,7 @@ namespace SimpleLUI.Editor.API
             var anchor = SLUIRectTransform.GetAnchor(t);
             if (anchor != SLUIRectAnchorName.Unknown)
             {
-                String.AppendLine($"{name}.rectTransform:SetAnchor('{SLUIRectTransform.GetAnchor(t)}')");
+                String.AppendLine($"{name}.rectTransform.anchor = '{SLUIRectTransform.GetAnchor(t)}'");
             }
             else
             {

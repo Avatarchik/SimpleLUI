@@ -159,6 +159,22 @@ namespace SimpleLUI.API.Core
         }
 
         /// <summary>
+        ///     Anchor defines how this rectTransform's position and size is behaving to it's parent.
+        /// </summary>
+        public string anchor
+        {
+            get => GetAnchor().ToString();
+            set
+            {
+                if (Enum.TryParse<SLUIRectAnchorName>(value, true, out var t))
+                {
+                    SetAnchor(t);
+                }
+                else Debug.LogError($"Failed to parse '{value}' in to {typeof(SLUIRectAnchorName)}");
+            }
+        }
+
+        /// <summary>
         ///     The parent of the RectRransform.
         /// </summary>
         public SLUIRectTransform Parent { get; private set; }
@@ -191,25 +207,14 @@ namespace SimpleLUI.API.Core
         public SLUIRectAnchorName GetAnchor() => GetAnchor(Original);
 
         /// <summary>
-        ///     Set current anchor of rectTransform using string of SLUIRectAnchorName.
-        /// </summary>
-        public void SetAnchor(string anchor)
-        {
-            if (Enum.TryParse<SLUIRectAnchorName>(anchor, true, out var t))
-            {
-                SetAnchor(t);
-            } else Debug.LogError($"Failed to parse '{anchor}' in to {typeof(SLUIRectAnchorName)}");
-        }
-
-        /// <summary>
         ///     Set current anchor of rectTransform using index of SLUIRectAnchorName.
         /// </summary>
-        public void SetAnchor(int anchor) => SetAnchor(Original, (SLUIRectAnchorName) anchor);
+        public void SetAnchor(int anchorIndex) => SetAnchor(Original, (SLUIRectAnchorName) anchorIndex);
 
         /// <summary>
         ///     Set current anchor of rectTransform using SLUIRectAnchorName.
         /// </summary>
-        public void SetAnchor(SLUIRectAnchorName anchor) => SetAnchor(Original, anchor);
+        public void SetAnchor(SLUIRectAnchorName anchorName) => SetAnchor(Original, anchorName);
 
         /// <summary>
         ///     Get current anchor name of given rectTransform.
