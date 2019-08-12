@@ -25,6 +25,7 @@ Logs/
 # E
 *.csproj
 *.sln
+*.DotSettings
 
 LUI/auto_res/
 LUI/lui_script.lua
