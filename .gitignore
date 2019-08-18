@@ -9,23 +9,20 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+[Ll]ogs/
 [Dd]eploy/
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Pp]ackages/
 
 # Visual Studio 2015 cache/options directory
 .vs/
-
-# unity
-Library/
-Temp/
-Build/
-
-# game
-Logs/
 
 # E
 *.csproj
 *.sln
 *.DotSettings
+*.DotSettings.user
 
-LUI/auto_res/
-LUI/lui_script.lua
+Plugins/
