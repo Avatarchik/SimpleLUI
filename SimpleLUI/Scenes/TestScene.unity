@@ -283,12 +283,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 640161136}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -1356066000, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 197cc5bfbf6f1254391e350080ec5e9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AnimationSpeed: 25
-  AnimationEnterScale: 1.05
-  AnimationExitScale: 1.05
+  AnimationEnterScale: 1.1
+  AnimationExitScale: 1.1
   AnimationMode: 0
 --- !u!114 &640161141
 MonoBehaviour:
@@ -299,7 +299,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 640161136}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IgnoreGroup: 0
@@ -451,13 +451,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 800800667}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IgnoreGroup: 0
   AlwaysFalseRaycast: 0
   ApplyStateToGameObject: 1
-  DisallowLiteActivation: 1
+  DisallowLiteActivation: 0
   FixedAlphaTarget: 1
 --- !u!114 &800800673
 MonoBehaviour:
@@ -643,7 +643,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1039221497}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IgnoreGroup: 0
@@ -978,7 +978,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1488900174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IgnoreGroup: 0
@@ -1019,7 +1019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Root: {fileID: 1499973189}
-  SLUIName: Tests
+  SLUIName: Tests2
   WorkDirectory: LUI
   RefreshWait: 2
   LuaFiles:
@@ -1136,7 +1136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Root: {fileID: 2008442937}
-  SLUIName: Tests
+  SLUIName: Tests1
   WorkDirectory: LUI
   RefreshWait: 2
   LuaFiles:
@@ -1309,7 +1309,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2100291426}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2096182857, guid: 98d837e86c9446d42b4fe100298ae8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IgnoreGroup: 0
