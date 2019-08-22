@@ -26,3 +26,4 @@ bld/
 *.DotSettings.user
 
 Plugins/
+Plugins.meta
