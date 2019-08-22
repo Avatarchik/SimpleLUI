@@ -9,4 +9,8 @@ Is SimpleLUI for you?
 
   - After cloning the repository via `Github Desktop` you need to clone just one more repository [`JEM.Unity`](https://github.com/TylkoDemon/JEM.Unity) that SLUI uses in to `Assets\Plugins\`
 
+## API Documentation
+
+The API Documantation is available [here](https://alwaystoolate.com/overmodded/#/LUI/).
+
 *(c) 2019 Adam Majcherek*
