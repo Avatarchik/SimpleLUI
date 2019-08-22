@@ -6,21 +6,27 @@
 
 using JetBrains.Annotations;
 using NLua;
+using SimpleLUI.API;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using SimpleLUI.API;
 using UnityEngine;
 
 namespace SimpleLUI
 {
-    /// <summary/>
+    /// <summary>
+    ///     A SLUI file.
+    /// </summary>
     public class SLUIFile
     {
-        /// <summary/>
+        /// <summary>
+        ///     File path.
+        /// </summary>
         public string File { get; }
 
-        /// <summary/>
+        /// <summary>
+        ///     Last file modification date.
+        /// </summary>
         public DateTime LastModified { get; internal set; }
 
         internal SLUIFile(string file)
@@ -129,7 +135,7 @@ namespace SimpleLUI
         }
 
         /// <summary>
-        ///     Destroy all the manager created object.
+        ///     Destroy all objects created by this SLUIManager..
         /// </summary>
         public void Cleanup()
         {
@@ -226,7 +232,7 @@ namespace SimpleLUI
         }
  
         /// <summary>
-        ///     Looks if any of the manager's files changed.
+        ///     Looks if any of the manager's files has been changed.
         /// </summary>
         public bool LookForChanges(bool cleanup = true)
         {
@@ -265,7 +271,7 @@ namespace SimpleLUI
         }
 
         /// <summary>
-        ///     Creates new SLUI manager with given canvas as a root.
+        ///     Creates new SLUI manager.
         /// </summary>
         public static SLUIManager CreateNew([NotNull] string name, [NotNull] Canvas root, string directory)
         {

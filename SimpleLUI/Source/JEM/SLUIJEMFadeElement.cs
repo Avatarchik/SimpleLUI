@@ -4,8 +4,8 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using JEM.UnityEngine.Extension;
 using JEM.UnityEngine.Interface;
-using SimpleLUI.API;
 using SimpleLUI.API.Core;
 using UnityEngine;
 

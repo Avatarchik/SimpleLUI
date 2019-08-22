@@ -43,7 +43,9 @@ namespace SimpleLUI
             Core.DestroyContent();
         }
 
-        /// <summary/>
+        /// <summary>
+        ///     Look for SLUI custom component types in currently all loaded assemblies.
+        /// </summary>
         public static void LookForCustomTypes()
         {
             CustomTypes.Clear();

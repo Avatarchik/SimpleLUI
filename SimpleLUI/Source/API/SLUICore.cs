@@ -16,7 +16,12 @@ using Object = UnityEngine.Object;
 
 namespace SimpleLUI.API
 {
-    internal class SLUICore
+    /// <summary>
+    ///     SLUI core class.
+    ///     Contains core methods to create and destroy objects.
+    ///     Core class can be accesses in lua by using 'core'.
+    /// </summary>
+    public class SLUICore
     {
         internal SLUIWorker Parent { get; }
         internal List<SLUIObject> Objects { get; } = new List<SLUIObject>();
@@ -100,7 +105,7 @@ namespace SimpleLUI.API
         }
 
         /// <summary>
-        ///     Destroy selected object.
+        ///     Destroys given object.
         /// </summary>
         public void Destroy([NotNull] SLUIObject obj)
         {
