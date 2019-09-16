@@ -7,6 +7,6 @@ Is SimpleLUI for you?
 
 ## API Documentation
 
-The API Documantation is available [here](https://alwaystoolate.com/overmodded/#/LUI/).
+API Documantation coming soon.
 
 *(c) 2019 Adam Majcherek*
