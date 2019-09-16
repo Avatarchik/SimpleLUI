@@ -1,0 +1,1581 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JEM.Core</name>
+    </assembly>
+    <members>
+        <member name="T:JEM.Core.Commands.JEMCommand">
+            <summary>
+                Structure of the command data.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommand.Name">
+            <summary>
+                The command name.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommand.Description">
+            <summary>
+                The command description.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommand.Group">
+            <summary>
+                The command group, easily unregister batch of commands by one call.
+                Use this of eg.: level dependent commands, only 'when playing' command etc.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommand.Parameters">
+            <summary>
+                Array of parameters of the command.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommand.MethodTarget">
+            <summary>
+                Target instance of the method of the command.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommand.Method">
+            <summary>
+                Method info of the command.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Commands.JEMCommandGroup">
+            <summary>
+                JEM Command Group.
+                The command groups stores lists of commands.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommandGroup.GroupName">
+            <summary>
+                Name of command group.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommandGroup.Commands">
+            <summary>
+                Commands registered in this group.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.#ctor(System.String)">
+            <summary>
+                Creates new commands group.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.Register(System.String,System.Action,System.String)">
+            <summary>
+                Registers command with specified name and execution method.
+            </summary>
+            <param name="commandName">The command name.</param>
+            <param name="onExecute">Called when command is being executed.</param>
+            <param name="description">(optional)The command description.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.Register``1(System.String,System.Action{``0},System.String)">
+            <summary>
+                Registers command with specified name and execution method.
+            </summary>
+            <param name="commandName">The command name.</param>
+            <param name="onExecute">Called when command is being executed.</param>
+            <param name="description">(optional)The command description.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.Register``2(System.String,System.Action{``0,``1},System.String)">
+            <summary>
+                Registers command with specified name and execution method.
+            </summary>
+            <param name="commandName">The command name.</param>
+            <param name="onExecute">Called when command is being executed.</param>
+            <param name="description">(optional)The command description.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.Register``3(System.String,System.Action{``0,``1,``2},System.String)">
+            <summary>
+                Registers command with specified name and execution method .
+            </summary>
+            <param name="commandName">The command name.</param>
+            <param name="onExecute">Called when command is being executed.</param>
+            <param name="description">(optional)The command description.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.Register``4(System.String,System.Action{``0,``1,``2,``3},System.String)">
+            <summary>
+                Registers command with specified name and execution method.
+            </summary>
+            <param name="commandName">The command name.</param>
+            <param name="onExecute">Called when command is being executed.</param>
+            <param name="description">(optional)The command description.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandGroup.RegisterCommand(System.String,System.Object,System.Reflection.MethodInfo,System.String)">
+            <summary>
+                Register command with specified name and execution method.
+            </summary>
+            <param name="commandName">The command name.</param>
+            <param name="instance"></param>
+            <param name="method"></param>
+            <param name="description">(optional)The command description.</param>
+        </member>
+        <member name="T:JEM.Core.Commands.JEMCommandManager">
+            <summary>
+                Allows to register commands.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.RegisterGroup(System.String)">
+            <summary>
+                Creates and registers commands group of given name.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.UnRegisterGroup(System.String)">
+            <summary>
+                Unregister commands group.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.Execute(System.String,System.String,System.String[])">
+            <summary>
+                Executes command with given parameters.
+            </summary>
+            <param name="commandGroup">The command group.</param>
+            <param name="commandName">The command name.</param>
+            <param name="parameters">The command parameters, typeless, checking and parsing will be done.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.Execute(System.String,System.String,System.Object,System.String[])">
+            <summary>
+                Executes command with given parameters.
+            </summary>
+            <param name="commandGroup">The command group.</param>
+            <param name="commandName">The command name.</param>
+            <param name="sender">A optional sender.</param>
+            <param name="parameters">The command parameters, typeless, checking and parsing will be done.</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.PrepareParameters(System.Reflection.ParameterInfo[],System.String[],System.Object[]@)">
+            <summary>
+                Parse string in to object parameters with it's actual type.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.ParseCommand(System.String,System.String@,System.String@)">
+            <summary>
+                Parse command to get name and parameters.
+                Strings are supported! eg.: 'test "Hello, World!"'
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.ExecuteRaw(System.String)">
+            <summary>
+                Executes raw command, parse arguments etc.
+            </summary>
+            <param name="command">The command string, eg.: 'volume master 0.2' or 'volume "master" 0.2'</param>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.ClearAll">
+            <summary>
+                Removes all registered commands.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.GetAllCommands">
+            <summary>
+                Lists all available commands.
+            </summary>
+            <returns>The commands array containing all commands.</returns>
+        </member>
+        <member name="M:JEM.Core.Commands.JEMCommandManager.GetGroup(System.String)">
+            <summary>
+                Gets group of given name.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommandManager.DefaultGroup">
+            <summary>
+                Default group name. If set, will be used if no group been given while executing the command.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommandManager.Groups">
+            <summary>
+                All registered groups.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Commands.JEMCommandManager.CollectLogSilently">
+            <summary>
+                If true, prevents form printing logs by JEM.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Common.JEMKeyBasedDatabase">
+            <inheritdoc />
+            <summary>
+                A key based database class.
+                It is a small helper with managing Dictionary(string, object).
+                Implements object change events and parse objects type to original type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Common.JEMKeyBasedDatabase.SystemObjects">
+            <summary/>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.CheckForChanges(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+                Checks system object dictionary for any changes.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.WriteToSystem(System.String,System.Object,System.Boolean)">
+            <summary>
+                Writes value to system objects.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.ResolveFromSystem``1(System.String)">
+            <summary>
+                Resolves system object from given key.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.HasKey(System.String)">
+            <summary>
+                Checks if given key exists.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.ResolveFromSystem(System.String)">
+            <summary>
+                Resolves system object from given key.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.CheckSystemObject(System.String,System.Object)">
+            <summary>
+                Checks if system object of given name exists.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.RegisterObjectChange(System.String,System.Action{System.Object},System.Boolean)">
+            <summary>
+                Registers on object changed event for given system key.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.RegisterObjectChange``1(System.String,System.Action{``0},System.Boolean)">
+            <summary>
+                Register change event.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.UnhandledCallOfEverything">
+            <summary>
+                Makes unhandled call of all OnChangedEvents passing last value.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.UnregisterObjectChange(System.String,System.Action{System.Object})">
+            <summary>
+                Unregisters given on object changed event for given system key.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMKeyBasedDatabase.Clone">
+            <inheritdoc />
+        </member>
+        <member name="T:JEM.Core.Common.JEMSmartMethod">
+            <summary>
+                JEM Smart Method.
+                Simple class that allows to invoke method of given name.
+                If the method not exist, execution will be ignored without any errors.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.#ctor(System.Type,System.String)">
+            <summary>
+                Constructor.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.#ctor(System.Object,System.String,System.Boolean)">
+            <summary>
+                Constructor.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.IsValid">
+            <summary>
+                True, if there is a specified method.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.Invoke">
+            <summary>
+                Try to invoke target method.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.Invoke(System.Object[])">
+            <summary>
+                Try to invoke target method with parameters.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.ExtractAllMethods(System.Type)">
+            <summary>
+                Extracts all methods from given type (including <see cref="P:System.Type.BaseType"/>).
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Common.JEMSmartMethod.ExtractMethod(System.Type,System.String,System.Boolean)">
+            <summary>
+                Extract a method of given name from given type (including <see cref="P:System.Type.BaseType"/>).
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="T:JEM.Core.Common.JEMFixedJsonType">
+            <summary>
+                Small utility class that trays to properly parse object to given Type.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMFixedJsonType.Fix``1(System.Object)">
+            <summary>
+                Try parse object Type to T.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Common.JEMFixedJsonType.Fix``1(System.Object,``0@)">
+            <summary>
+                Try parse object Type to T.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.CVar.JEMCVarAttribute">
+            <inheritdoc />
+            <summary>
+                Thanks to CVarAttribute you can define what static properties should be loaded as console var.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarAttribute.Name">
+            <summary>
+                Name of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarAttribute.Description">
+            <summary>
+                Description of the CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarAttribute.IsNetworkVar">
+            <summary>
+                Defines whether the CVar is synchronized over network. If so, the CVar can only be changed by the server.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarAttribute.#ctor(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarAttribute.#ctor(System.String,System.String)">
+            <inheritdoc />
+            <summary>
+                Constructor.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.CVar.JEMCVarData">
+            <summary>
+                CVar data class.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.Name">
+            <summary>
+                Name of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.Description">
+            <summary>
+                Description of Car.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.IsNetworkVar">
+            <summary>
+                Defines if CVar is networked. If so, while isNetworkActive is true only the server can change this CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.Data">
+            <summary>
+                Raw Data of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.DataType">
+            <summary>
+                Raw Type of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.FixedDataType">
+            <summary>
+                Fixed type of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarData.Property">
+            <summary>
+                Property from this CVar has been generated.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarData.GetString">
+            <summary>
+                Gets string from current data.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarData.Change(System.Object,System.Boolean,System.Boolean)">
+            <summary>
+                Changes the data of CVar.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarData.CheckForPropertyChanges">
+            <summary>
+                Checks if any changes has been made to this CVar.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarData.InvokeChangeEvent">
+            <summary>
+                Invokes OnValueChange event for this CVar.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarData.CanConvertTypes(JEM.Core.CVar.JEMCVarDataType,JEM.Core.CVar.JEMCVarDataType)">
+            <summary>
+                Checks if typeA can be converted to typeB.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.CVar.JEMCVarDataType">
+            <summary>
+                Defines CVar data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.Unknown">
+            <summary>
+                The type of data is unknown, and target will most likely throw an error.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.String">
+            <summary>
+                String data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.Int32">
+            <summary>
+                Int32 data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.UInt32">
+            <summary>
+                uInt32 data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.Int64">
+            <summary>
+                Int64 data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.Single">
+            <summary>
+                Single data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.Double">
+            <summary>
+                Double data type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.CVar.JEMCVarDataType.Boolean">
+            <summary>
+                Boolean data type.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.CVar.JEMCVarManager">
+            <summary>
+                CVars manager class.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.Update">
+            <summary>
+                Update CVarManager to check if any changes to properties has been made.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVar(System.String,System.Object,System.Action{System.Object},System.Boolean)">
+            <summary>
+                Registers new var.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVar(System.String,System.Object,System.String,System.Boolean,System.Action{System.Object},System.Boolean)">
+            <summary>
+                Registers new CVar.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVar``1(System.String,``0,System.String,System.Boolean,System.Action{``0},System.Boolean)">
+            <summary>
+                Registers new CVar.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVar(JEM.Core.CVar.JEMCVarSettings{System.Object})">
+            <summary>
+                Registers new CVar by given settings.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVar``1(JEM.Core.CVar.JEMCVarSettings{``0})">
+            <summary>
+                Registers new CVar by given settings.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVarChange``1(System.String,System.Action{``0},System.Boolean)">
+            <summary>
+                Register CVar change event.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.RegisterCVarChange(System.String,System.Action{System.Object},System.Boolean)">
+            <summary>
+                Register CVar change event.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.EditCVar(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+                Edits var at given key by setting new data.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.EditCVar(System.String,System.Object,System.Boolean,System.Boolean)">
+            <summary>
+                Edits var at given key by setting new data.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.UnregisterCVar(System.String)">
+            <summary>
+                Unregister CVar of given Name.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.UnregisterCVarChange(System.String,System.Action{System.Object})">
+            <summary>
+                UnRegister CVar change event.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.CollectAllCVars">
+            <summary>
+                Collects all fields with CVarAttribute.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.LoadFile">
+            <summary>
+                Loads CVar save file.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.SaveFile">
+            <summary>
+                Save CVar file.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.GetCVarData(System.String)">
+            <summary>
+                Gets var by key data.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarManager.ResolveFixedDataType(System.Type)">
+            <summary>
+                Resolves CVarData type of given Type.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarManager.RegisteredVars">
+            <summary>
+                List of registered console vars.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.CVar.JEMCVarSettings`1">
+            <summary>
+                CVar creation settings.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.Name">
+            <summary>
+                Name of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.Default">
+            <summary>
+                Default value of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.Description">
+            <summary>
+                Description of CVar.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.IsNetworkVar">
+            <summary>
+                Is CVar networked?
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.OnValueChanged">
+            <summary>
+                OnValueChanged event.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.InvokeAtStart">
+            <summary>
+                If set to true, all OnValueChanged will be invoked at end of CVar registration.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.CVar.JEMCVarSettings`1.Property">
+            <summary>
+                Property from this CVar has been generated.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarSettings`1.#ctor(System.String,System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarSettings`1.#ctor(System.String,System.Object,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarSettings`1.#ctor(System.String,System.Object,System.String,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:JEM.Core.CVar.JEMCVarSettings`1.#ctor(System.String,System.Object,System.String,System.Boolean,System.Action{`0})">
+            <summary>
+                CVar Settings ctr.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMConfigurationSaveMethod">
+            <summary>
+                JEM Configuration save method.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMConfigurationSaveMethod.UNKNOWN">
+            <summary>
+                Unknown formatting type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMConfigurationSaveMethod.BINARY">
+            <summary>
+                Save/Load using binary formatter.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMConfigurationSaveMethod.JSON">
+            <summary>
+                Save/Load using Newtonsoft.Json.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Configuration.InternalJEMConfiguration">
+            <summary>
+                Internal JEM Configuration data used by JEMConfiguration.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.ConfigurationAppSaveDirectory">
+            <summary>
+                Base configuration save path.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.ConfigurationBinFileExtension">
+            <summary>
+                Extension of bin configuration file.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.ConfigurationJEMSaveDirectory">
+            <summary>
+                Base configuration save path.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.ConfigurationJsonFileExtension">
+            <summary>
+                Extension of json configuration file.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.ConfigurationSaveMethod">
+            <summary>
+                Configuration save method.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.JsonFormattingMethod">
+            <summary>
+                Json formatting method.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.InternalJEMConfiguration.NoLogs">
+            <summary>
+                Of set to true, JEMLogger will ignore every single log received.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.InternalJEMConfiguration.Configuration">
+            <summary>
+                Currently loaded configuration of JEMConfiguration class.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.InternalJEMConfiguration.ResolveConfigurationFile">
+            <summary>
+                Resolves file name of internal cfg.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.InternalJEMConfiguration.Load">
+            <summary>
+                Loads current configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.InternalJEMConfiguration.Resolve">
+            <summary>
+                Resolves JEM configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.InternalJEMConfiguration.Save">
+            <summary>
+                Saves current configuration.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMSmartConfigPropertyMode">
+            <summary>
+                JEM Smart Configuration Property Mode.
+                It defines how Properties of target Type should be gathered.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMSmartConfigPropertyMode.Default">
+            <summary>
+                A default gather type. Only Properties with JEMSmartConfigVarAttribute will be collected.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMSmartConfigPropertyMode.ForcedAll">
+            <summary>
+                All Properties in target type will be collected. If target property does not have JEMSmartConfigVarAttribute, the name of property will be used as varName instead.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMSmartConfigAttribute">
+            <inheritdoc />
+            <summary>
+                JEM Smart Configuration Attribute.
+                Defines a class that holds configuration vars.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.JEMSmartConfigAttribute.ConfigName">
+            <summary>
+                Configuration (file)name.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.JEMSmartConfigAttribute.PropertyMode">
+            <summary>
+                Property mode of this Configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfigAttribute.#ctor(System.String)">
+            <inheritdoc />
+            <summary>
+                Constructor.
+            </summary>
+            <param name="configName">Configuration (file)name.</param>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMSmartConfigProperty">
+            <summary>
+                JEM Smart Configuration Property.
+                A instance of property loaded by Smart Configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfigProperty.CheckForPropertyChanges">
+            <summary>
+                Checks if any changes has been made to this Property.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMSmartConfigSave">
+            <summary>
+                JEM Smart Configuration Save.
+                Holds data for any Smart Configuration Class.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMSmartConfigSave.MountedConfigurationAttribute">
+            <summary>
+                Reference to Smart Configuration Attribute this Save was loaded for.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMSmartConfigSave.MountedType">
+            <summary>
+                Reference to the Type of class that this Save was loaded for.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.JEMSmartConfigSave.Properties">
+            <summary>
+                List of loaded properties.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMSmartConfigSave.Database">
+            <summary>
+                A Database instance that holds all data of Smart Configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfigSave.Save">
+            <summary>
+                Save the data!
+            </summary>
+            <exception cref="T:System.NullReferenceException"/>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfigSave.Update">
+            <summary>
+                Update loaded Properties to check if the value has been changed.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfigSave.CollectPropertiesFromMountedType">
+            <summary>
+                Collects properties from currently Mounted Type.
+            </summary>
+            <exception cref="T:System.NullReferenceException"/>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMSmartConfiguration">
+            <summary>
+                JEM Smart Configuration class.
+                It manages 'Smart Configuration' system.
+            </summary>
+            <remarks>Smart Configuration is a system that allows to define configuration properties (CVar like)</remarks>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfiguration.LoadConfiguration(System.Type)">
+            <summary>
+                Try to load configuration from given instance of object.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+            <exception cref="T:System.NullReferenceException"/>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfiguration.IsPropertyStatic(System.Reflection.PropertyInfo)">
+            <summary>
+                Checks if given Property is static.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMSmartConfigVarAttribute">
+            <inheritdoc />
+            <summary>
+                JEM Smart Configuration Var Attribute.
+                It defines a configuration vars.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.JEMSmartConfigVarAttribute.VarName">
+            <summary>
+                Name of configuration var.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.JEMSmartConfigVarAttribute.OnValueChanged">
+            <summary>
+                Name of change method to call.
+                The method need to be in the same Class of property.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMSmartConfigVarAttribute.#ctor(System.String,System.String)">
+            <inheritdoc />
+            <summary>
+                Constructor.
+            </summary>
+            <param name="varName">Name of configuration var.</param>
+            <param name="onValueChanged">Name of change method to call. The method need to be in the same Class of property.</param>
+        </member>
+        <member name="T:JEM.Core.Configuration.JEMConfiguration">
+            <summary>
+                Configuration manager.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Configuration.JEMConfiguration.CurrentDirectory">
+            <summary>
+                Current directory of JEM Configuration system.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Configuration.JEMConfiguration.Configuration">
+            <summary>
+                Current configuration.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMConfiguration.ResolveSaveMethod(JEM.Core.Configuration.JEMConfigurationSaveMethod)">
+            <summary>
+                Resolves fixed save method.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMConfiguration.WriteData(System.String,System.Object,JEM.Core.Configuration.JEMConfigurationSaveMethod)">
+            <summary>
+                Writes data to file.
+            </summary>
+            <param name="path">Path to file.</param>
+            <param name="value">Save data.</param>
+            <param name="forcedMethod">Forced save method</param>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMConfiguration.LoadData``1(System.String,JEM.Core.Configuration.JEMConfigurationSaveMethod)">
+            <summary>
+                Loads data from file.
+            </summary>
+            <typeparam name="T">Type of save.</typeparam>
+            <param name="path">Path to file.</param>
+            <param name="forcedMethod">Forced save method</param>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMConfiguration.LoadData``1(System.String,System.Boolean,JEM.Core.Configuration.JEMConfigurationSaveMethod)">
+            <summary>
+                Loads data from file.
+            </summary>
+            <typeparam name="T">Type of save.</typeparam>
+            <param name="path">Path to file.</param>
+            <param name="disallowDefaultInstance">Disallows to create default instance of given type when file not exists.</param>
+            <param name="forcedMethod">Forced save method</param>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMConfiguration.ResolveFilePath(System.String,JEM.Core.Configuration.JEMConfigurationSaveMethod)">
+            <summary>
+                Resolves path to configuration file of given name.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Configuration.JEMConfiguration.ResolveJEMFilePath(System.String)">
+            <summary>
+                Resolves path to configuration file of given name.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Extension.ExtensionArray">
+            <summary>
+                Set of utility methods: Array
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Extension.ExtensionArray.GetRandom``1(``0[])">
+            <summary>
+                Gets random item from array.
+            </summary>
+            <typeparam name="T">Type of object in array.</typeparam>
+            <param name="array">Array.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:JEM.Core.Extension.ExtensionArray.RemoveAt``1(``0[],System.Int32,System.Int32)">
+            <summary>
+                Removes given amount of items starting at given index.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:JEM.Core.Extension.ExtensionList">
+            <summary>
+                Set of utility methods: List
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Extension.ExtensionList.GetRandom``1(System.Collections.Generic.List{``0})">
+            <summary>
+                Gets random item from list.
+            </summary>
+            <typeparam name="T">Type of object in list.</typeparam>
+            <param name="list">List.</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="T:JEM.Core.Extension.ExtensionPath">
+            <summary>
+                Set of utility methods: Path
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Extension.ExtensionPath.ResolveRelativeFilePath(System.String)">
+            <summary>
+                Resolves relative file path.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Extension.ExtensionPath.ResolveRelativeFilePath(System.String,System.String)">
+            <summary>
+                Resolves relative file path.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="T:JEM.Core.Extension.ExtensionString">
+            <summary>
+                Set of utility methods: String
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Extension.ExtensionString.Like(System.String,System.String)">
+            <summary>
+                Checks if string contains string like.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Extension.FastObjectFactory`1">
+            <summary>
+                JEM Fast Object Factory extension.
+                Allows for faster object instance creation.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Extension.FastObjectFactory`1.Instance">
+            <summary/>
+        </member>
+        <member name="M:JEM.Core.Extension.FastObjectFactory`1.Creator">
+            <summary/>
+        </member>
+        <member name="T:JEM.Core.Extension.FastObjectFactoryUtil">
+            <summary/>
+        </member>
+        <member name="M:JEM.Core.Extension.FastObjectFactoryUtil.HasDefaultConstructor(System.Type)">
+            <summary>
+                Check if given type has default constructor.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.IO.JEMEncryptor">
+            <summary>
+                JEM Binary Encryptor Test.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.IO.JEMEncryptor.DefaultEncryptorPassword">
+            <summary>
+                Default encryptor password.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.IO.JEMEncryptor.Write``1(System.String,System.String,``0)">
+            <summary>
+                Writes given object to file at given path with given password.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.IO.JEMEncryptor.Load``1(System.String,System.String)">
+            <summary>
+                Loads file at given path to given type of object.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.IO.JEMByteSerializer">
+            <summary>
+                JEM Byte Serializer.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.IO.JEMByteSerializer.SerializeToBytes``1(``0)">
+            <summary>
+                Serialize given object to byte array.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.IO.JEMByteSerializer.DeserializeFromBytes``1(System.Byte[])">
+            <summary>
+                Deserialize bytes to object of given type.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.IO.JEMDirectory">
+            <summary>
+                Directory operation class.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.IO.JEMDirectory.GetFiles(System.String,System.String[])">
+            <summary>
+                Returns the names of files (including their paths) that math the specific directory and don't contains ignored names.
+            </summary>
+            <param name="path">The relative or absolute path to directory to search.</param>
+            <param name="namesIgnored">Names of directories to ignore.</param>
+        </member>
+        <member name="T:JEM.Core.IO.JEMMD5">
+            <summary>
+                MD5 hash calculation class.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.IO.JEMMD5.HashMode">
+            <summary>
+                Mode of md5 hash calculation.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.IO.JEMMD5.HashMode.PerChar">
+            <summary>
+                MD5 hash will be calculated per character.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.IO.JEMMD5.HashMode.FromByte">
+            <summary>
+                MD5 hash will by calculated ny whole byte data.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.IO.JEMMD5.Hash(System.String,JEM.Core.IO.JEMMD5.HashMode,System.Boolean)">
+            <summary>
+                Calculates MD5 hash.
+            </summary>
+            <param name="stringToHash">String to hash.</param>
+            <param name="mode">Mode of hash.</param>
+            <param name="lowCase"></param>
+            <returns>Generate string in low case?</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"/>
+        </member>
+        <member name="M:JEM.Core.IO.JEMMD5.Hash(System.IO.FileStream,JEM.Core.IO.JEMMD5.HashMode,System.Boolean)">
+            <summary>
+                Calculates MD5 hash.
+            </summary>
+            <param name="stream">File stream to hash.</param>
+            <param name="mode">Mode of hash.</param>
+            <param name="lowCase"></param>
+            <returns>Generate string in low case?</returns>
+            <exception cref="T:System.ArgumentNullException"/>
+            <exception cref="T:System.ArgumentOutOfRangeException"/>
+        </member>
+        <member name="T:JEM.Core.Debugging.JEMLogType">
+            <summary>
+                JEM Log Type.
+                Defines a log type of JEMLogger.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogType.Log">
+            <summary>
+                Info log type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogType.Warning">
+            <summary>
+                Warning log type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogType.Error">
+            <summary>
+                Error log type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogType.Exception">
+            <summary>
+                Exception log type.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogType.Assert">
+            <summary>
+                Assertion log type.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Debugging.JEMLogAppend">
+            <summary>
+                Log append event.
+            </summary>
+            <param name="source">Source of log.</param>
+            <param name="type">Type of log.</param>
+            <param name="value">Value of log.</param>
+            <param name="stackTrace">Stack trace of log.</param>
+        </member>
+        <member name="T:JEM.Core.Debugging.JEMLogger">
+            <summary>
+                JEM Logger.
+                A logs controller class.
+            </summary>
+        </member>
+        <member name="E:JEM.Core.Debugging.JEMLogger.OnLogAppended">
+            <summary>
+                Event called when new log has been received.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogger.LoggerWorkDirectoryName">
+            <summary>
+                Name of logger directory.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Debugging.JEMLogger.LogFileExtension">
+            <summary>
+                Log file extension.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Debugging.JEMLogger.Disabled">
+            <summary>
+                If true, the Logger wil ignore every log received.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Debugging.JEMLogger.AlwaysThrowStacktrace">
+            <summary>
+                If true, Logger will try to deliver stackTrace for every log type.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Debugging.JEMLogger.DateTimeNowText">
+            <summary>
+                DateTime.Now string formatted for text.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Debugging.JEMLogger.LoggerCustomDirectory">
+            <summary>
+                Logger's custom root directory.
+                If empty, logger will get default current directory.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Debugging.JEMLogger.LoggerWorkDirectory">
+            <summary>
+                Full path of logger work directory.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Debugging.JEMLogger.LoggerFilePrefix">
+            <summary>
+                Prefix of logger files. Based on process name.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.GetLogFile(System.String,System.String)">
+            <summary>
+                Gets a log file name.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.FixLoggerWorkDirectory">
+            <summary>
+                Fixes logger work directory by checking if working directory not exists.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.BuildFilePatch(System.String)">
+            <summary>
+                Builds full path of file.
+            </summary>
+            <param name="fileName">Name of file.</param>
+            <returns>Created path of file.</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.BuildFileLine(System.String)">
+            <summary>
+                Builds line for file text.
+            </summary>
+            <param name="lineContent">Content of line.</param>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.BuildFileCommentLine(System.String)">
+            <summary>
+                Builds comment line for file text.
+            </summary>
+            <param name="comment">Comment content.</param>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.GetTrace(System.String)">
+            <summary>
+                Gets the stackTrace.
+                If originalTrace parameter is null or empty, Logger will try to generate new StackTrace from this point.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.AppendLog(System.String,JEM.Core.Debugging.JEMLogType,System.String,System.String,System.String)">
+            <summary>
+                Appends log.
+            </summary>
+            <param name="source">Source of log.</param>
+            <param name="type">Type of log.</param>
+            <param name="value">Value of log.</param>
+            <param name="stackTrace">Stack trace of log.</param>
+            <param name="customFile">Custom file of log.</param>
+            <returns>Is log been successfully appended?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.Init">
+            <summary>
+            Initializes Logger.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.ClearLoggerDirectory(System.Boolean)">
+            <summary>
+                Clears logger directory. from all log files.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.Log(System.String,System.String,System.String,System.String)">
+            <summary>
+                Append log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.LogWarning(System.String,System.String,System.String,System.String)">
+            <summary>
+                Append warning log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.LogError(System.String,System.String,System.String,System.String)">
+            <summary>
+                Append error log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.LogException(System.Exception,System.String,System.String)">
+            <summary>
+                Append exception log.
+            </summary>
+            <param name="ex">Exception to write.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.LogException(System.String,System.String,System.String,System.String)">
+            <summary>
+                Append exception log.
+            </summary>
+            <param name="condition">Condition of exception.</param>
+            <param name="stackTrace">Stack trace of exception.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.LogExceptionCustom(System.Exception,System.String,System.String,System.String)">
+            <summary>
+                Append exception log.
+            </summary>
+            <param name="ex">Exception to write.</param>
+            <param name="customCondition">Condition of exception.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.LogAssert(System.String,System.String,System.String,System.String)">
+            <summary>
+                Append assert log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="customFile">Custom file name.</param>
+            <param name="source">Name of source of this log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.InternalLog(System.String,System.String)">
+            <summary>
+                Append log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.InternalLogWarning(System.String,System.String)">
+            <summary>
+                Append warning log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.InternalLogError(System.String,System.String)">
+            <summary>
+                Append error log.
+            </summary>
+            <param name="value">Value of log.</param>
+            <param name="originalTrace">Original trace.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.InternalLogException(System.Exception)">
+            <summary>
+                Append exception log.
+            </summary>
+            <param name="ex">Exception to write.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="M:JEM.Core.Debugging.JEMLogger.InternalLogException(System.String,System.String)">
+            <summary>
+                Append exception log.
+            </summary>
+            <param name="condition">Condition of exception.</param>
+            <param name="stackTrace">Stack trace of exception.</param>
+            <returns>Is log been successfully appended by system?</returns>
+        </member>
+        <member name="T:JEM.Core.Text.JEMLocaleGroup">
+            <summary>
+                JEM Locale Group.
+                A locale group data.
+                Each group is defined by it's file name.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Text.JEMLocaleGroup.GroupName">
+            <summary>
+                A name of locale group.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Text.JEMLocaleGroup.Keys">
+            <summary>
+                Keys loaded in to this locale group.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Text.JEMLocaleData">
+            <summary>
+                JEM Locale Data
+                A data of loaded locale.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Text.JEMLocaleData.LocaleName">
+            <summary>
+                Unique locale name. For ex.: eng, pl, etc.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Text.JEMLocaleData.Groups">
+            <summary>
+                Groups loaded in to this locale.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocaleData.GetGroup(System.String)">
+            <summary>
+                Gets group of given name.
+                NOTE: Group name is always upper case!
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocaleData.GetDefault">
+            <summary>
+                Gets the default locale group.
+                The default locale group is always the first one loaded.
+            </summary>
+            <exception cref="T:System.IndexOutOfRangeException"/>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocaleData.LoadFromDirectory(System.String)">
+            <summary>
+                Load locale data from given directory.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+            <exception cref="T:System.NotSupportedException"></exception>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocaleData.IsSelected">
+            <summary>
+                Returns true, if this a currently selected locale.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Text.JEMLocale">
+            <summary>
+                JEM Locale.
+                Implements a simple locale system.
+            </summary>
+            <remarks>
+                The system utilizes .csv files (key;content).
+                This files can be binary formatted so the user wont be able to freely edit the locale content.
+                You can serialize files using jem's binary serializer. The files should have the .csvb extension.
+            </remarks>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.LoadLocale(System.String,System.String,System.Boolean)">
+            <summary>
+                Loads all locale files from given directory to a given localName.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.SetLocale(System.String)">
+            <summary>
+                Set the locale.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.TryResolve(System.String,System.Object[])">
+            <summary>
+                Try to resolve text from currently selected locale.
+                If there is no locale selected, <paramref name="key"/> will be returned instead.
+            </summary>
+            <param name="key">Key of locale.</param>
+            <param name="args">Arguments to format in to resolved locale data.</param>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.TryResolve(System.String,System.String,System.Object[])">
+            <summary>
+                Try to resolve text from currently selected locale.
+                If there is no locale selected, <paramref name="key"/> will be returned instead.
+            </summary>
+            <param name="groupName">Group in the locale. The group is defined by locale file name.</param>
+            <param name="key">Key of locale.</param>
+            <param name="args">Arguments to format in to resolved locale data.</param>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.Resolve(System.String,System.Object[])">
+            <summary>
+                Resolves text from currently selected locale.
+            </summary>
+            <param name="key">Key of locale.</param>
+            <param name="args">Arguments to format in to resolved locale data.</param>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.Resolve(System.String,System.String,System.Object[])">
+            <summary>
+                Resolves text from currently selected locale.
+            </summary>
+            <param name="groupName">Group in the locale. The group is defined by locale file name.</param>
+            <param name="key">Key of locale.</param>
+            <param name="args">Arguments to format in to resolved locale data.</param>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.Resolve(JEM.Core.Text.JEMLocaleGroup,System.String,System.Object[])">
+            <summary>
+                Resolves text from currently selected locale.
+            </summary>
+            <param name="localeGroup">Group in the locale. The group is defined by locale file name.</param>
+            <param name="key">Key of locale.</param>
+            <param name="args">Arguments to format in to resolved locale data.</param>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.GetLocale(System.String)">
+            <summary>
+                Gets the locale of given name.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Text.JEMLocale.GetSelectedLocale">
+            <summary>
+                Gets the currently selected locale data.
+            </summary>
+            <exception cref="T:System.NullReferenceException"/>
+            <exception cref="T:System.ArgumentOutOfRangeException"/>
+        </member>
+        <member name="P:JEM.Core.Text.JEMLocale.LoadedLocales">
+            <summary>
+                List of all loaded locales.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Text.JEMLocale.SelectedLocale">
+            <summary>
+                A index (in <see cref="P:JEM.Core.Text.JEMLocale.LoadedLocales"/>) of selected locale.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Text.JEMSmartTextEvent">
+            <summary>
+                The delegate of JEMSmartText.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Text.JEMSmartTextEventData">
+            <summary>
+                JEM Smart Text Event Data.
+                A data of smart text event :)
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Text.JEMSmartTextEventData.EventName">
+            <summary>
+                Name of the event.
+            </summary>
+        </member>
+        <member name="F:JEM.Core.Text.JEMSmartTextEventData.OnEventTrigger">
+            <summary>
+                The event.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Text.JEMSmartText">
+            <summary>
+                JEM Smart Text.
+                A text formatting utility that will help with standard text formatting operations.
+                It can for ex. replace locale="key" with the key's value.
+                JEMSmartText gives also ability to define custom keys with it's own replacements events.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Text.JEMSmartText.RegisterDefaultEvents">
+            <summary>
+                Registers default events like for ex. JEMLocale keys replacement.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Text.JEMSmartText.RegisterEvent(System.String,JEM.Core.Text.JEMSmartTextEvent)">
+            <summary>
+                Registers new event.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"/>
+        </member>
+        <member name="M:JEM.Core.Text.JEMSmartText.CheckAndReplace(System.String)">
+            <summary>
+                Checks if given string known key and replaces it with received by event new string.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Text.JEMSmartText.GetEvent(System.String)">
+            <summary>
+                Gets the ata of event of given name.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.Text.JEMSmartText.Events">
+            <summary>
+                List of all registered events.
+            </summary>
+        </member>
+        <member name="T:JEM.Core.Text.JEMXml">
+            <summary>
+                Xml string de/serialization class.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.Text.JEMXml.ObjectToString(System.Object)">
+            <summary>
+                Parse object to xml string.
+            </summary>
+            <param name="targetObject">Object to serialize.</param>
+            <returns>Xml string of object.</returns>
+        </member>
+        <member name="M:JEM.Core.Text.JEMXml.StringToObject``1(System.String)">
+            <summary>
+                Parse xml string to object.
+            </summary>
+            <typeparam name="T">Type of object to create from xml string.</typeparam>
+            <param name="xmlString">Xml string of target.</param>
+            <returns>Created object from xml string.</returns>
+        </member>
+        <member name="M:JEM.Core.Text.JEMXml.StringToObject(System.Type,System.String)">
+            <summary>
+                Parse xml string to object.
+            </summary>
+            <param name="objectType">Type of object to create from xml string.</param>
+            <param name="xmlString">Target xml string.</param>
+            <returns>Created object from xml string.</returns>
+        </member>
+        <member name="T:JEM.Core.JEMVar">
+            <summary>
+                Global vars and internal configuration of library.
+            </summary>
+        </member>
+        <member name="P:JEM.Core.JEMVar.IsLinux">
+            <summary>
+                Is library works currently on linux?
+            </summary>
+        </member>
+        <member name="P:JEM.Core.JEMVar.DirectorySeparatorChar">
+            <summary>
+                Returns directory separator char for current os (windows vs linux).
+            </summary>
+        </member>
+        <member name="M:JEM.Core.JEMVar.VersionStringToNumber(System.String)">
+            <summary>
+                Parse application version (string) to int.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.JEMVar.CheckForArgument(System.String,System.Boolean)">
+            <summary>
+                Checks if argument of given name exists in current command line args of program.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.JEMVar.CheckForArgument(System.String,System.Boolean,System.String@)">
+            <summary>
+                Checks if argument of given name exists in current command line args of program.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.JEMVar.CheckForArgument(System.String[],System.String,System.Boolean)">
+            <summary>
+                Checks if argument of given name exists in given array of string.
+            </summary>
+        </member>
+        <member name="M:JEM.Core.JEMVar.CheckForArgument(System.String[],System.String,System.Boolean,System.String@)">
+            <summary>
+                Checks if argument of given name exists in given array of string.
+            </summary>
+        </member>
+    </members>
+</doc>

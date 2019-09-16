@@ -25,7 +25,5 @@ bld/
 *.DotSettings
 *.DotSettings.user
 
-Plugins/
-Plugins.meta
 LICENSE.meta
 README.md.meta
