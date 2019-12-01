@@ -4,18 +4,25 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using JEM.Core.Debugging;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using JEM.Core.Debugging;
 using UnityEngine;
 
 namespace JEM.UnityEngine.Resource
 {
-    internal class JEMGameResourcesScript : MonoBehaviour
+    [AddComponentMenu("HIDDEN/_JEM _GAME _RESOURCES _SCRIPT")]
+    internal class JEMGameResourcesScript : JEMRegenerableScript<JEMGameResourcesScript>
     {
-        public IEnumerator InternalLoadResourcesAssets(string[] packList, bool async,
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
+        internal IEnumerator InternalLoadResourcesAssets(string[] packList, bool async,
             JEMGameResources.ResourcesLoaded loadedEvent,
             JEMGameResources.ResourcesLoadProgress progressEvent)
         {

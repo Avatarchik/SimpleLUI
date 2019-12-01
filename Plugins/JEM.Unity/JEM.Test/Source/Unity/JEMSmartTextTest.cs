@@ -22,7 +22,7 @@ namespace JEM.Test.Unity
                 content = "Player nickname!";
             });
 
-            var sampleText = "23rfds <locale=MY_KEY> >!!e=<MY_KEY>>!! <locale=TEXT_OK>%@#FD<>S <player>>";
+            var sampleText = "23rfds <locale=MY_KEY> >!!e=<MY_KEY>>!! <locale=TEXT_OK>%@#FD<>S <player>> <locale=SYSTEM:MY_KEY> <locale=SYSTEM:FORMATTING_TEST;SYSTEM:MY_KEY>";
             Debug.Log(JEMSmartText.CheckAndReplace(sampleText));
         }
     }

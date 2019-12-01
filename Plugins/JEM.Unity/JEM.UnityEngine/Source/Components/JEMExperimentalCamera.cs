@@ -77,8 +77,7 @@ namespace JEM.UnityEngine.Components
             CurrentDistance -= Input.GetAxis("Mouse ScrollWheel") * ScrollSensitivity;
             CurrentDistance = Mathf.Clamp(CurrentDistance, .3f, 1f);
 
-            transform.position = Vector3.Lerp(transform.position,
-                Character.transform.position + Offset * CurrentDistance, Time.deltaTime * Smooth);
+            transform.LerpPosition(Character.transform.position + Offset * CurrentDistance, Time.deltaTime * Smooth);
             transform.LookAtSmooth(Center, Smooth);
         }
 

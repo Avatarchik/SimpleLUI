@@ -39,7 +39,7 @@ namespace JEM.UnityEditor.AssetBundles
         /// <summary>
         ///     Exports selected assets directly.
         /// </summary>
-        [MenuItem("Assets/Export Assets Directly", false, 2)]
+        [MenuItem("Assets/Export Assets Directly", priority = 20)]
         public static void ExportSelectedDirectly(MenuCommand menuCommand)
         {
             if (Selection.objects.Length == 0)

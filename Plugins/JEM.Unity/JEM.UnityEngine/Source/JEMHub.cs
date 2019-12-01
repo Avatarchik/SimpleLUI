@@ -40,7 +40,7 @@ namespace JEM.UnityEngine
     [AddComponentMenu("JEM/Systems/JEM Hub")]
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(-10)]
-    public class JEMHub : MonoBehaviour
+    public class JEMHub : JEMSingletonBehaviour<JEMHub>
     {
         /// <summary>
         ///     If true, all JEM scripts will be spawned at start.
@@ -54,17 +54,9 @@ namespace JEM.UnityEngine
         [Header("Debugging Settings")]
         public JEMLogForward LogForwarding = JEMLogForward.JEMToUnity;
 
-        private void Awake()
+        /// <inheritdoc />
+        protected override void OnAwake()
         {
-            if (Instance != null)
-            {
-                // Duplicate detected.
-                gameObject.SetActive(false);
-                return;
-            }
-
-            Instance = this;
-
             // Dont destroy this object.
             gameObject.CollectComponent<JEMObjectKeepOnScene>();
 
@@ -72,19 +64,19 @@ namespace JEM.UnityEngine
             JEMLogger.OnLogAppended += OnJEMLog;
             Application.logMessageReceived += OnUnityLog;
 
-            // Init and clear JEM Logger.
-            JEMLogger.Init();
+            // Clear and init JEM Logger.
             JEMLogger.ClearLoggerDirectory();
-        }
+            JEMLogger.Start();
 
-        private void Start()
-        {
             // Prepare scripts.
             if (PrepareScripts)
             {
                 JEMUnity.PrepareJEMScripts();
             }
         }
+
+        private void OnDestroy() => JEMLogger.Stop();
+        private void OnApplicationQuit() => JEMLogger.Stop();
 
         private void OnJEMLog(string source, JEMLogType type, string value, string stacktrace)
         {
@@ -159,10 +151,5 @@ namespace JEM.UnityEngine
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        /// <summary>
-        ///     Current instance of script.
-        /// </summary>
-        internal static JEMHub Instance { get; private set; }
     }
 }

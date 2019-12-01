@@ -1,7 +1,7 @@
 ﻿//
-// Unity Editor Just Enough Methods Library Source
+// JEM For Unity Source
 //
-// Copyright (c) 2017-2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
+// Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
 using UnityEngine;
@@ -16,18 +16,23 @@ namespace JEM.UnityEngine
         /// <summary>
         ///     Draw a field of view visual presentation.
         /// </summary>
-        public static void DrawFOV(Vector3 point, Vector3 forward, float fov, float range = 10f)
+        public static void DrawFOV(Vector3 point, Vector3 forward, float fov, float range = 10f) =>
+            DrawFOV(point, forward, Vector3.up, fov, range);
+
+        /// <summary>
+        ///     Draw a field of view visual presentation.
+        /// </summary>
+        public static void DrawFOV(Vector3 point, Vector3 forward, Vector3 axis, float fov, float range = 10f)
         {
             var halfFov = fov / 2.0f;
-            var leftRayRotation = Quaternion.AngleAxis(-halfFov, Vector3.up);
-            var rightRayRotation = Quaternion.AngleAxis(halfFov, Vector3.up);
+            var leftRayRotation = Quaternion.AngleAxis(-halfFov, axis);
+            var rightRayRotation = Quaternion.AngleAxis(halfFov, axis);
             var leftRayDirection = leftRayRotation * forward;
             var rightRayDirection = rightRayRotation * forward;
             Gizmos.DrawRay(point, leftRayDirection * range);
             Gizmos.DrawRay(point, rightRayDirection * range);
             Gizmos.DrawLine(point + leftRayDirection * range, point + rightRayDirection * range);
         }
-
 
         /// <summary>
         ///     Draw sphere wire.

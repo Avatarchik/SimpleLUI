@@ -1,5 +1,5 @@
 ﻿//
-// RPG Source
+// JEM For Unity Source
 //
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
@@ -12,36 +12,23 @@ namespace JEM.UnityEngine.Interface.Control
 {
     /// <inheritdoc cref="MonoBehaviour" />
     /// <summary>
-    ///     Interface pointer events chandler.
+    ///     A simple script that will forward IPointerHandlers in to <see cref="UnityEvent"/> that can be accessed via editor inspector.
     /// </summary>
     [AddComponentMenu("JEM/Interface/Control/JEM Pointer Events")]
     [DisallowMultipleComponent]
-    public class JEMInterfacePointerEvents : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    public class JEMInterfacePointerEvents : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
+        IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
     {
-        [Header("Events")]
-        public UnityEvent OnEnter;
+        [Header("Events")] public UnityEvent OnEnter;
         public UnityEvent OnExit;
         public UnityEvent OnDown;
         public UnityEvent OnUp;
+        public UnityEvent OnClick;
 
-        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
-        {
-            OnEnter.Invoke();
-        }
-
-        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-        {
-            OnExit.Invoke();
-        }
-
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-        {
-            OnDown.Invoke();
-        }
-
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-        {
-            OnUp.Invoke();
-        }
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData) => OnEnter.Invoke();
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData) => OnExit.Invoke();
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData) => OnDown.Invoke();
+        void IPointerUpHandler.OnPointerUp(PointerEventData eventData) => OnUp.Invoke();
+        void IPointerClickHandler.OnPointerClick(PointerEventData eventData) => OnClick.Invoke();
     }
 }

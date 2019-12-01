@@ -4,14 +4,18 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+#define DEEP_DEBUG
+
 using JEM.Core.Common;
+using JEM.Core.Debugging;
 using JEM.QNet.Messages;
-using JEM.QNet.UnityEngine.Messages.Extensions;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace JEM.QNet.UnityEngine.Objects
 {
@@ -53,10 +57,19 @@ namespace JEM.QNet.UnityEngine.Objects
     [RequireComponent(typeof(QNetIdentity))]
     public abstract partial class QNetBehaviour : QNetObject
     {
-        public class QNetMessagePointer
+        public delegate void BehaviourInternalMessage(QNetMessageReader reader);
+
+        public class CachedQNetMessagePointer
         {
             public QNetMessageAttribute Attribute;
             public MethodInfo Method;
+            public byte Index;
+        }
+
+        public class QNetMessagePointer
+        {
+            public QNetMessageAttribute Attribute;
+            public BehaviourInternalMessage Delegate;
             public byte Index;
         }
 
@@ -74,67 +87,105 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     List of all registered message pointers.
         /// </summary>
         public List<QNetMessagePointer> MessagePointers { get; } = new List<QNetMessagePointer>();
+        private bool _messagePointersCollected;
 
         /// <summary>
         ///     OnNetworkSpawned method is called when the network on local machine has been activated.
         ///     Called instantly on object initialize if network is already active.
         /// </summary>
-        private JEMSmartMethod _onNetworkSpawned;
+        private JEMSmartMethodS _onNetworkSpawned;
 
+        /// <summary>
+        ///     OnLateNetworkSpawned method is called after initialize OnDeserializeServerState call.
+        ///     If <see cref="QNetManager.IsServerActive"/> is true, this method will be always called right after the OnNetworkSpawned
+        ///      cuz server will never de-serialize state of local objects.
+        /// </summary>
+        private JEMSmartMethodS _onLateNetworkSpawned;
+
+        /// <summary>
+        ///     OnPooled method is called when this QNetObject is being pooled by local pooling system.
+        ///     Entities are pooled to reduce time on destroying and spawning new entity of same prefab.
+        /// </summary>
+        private JEMSmartMethodS _onPooled;
+
+        /// <summary>
+        ///     OnNetworkActiveChange is called when the <see cref="QNetIdentity.IsNetworkActive"/> changes.
+        ///     Always called by <see cref="QNetIdentity.Spawn"/> to activate or <see cref="QNetIdentity.Pool"/> to de-activate the object.
+        /// </summary>
+        private JEMSmartMethodS<bool> _onNetworkActiveChange;
+    
         /// <inheritdoc />
         protected override void LoadMethods()
         {
             // Invoke base method.
             base.LoadMethods();
 
+            Profiler.BeginSample("QNetBehaviour.LoadMethods");
+
             // Collect local methods.
-            _onNetworkSpawned = new JEMSmartMethod(this, "OnNetworkSpawned");
+            _onNetworkSpawned = new JEMSmartMethodS(this, "OnNetworkSpawned");
+            _onLateNetworkSpawned = new JEMSmartMethodS(this, "OnLateNetworkSpawned");
+            _onPooled = new JEMSmartMethodS(this, "OnPooled");
+            _onNetworkActiveChange = new JEMSmartMethodS<bool>(this, "OnNetworkActiveChange");
+
+            // Collect network methods.
+            LoadNetworkMethods();
 
             // Collect simulation methods.
             LoadSimulationMethods();
 
-            // Collect network methods.
-            LoadNetworkMethods();
+            Profiler.EndSample();
         }
 
         private void LoadNetworkMethods()
         {
-            var allMethods = JEMSmartMethod.ExtractAllMethods(GetType());
-            for (var index = 0; index < allMethods.Count; index++)
+            for (var index = 0; index < CachedMessagePointers.Count; index++)
             {
-                var m = allMethods[index];
-                var attributes = m.GetCustomAttributes(typeof(QNetMessageAttribute), false);
-                if (attributes.Length <= 0)
-                    continue;
-
-                var attribute = (QNetMessageAttribute) attributes[0];
-                var newPointer = new QNetMessagePointer
+                var p = CachedMessagePointers[index];
+                if (p.Item1 == GetType())
                 {
-                    Attribute = attribute,
-                    Method = m,
-                    Index = (byte) MessagePointers.Count
-                };
+                    for (var index1 = 0; index1 < p.Item2.Count; index1++)
+                    {
+                        var i = p.Item2[index1];
+                        try
+                        {
+                            var @delegate = (BehaviourInternalMessage)Delegate.CreateDelegate(typeof(BehaviourInternalMessage), this, i.Method);
+                            MessagePointers.Add(new QNetMessagePointer
+                            {
+                                Attribute = i.Attribute,
+                                Delegate = @delegate,
+                                Index = i.Index
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            JEMLogger.LogException(e, $"Failed to register network method of name {GetType().FullName}.{i.Method.Name}", "GAME");
+                            throw;
+                        }
+                    }
 
-                MessagePointers.Add(newPointer);
+                    _messagePointersCollected = true;
+                    return;
+                }
             }
 
-#if DEBUG
-            QNetManager.PrintLogMsc($"We found {MessagePointers.Count} message pointers " +
-                                    $"in QNetBehaviour based component of type {GetType().Name}", this);
-#endif
+            throw new NullReferenceException($"Failed to find list of network message pointers for {GetType().Name} type.");
         }
 
         /// <summary>
         ///     Gets a message pointer by method name.
         /// </summary>
         /// <exception cref="ArgumentNullException"/>
-        internal QNetMessagePointer GetMessagePointer([NotNull] string methodName)
+        public QNetMessagePointer GetMessagePointer([NotNull] string methodName)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            if (!_messagePointersCollected)
+                throw new InvalidOperationException($"You are trying to collect message pointer of name '{methodName}' while list of pointer has been not collected yet.");
+
             for (var index = 0; index < MessagePointers.Count; index++)
             {
                 var pointer = MessagePointers[index];
-                if (pointer.Method.Name == methodName)
+                if (pointer.Delegate.Method.Name == methodName)
                     return pointer;
             }
 
@@ -145,8 +196,11 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     Gets a message pointer by index.
         /// </summary>
         /// <exception cref="ArgumentNullException"/>
-        internal QNetMessagePointer GetMessagePointer(byte methodIndex)
+        public QNetMessagePointer GetMessagePointer(byte methodIndex)
         {
+            if (!_messagePointersCollected)
+                throw new InvalidOperationException($"You are trying to collect message pointer of index '{methodIndex}' while list of pointer has been not collected yet.");
+
             for (var index = 0; index < MessagePointers.Count; index++)
             {
                 var pointer = MessagePointers[index];
@@ -162,83 +216,16 @@ namespace JEM.QNet.UnityEngine.Objects
         /// </summary>
         internal void ExecuteMessage(byte messageIndex, QNetMessageReader reader)
         { 
+            // Profiler.BeginSample($"QNetBehaviour.ExecuteMessage {GetType().Name}.({messageIndex})");
+
             var pointer = GetMessagePointer(messageIndex);
             if (pointer == null)
                 throw new NullReferenceException($"There is no message pointer registered at index {messageIndex}");
 
-            // Check if method is generic.
-            MethodInfo method = pointer.Method;
-            if (method.IsGenericMethod)
-            {
-                // Read generic types.
-                var genericArguments = method.GetGenericArguments();
-                var genericTypes = new Type[genericArguments.Length];
-                for (var index = 0; index < genericArguments.Length; index++)
-                {
-                    var typeIndex = reader.ReadByte();
-                    if (GetSerializedMessageType(typeIndex, out var genericType))
-                    {
-                        genericTypes[index] = genericType;
-                    }
-                    else throw new NullReferenceException($"Method execute {method.Name} failed because of generic method error. " +
-                                                          $"Unable to find serialized message type of index {typeIndex}.");
-                }
-
-                method = method.MakeGenericMethod(genericTypes);
-            }
-
-            // Read message parameters.
-            var parameters = method.GetParameters();
-            object[] args = new object[parameters.Length];
-            for (var index = 0; index < parameters.Length; index++)
-            {
-                var param = parameters[index];
-                var t = param.ParameterType;
-                if (t == typeof(int))
-                    args[index] = reader.ReadInt32();
-                else if (t == typeof(uint))
-                    args[index] = reader.ReadUInt32();
-                else if (t == typeof(short))
-                    args[index] = reader.ReadInt16();
-                else if (t == typeof(ushort))
-                    args[index] = reader.ReadUInt16();
-                else if (t == typeof(long))
-                    args[index] = reader.ReadInt64();
-                else if (t == typeof(ulong))
-                    args[index] = reader.ReadUInt64();
-                else if (t == typeof(float))
-                    args[index] = reader.ReadSingle();
-                else if (t == typeof(double))
-                    args[index] = reader.ReadDouble();
-                else if (t == typeof(byte))
-                    args[index] = reader.ReadByte();
-                else if (t == typeof(string))
-                    args[index] = reader.ReadString();
-                else if (t == typeof(bool))
-                    args[index] = reader.ReadBool();
-                else if (t == typeof(byte[]))
-                    args[index] = reader.ReadBytes();
-                else if (t.IsSubclassOf(typeof(QNetSerializedMessage)))
-                    args[index] = reader.ReadMessage(t);
-                // Special types.
-                else if (t == typeof(Vector3))
-                    args[index] = reader.ReadVector3();
-                else if (t == typeof(Vector2))
-                    args[index] = reader.ReadVector2();
-                else if (t == typeof(Vector4))
-                    args[index] = reader.ReadVector4();
-                else if (t == typeof(Color))
-                    args[index] = reader.ReadColor4();
-                else
-                {
-                    throw new NotSupportedException($"Not supported message parameter type {t.Name}.");
-                }
-            }
-
             try
             {
                 // Invoke.
-                method.Invoke(this, args);
+                pointer.Delegate.Invoke(reader);
             }
             catch (Exception e)
             {
@@ -247,8 +234,139 @@ namespace JEM.QNet.UnityEngine.Objects
 
                 QNetManager.PrintLogException(e);
             }
+
+            // Profiler.EndSample();
         }
 
-        internal void CallOnNetworkSpawned() => _onNetworkSpawned.Invoke();       
+        internal void CallOnNetworkSpawned() => _onNetworkSpawned.Invoke();
+        internal void CallOnLateNetworkSpawned() => _onLateNetworkSpawned.Invoke();
+        internal void CallOnPooled() => _onPooled.Invoke();
+        internal void CallOnNetworkActiveChange(bool activeState) => _onNetworkActiveChange.Invoke(activeState);
+
+        /// <summary>
+        ///     Search for all <see cref="QNetBehaviour"/> based types and extract all methods from them.
+        /// </summary>
+        internal static void PrepareAllMethodsTypes()
+        {
+            Profiler.BeginSample("QNetBehaviour.PrepareAllMethodsTypes");
+
+            int i = 0;
+            int t = 0;
+
+            var baseType = typeof(QNetBehaviour);
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (var index1 = 0; index1 < assemblies.Length; index1++)
+            {
+                var assembly = assemblies[index1];
+                var allTypes = assembly.GetTypes();
+                for (var index2 = 0; index2 < allTypes.Length; index2++)
+                {
+                    var type = allTypes[index2];
+                    if (!type.IsClass && !(type.IsValueType && !type.IsPrimitive))
+                    {
+                        continue;
+                    }
+
+                    if (!baseType.IsAssignableFrom(type)) continue;
+                    i += JEMSmartMethod.ExtractAllMethods(type).Count;
+                    t++;
+                }
+            }
+
+            Profiler.EndSample();
+
+#if DEBUG
+            QNetManager.PrintLogMsc($"Total of {i} methods extracted from {t} types.");
+#endif
+        }
+
+        internal static void LoadAllNetworkMethods()
+        {
+            Profiler.BeginSample("QNetBehaviour.LoadNetworkMethods");
+
+            int t = 0;
+            int i = 0;
+
+            var baseType = typeof(QNetBehaviour);
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (var index1 = 0; index1 < assemblies.Length; index1++)
+            {
+                var assembly = assemblies[index1];
+                var allTypes = assembly.GetTypes();
+                for (var index2 = 0; index2 < allTypes.Length; index2++)
+                {
+                    var type = allTypes[index2];
+                    if (!type.IsClass && !(type.IsValueType && !type.IsPrimitive))
+                    {
+                        continue;
+                    }
+
+                    if (!baseType.IsAssignableFrom(type)) continue;
+                    i += LoadNetworkMethods(type);
+                    t++;
+                }
+            }
+
+            Profiler.EndSample();
+
+#if DEBUG
+            QNetManager.PrintLogMsc($"Total of {t} types has extracted {i} network types.");
+#endif
+
+        }
+
+        private static int LoadNetworkMethods(Type type)
+        {
+            Profiler.BeginSample("QNetBehaviour.LoadNetworkMethodsType");
+
+            Profiler.BeginSample("QNetBehaviour.LoadNetworkMethodsType extract all methods");
+            var allMethods = JEMSmartMethod.ExtractAllMethods(type);
+            Profiler.EndSample();
+
+            var messagePointers = new List<CachedQNetMessagePointer>();
+
+            for (var index = 0; index < allMethods.Count; index++)
+            {
+                var m = allMethods[index];
+                var attributes = m.GetCustomAttributes(typeof(QNetMessageAttribute), false);
+                if (attributes.Length <= 0)
+                    continue;
+
+                var attribute = (QNetMessageAttribute)attributes[0];
+                var newPointer = new CachedQNetMessagePointer
+                {
+                    Attribute = attribute,
+                    Method = m,
+                    Index = (byte) messagePointers.Count
+                };
+
+                messagePointers.Add(newPointer);
+            }
+
+            CachedMessagePointers.Add(new Tuple<Type, List<CachedQNetMessagePointer>>(type, messagePointers));
+
+            Profiler.EndSample();
+
+#if DEBUG && DEEP_DEBUG
+            if (messagePointers.Count == 0)
+                QNetManager.PrintLogMsc($"No messages pointers found in class of type {type.Name}.");
+            else
+            {
+                var sb = new StringBuilder();
+                for (var index = 0; index < messagePointers.Count; index++)
+                {
+                    var msg = messagePointers[index];
+                    sb.AppendLine($"\t{msg.Method.Name}: {msg.Index}");
+                }
+
+                QNetManager.PrintLogMsc($"{messagePointers.Count} message pointers found in " +
+                                        $"QNetBehaviour based component of type {type.Name}\n{sb}");
+            }
+#endif
+
+            return messagePointers.Count;
+        }
+
+        private static List<Tuple<Type, List<CachedQNetMessagePointer>>> CachedMessagePointers { get; } = new List<Tuple<Type, List<CachedQNetMessagePointer>>>();
     }
 }

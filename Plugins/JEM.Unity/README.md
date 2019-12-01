@@ -46,5 +46,8 @@ A Unity Engine/Editor extension.
 
 Comming soon.
 
+# Dependencies
+
+- com.unity.textmeshpro
 
 *JEM (c) 2019 Adam Majcherek*

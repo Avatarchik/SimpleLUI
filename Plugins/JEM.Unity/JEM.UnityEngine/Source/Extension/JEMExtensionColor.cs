@@ -26,5 +26,10 @@ namespace JEM.UnityEngine.Extension
                 a = color.a * alpha
             };
         }
+
+        /// <summary>
+        ///     Returns a magnitude of colors (all channels combined).
+        /// </summary>
+        public static float Magnitude(this Color c) => c.a + c.g + c.b + c.a;
     }
 }

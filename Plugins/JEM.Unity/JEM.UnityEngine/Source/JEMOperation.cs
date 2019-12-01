@@ -13,7 +13,7 @@ using UnityEngine;
 namespace JEM.UnityEngine
 {
     /// <summary>
-    ///     Set of utility methods: Operations.
+    ///     Set of utility methods: Coroutine Operations.
     /// </summary>
     public static class JEMOperation
     {
@@ -25,9 +25,7 @@ namespace JEM.UnityEngine
         public static void InvokeAction(float sleep, [NotNull] Action targetAction)
         {
             if (targetAction == null) throw new ArgumentNullException(nameof(targetAction));
-
-            RegenerateLocalScript();
-            _script.StartCoroutine(_script.InternalInvokeAction(sleep, targetAction));
+            Script.StartCoroutine(Script.InternalInvokeAction(sleep, targetAction));
         }
 
         /// <summary>
@@ -38,9 +36,7 @@ namespace JEM.UnityEngine
         public static Coroutine StartCoroutine([NotNull] IEnumerator routine)
         {
             if (routine == null) throw new ArgumentNullException(nameof(routine));
-
-            RegenerateLocalScript();
-            return _script.StartCoroutine(routine);
+            return Script.StartCoroutine(routine);
         }
 
         /// <summary>
@@ -51,23 +47,18 @@ namespace JEM.UnityEngine
         public static void StopCoroutine([NotNull] Coroutine coroutine)
         {
             if (coroutine == null) throw new ArgumentNullException(nameof(coroutine));
-
-            RegenerateLocalScript();
-            _script.StopCoroutine(coroutine);
+            Script.StopCoroutine(coroutine);
         }
 
-        internal static void RegenerateLocalScript()
+        private static JEMOperationScript Script
         {
-            if (_script != null)
-                return;
+            get
+            {
+                if (_script == null)
+                    _script = JEMOperationScript.GetScript();
 
-            var obj = new GameObject(nameof(JEMOperationScript));
-            global::UnityEngine.Object.DontDestroyOnLoad(obj);
-            _script = obj.AddComponent<JEMOperationScript>();
-
-            if (_script == null)
-                throw new NullReferenceException(
-                    $"System was unable to regenerate local script of {nameof(JEMObject)}@{nameof(JEMOperationScript)}");
+                return _script;
+            }
         }
 
         private static JEMOperationScript _script;

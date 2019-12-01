@@ -8,7 +8,6 @@ using JEM.UnityEngine.Extension.Internal;
 using JetBrains.Annotations;
 using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace JEM.UnityEngine.Extension
 {
@@ -24,8 +23,7 @@ namespace JEM.UnityEngine.Extension
         public static void FadedOut([NotNull] this AudioSource audioSource, float speed = 15f, Action onComplete = null)
         {
             if (audioSource == null) throw new ArgumentNullException(nameof(audioSource));
-            RegenerateLocalScript();
-            _script.StartCoroutine(_script.InternalFadeOut(audioSource, speed, onComplete));
+            Script.StartCoroutine(Script.InternalFadeOut(audioSource, speed, onComplete));
         }
 
         /// <summary>
@@ -35,22 +33,18 @@ namespace JEM.UnityEngine.Extension
         public static void FadedIn([NotNull] this AudioSource audioSource, float speed = 15f, Action onComplete = null)
         {
             if (audioSource == null) throw new ArgumentNullException(nameof(audioSource));
-            RegenerateLocalScript();
-            _script.StartCoroutine(_script.InternalFadeIn(audioSource, speed, onComplete));
+            Script.StartCoroutine(Script.InternalFadeIn(audioSource, speed, onComplete));
         }
 
-        internal static void RegenerateLocalScript()
+        private static JEMExtensionAudioSourceScript Script
         {
-            if (_script != null)
-                return;
+            get
+            {
+                if (_script == null)
+                    _script = JEMExtensionAudioSourceScript.GetScript();
 
-            var obj = new GameObject(nameof(JEMExtensionAudioSourceScript));
-            Object.DontDestroyOnLoad(obj);
-            _script = obj.AddComponent<JEMExtensionAudioSourceScript>();
-
-            if (_script == null)
-                throw new NullReferenceException(
-                    $"System was unable to regenerate local script of {nameof(JEMExtensionAudioSource)}@{nameof(JEMExtensionAudioSourceScript)}");
+                return _script;
+            }
         }
 
         private static JEMExtensionAudioSourceScript _script;

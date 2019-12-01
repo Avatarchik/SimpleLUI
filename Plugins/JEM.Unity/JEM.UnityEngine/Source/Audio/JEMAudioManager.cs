@@ -4,15 +4,16 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using JEM.Core.Common;
-using JEM.Core.Debugging;
+// TODO: JEMAudioManager refactor needed.
+
+using JEM.UnityEngine.Audio.Components;
 using JEM.UnityEngine.Audio.Interface;
 using JEM.UnityEngine.Handlers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityEngine.Audio;
 
 namespace JEM.UnityEngine.Audio
 {
@@ -20,30 +21,27 @@ namespace JEM.UnityEngine.Audio
     /// <summary>
     ///     A simple audio manager system.
     /// </summary>
-    [AddComponentMenu("JEM/Systems/JEM Audio Manager")]
-    [DisallowMultipleComponent]
-    public class JEMAudioManager : MonoBehaviour
+    [AddComponentMenu("JEM/Systems/JEM Audio Manager"), DisallowMultipleComponent]
+    public class JEMAudioManager : JEMSingletonBehaviour<JEMAudioManager>
     {
-        private class LocalSourceInstance
-        {
-            public AudioSource Source;
-            public JEMAudioSourceType Type;
-            public float BaseVolume;
-        }
-
         [Header("References Settings")]
         public JEMAudioInterfaceDatabase AudioInterfaceDatabase;
 
-        private void Awake()
-        {
-            if (Instance != null)
-            {
-                // Duplicate detested.
-                gameObject.SetActive(false);
-                return;
-            }
+        /// <summary>
+        ///     Default <see cref="AudioMixerGroup"/> used when there is not group defined by user.
+        /// </summary>
+        [Header("Default Groups")]
+        public AudioMixerGroup DefaultGroup;
 
-            Instance = this;
+        /// <summary>
+        ///     Default <see cref="AudioMixerGroup"/> used for UI sfx when there is not group defined by user.
+        /// </summary>
+        public AudioMixerGroup DefaultUIGroup;
+
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // Ignore
         }
 
         /// <summary>
@@ -56,9 +54,10 @@ namespace JEM.UnityEngine.Audio
         public static void CollectAndDisableLevelAudioSources()
         {
             ReleaseCollection();
-            CollectedAudioSources.AddRange(Object.FindObjectsOfType<AudioSource>());
-            foreach (var c in CollectedAudioSources)
+            CollectedAudioSources.AddRange(FindObjectsOfType<AudioSource>());
+            for (var index = 0; index < CollectedAudioSources.Count; index++)
             {
+                var c = CollectedAudioSources[index];
                 c.enabled = false;
             }
         }
@@ -68,8 +67,9 @@ namespace JEM.UnityEngine.Audio
         /// </summary>
         public static void ReleaseCollection()
         {
-            foreach (var s in CollectedAudioSources)
+            for (var index = 0; index < CollectedAudioSources.Count; index++)
             {
+                var s = CollectedAudioSources[index];
                 if (s == null) continue;
                 s.enabled = true;
             }
@@ -80,69 +80,41 @@ namespace JEM.UnityEngine.Audio
         /// <summary>
         ///     It attempts to fix all audio listeners by destroying all except the one that is currently on Camera.main.
         /// </summary>
+        /// <remarks>
+        ///     This is sad that we just can't disable those <see cref="AudioListener"/> that are don't currently needed :(
+        /// </remarks>
         public static void FixAudioListeners()
         {
-            var audioListeners = Object.FindObjectsOfType<AudioListener>();
+            var audioListeners = FindObjectsOfType<AudioListener>();
             var mainListener = JEMCameraHandler.AudioListenerReference;
-            foreach (var a in audioListeners)
+            for (var index = 0; index < audioListeners.Length; index++)
             {
+                var a = audioListeners[index];
                 if (a == mainListener) continue;
-                Object.Destroy(a);
+                Destroy(a);
             }
         }
 
         /// <summary>
         ///     Updates all currently registered game audio sources.
         /// </summary>
-        public static void UpdateAudioSources(JEMKeyBasedDatabase settings = null)
+        public static void UpdateAudioSources()
         {
-            // update custom audio sources
-            foreach (var gameAudioSource in JEMCustomAudioSource.GameAudioSources)
-                gameAudioSource.UpdateAudioSource(settings);
-
-            // update local audio sources
-            for (var index = 0; index < AudioSources.Count; index++)
-            {
-                var localSource = AudioSources[index];
-                if (localSource == null || localSource.Source == null) // check if objects are missing and remove
-                {
-                    AudioSources.RemoveAt(index);
-                    index--;
-                    continue;
-                }
-
-                if (localSource.Source.isPlaying)
-                {
-                    localSource.Source.volume = GetAudioSourceVolume(localSource.BaseVolume, localSource.Type);
-                }
-            }
+            // Update JEMAudioSources
+            foreach (var gameAudioSource in JEMAudioSource.GameAudioSources)
+                gameAudioSource.UpdateAudioVolume();
         }
 
         /// <summary>
         ///     Gets volume of audio source of given type.
         /// </summary>
-        public static float GetAudioSourceVolume(float baseVolume, JEMAudioSourceType type, JEMKeyBasedDatabase settings = null)
+        [Obsolete]
+        public static float GetAudioSourceVolume(float baseVolume, JEMAudioSourceType type)
         {
-            var db = settings ?? JEMUnity.GetDatabase();
-            if (db == null)
+            if (OnMixAudioVolume == null)
                 return baseVolume;
 
-            var mixedMaster = baseVolume * db.ResolveFromSystem<float>("audio_master");
-            switch (type)
-            {
-                case JEMAudioSourceType.Unknown:
-                    return mixedMaster;
-                case JEMAudioSourceType.Interface:
-                    return mixedMaster * db.ResolveFromSystem<float>("audio_interface");
-                case JEMAudioSourceType.Effects:
-                    return mixedMaster * db.ResolveFromSystem<float>("audio_effects");
-                case JEMAudioSourceType.Music:
-                    return mixedMaster * db.ResolveFromSystem<float>("audio_music");
-                case JEMAudioSourceType.Ambient:
-                    return mixedMaster * db.ResolveFromSystem<float>("audio_ambient");
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            return OnMixAudioVolume(type, baseVolume);
         }
 
         /// <summary>
@@ -161,9 +133,9 @@ namespace JEM.UnityEngine.Audio
         /// </summary>
         public static JEMAudioInstance SpawnHard(JEMAudioData data)
         {
-            if (data.Clip == null) return new JEMAudioInstance(null, data);
+            if (data.Clip == null) throw new ArgumentNullException(nameof(data.Clip), "Clip of target JEMAudioData was not set.");
             var instance = CreateAudioInstance(data);
-            instance.Data.OnSpawned?.Invoke(instance);
+            instance.Data.CallOnSpawned(instance);
             return instance;
         }
 
@@ -171,143 +143,133 @@ namespace JEM.UnityEngine.Audio
         {
             var instance = CreateAudioInstance(data);
             yield return instance;
-            instance.Data.OnSpawned?.Invoke(instance);
-        }
-
-        private static JEMAudioInstance CreateAudioInstance(JEMAudioData data)
-        {
-            LocalSourceInstance local;
-            if (data.AutoDestroy <= 0.005f)
-                local = GetOrCreateAudioSource();
-            else
-            {
-                local = CreateNewAudioSource();
-                JEMOperation.InvokeAction(data.AutoDestroy, () =>
-                {
-                    var s = local?.Source;
-                    if (s != null && s.gameObject != null) JEMObject.LiteDestroy(s.gameObject);
-                });
-            }
-
-            local.BaseVolume = data.Volume;
-            local.Type = data.Type;
-            var source = local.Source;
-            if (data.Is2D)
-            {
-                if (data.Point == Vector3.zero)
-                {
-                    source.transform.SetParent(JEMCameraHandler.AudioListenerReference.transform);
-                }
-            }
-
-            source.transform.localPosition = data.Point;
-            source.clip = data.Clip;
-            source.loop = false;
-            source.spatialBlend = data.Is2D ? 0f : 1f;
-            source.volume = GetAudioSourceVolume(data.Volume, data.Type);
-            source.pitch = data.Pitch;
-            source.minDistance = data.MinDistance;
-            source.maxDistance = data.MaxDistance;
-            source.enabled = true;
-            source.Play();
-            return new JEMAudioInstance(source, data);
+            instance.Data.CallOnSpawned(instance);
         }
 
         /// <summary>
-        ///     Gets free or creates new audio source.
+        ///     Creates new <see cref="JEMAudioInstance"/> from given <see cref="JEMAudioData"/>.
         /// </summary>
-        private static LocalSourceInstance GetOrCreateAudioSource()
+        private static JEMAudioInstance CreateAudioInstance(JEMAudioData data)
         {
-            LocalSourceInstance instance = null;
-            for (var index = 0; index < AudioSources.Count; index++)
-            {
-                var audio = AudioSources[index];
-                if (audio == null || audio.Source == null)
-                {
-                    AudioSources.RemoveAt(index);
-                    index--;
-                    continue;
-                }
+            // Resolve item.
+            var item = Spawned.ResolveItem();
+            if (!(item is JEMAudioInstance instance))
+                throw new InvalidOperationException();
 
-                if (audio.Source.clip != null && audio.Source.isPlaying) continue;
-                instance = audio;
-                break;
+            // Get AudioSource reference.
+            var source = instance.Instance.AudioSource;
+
+            // Set transform.
+            if (data.Mode == JEMAudioSpaceMode.UserInterface && JEMCameraHandler.AudioListenerReference != null)
+            {
+                // When using UserInterface mode, plug audio in to active camera.
+                source.transform.SetParent(JEMCameraHandler.AudioListenerReference.transform);
+                source.transform.localPosition = Vector3.zero;
+            }
+            else
+            {
+                // Apply world audio position
+                source.transform.localPosition = data.Point;
             }
 
-            if (instance == null)
+            // Apply base audio info.
+            source.clip = data.Clip;
+            source.loop = false;
+
+            // Apply mixer group
+            if (data.MixerGroup == null)
             {
-                instance = CreateNewAudioSource();
-                AudioSources.Add(instance);
+                switch (data.Mode)
+                {
+                    case JEMAudioSpaceMode.ThreeDimensional:
+                    case JEMAudioSpaceMode.TwoDimensional:
+                        source.outputAudioMixerGroup = Instance.DefaultGroup;
+                        break;
+                    case JEMAudioSpaceMode.UserInterface:
+                        source.outputAudioMixerGroup = Instance.DefaultUIGroup;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            else source.outputAudioMixerGroup = data.MixerGroup;
+
+            // Apply mode.
+            switch (data.Mode)
+            {
+                case JEMAudioSpaceMode.ThreeDimensional:
+                    source.spatialBlend = 1f;
+                    source.rolloffMode = AudioRolloffMode.Logarithmic;
+                    break;
+                case JEMAudioSpaceMode.TwoDimensional:
+                    source.spatialBlend = 1f;
+                    source.rolloffMode = AudioRolloffMode.Linear;
+                    break;
+                case JEMAudioSpaceMode.UserInterface:
+                    source.spatialBlend = 0f;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            // Apply pitch
+            source.pitch = data.Pitch;
+
+            // Apply min and max distance
+            source.minDistance = data.MinDistance;
+            source.maxDistance = data.MaxDistance;
+
+            // Enable and play audio.
+            source.enabled = true;
+            source.Play();
+
+            // Apply item data
+            instance.Data = data;
+
+            // Apply JEMAudioSource info
+            instance.Instance.AudioSourceType = data.Type;
+            instance.Instance.BaseVolume = data.Volume;
+
+            // Update audio volume
+            instance.Instance.UpdateAudioVolume();
+
+            if (data.AutoDestroy >= 0.005f)
+            { 
+                // Run autoDestroy operation
+                JEMOperation.InvokeAction(data.AutoDestroy, () =>
+                {
+                    if (item.IsValid() && source != null && source.gameObject != null)
+                        Spawned.DestroyItem(item);
+                });
+            }
+            else
+            {
+                // Hook onStop handler to know when this AudioInstance should be pooled
+                instance.Instance.RegisterStopEvent(() => Spawned.PoolItem(item));
             }
 
             return instance;
         }
 
         /// <summary>
-        ///     Creates new audio source.
+        ///     Called by the <see cref="GetAudioSourceVolume"/> to resolve audio source's volume for given <see cref="JEMAudioSourceType"/>.
         /// </summary>
-        private static LocalSourceInstance CreateNewAudioSource()
-        {
-            var obj = new GameObject("GameAudioSource");
-            if (_parentGameObject == null)
-            {
-                _parentGameObject = new GameObject("GameAudioSources (Root)");
-            }
-
-            obj.transform.SetParent(_parentGameObject.transform);
-            var instance = obj.AddComponent<AudioSource>();
-            instance.loop = false;
-            return new LocalSourceInstance {Source = instance, BaseVolume = 1f, Type = JEMAudioSourceType.Unknown};
-        }
+        [Obsolete]
+        public static event Func<JEMAudioSourceType, float, float> OnMixAudioVolume; 
 
         /// <summary>
-        ///     Registers change events of <see cref="JEMUnity.Database"/> so if any of the configuration objects related with audio changes,
-        ///     all the audio sources will be automatically updated.
+        ///     Returns a count of all audio sources spawned by <see cref="JEMAudioManager"/> (a total value of items in pool).
         /// </summary>
-        public static void RegisterDatabaseChange()
-        {
-            void TryToReload()
-            {
-                if (_wasReloaded)
-                    return;
-
-                _wasReloaded = true;
-                UpdateAudioSources();
-
-                JEMOperation.InvokeAction(0.1f, () => { _wasReloaded = false; });
-            }
-
-            // Get the database.
-            var database = JEMUnity.GetDatabase();
-            if (database == null)
-            {
-                JEMLogger.LogWarning("Failed to register the database change for JEMAudioManager. Unable to load Database.", "JEM");
-                return;
-            }
-
-            // Register the change events.
-            JEMUnity.Database.RegisterObjectChange("audio_master_volume", obj => { TryToReload(); });
-            JEMUnity.Database.RegisterObjectChange("audio_interface_volume", obj => { TryToReload(); });
-            JEMUnity.Database.RegisterObjectChange("audio_effects_volume", obj => { TryToReload(); });
-            JEMUnity.Database.RegisterObjectChange("audio_music_volume", obj => { TryToReload(); });
-            JEMUnity.Database.RegisterObjectChange("audio_ambient_volume", obj => { TryToReload(); });
-        }
-
-        private static bool _wasReloaded;
-
-        private static GameObject _parentGameObject;
-        private static List<LocalSourceInstance> AudioSources { get; } = new List<LocalSourceInstance>();
-        private static List<AudioSource> CollectedAudioSources { get; } = new List<AudioSource>();
-        internal static JEMAudioManager Instance { get; private set; }
-
-        /// <summary>
-        ///     Returns a count of all audio sources spawned by <see cref="JEMAudioManager"/>.
-        /// </summary>
-        public static int AudioSourcesCount => AudioSources.Count;
+        public static int AudioSourcesCount => Spawned.Pool.Count;
 
         /// <summary>
         ///     Returns a count of collected audio sources via <see cref="CollectAndDisableLevelAudioSources"/>.
         /// </summary>
         public static int CollectedAudioSourcesCount => CollectedAudioSources.Count;
+
+        private static bool _wasReloaded;
+        private static readonly JEMAudioPool Spawned = new JEMAudioPool();
+
+        private static List<AudioSource> CollectedAudioSources { get; } = new List<AudioSource>();
     }
 }

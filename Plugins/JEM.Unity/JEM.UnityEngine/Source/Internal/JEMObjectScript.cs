@@ -12,9 +12,14 @@ using Object = UnityEngine.Object;
 namespace JEM.UnityEngine.Internal
 {
     /// <inheritdoc />
-    /// <summary />
-    internal class JEMObjectScript : MonoBehaviour
+    internal class JEMObjectScript : JEMRegenerableScript<JEMObjectScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
         /// <summary/>
         internal IEnumerator InternalLiteDestroy(Object obj, Action onDone)
         {

@@ -13,22 +13,23 @@ using UnityEngine;
 
 namespace JEM.Test.Unity.QNet
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IObjectInputSample" />
     /// <summary>
     ///     A example player input.
     /// </summary>
-    internal class TestInput : ObjectInputSample
+    internal struct TestInput : IObjectInputSample
     {
-        internal bool Forward;
-        internal bool Backward;
-        internal bool Left;
-        internal bool Right;
+        public uint ClientFrame { get; set; }
+
+        internal bool Forward { get; set; }
+        internal bool Backward { get; set; }
+        internal bool Left { get; set; }
+        internal bool Right { get; set; }
 
         /// <inheritdoc />
-        public override void Serialize(QNetMessageWriter writer)
+        public void Serialize(QNetMessageWriter writer)
         {
-            // Invoke base method to serialize frame.
-            base.Serialize(writer);
+            writer.WriteUInt32(ClientFrame);
 
             writer.WriteBool(Forward);
             writer.WriteBool(Backward);
@@ -37,10 +38,9 @@ namespace JEM.Test.Unity.QNet
         }
 
         /// <inheritdoc />
-        public override void DeSerialize(QNetMessageReader reader)
+        public void DeSerialize(QNetMessageReader reader)
         {
-            // Invoke base method to de-serialize frame.
-            base.DeSerialize(reader);
+            ClientFrame = reader.ReadUInt32();
 
             Forward = reader.ReadBool();
             Backward = reader.ReadBool();
@@ -49,32 +49,32 @@ namespace JEM.Test.Unity.QNet
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IObjectSimulationResult" />
     /// <summary>
     ///     A example results of player simulation.
     /// </summary>
-    internal class TestResult : ObjectSimulationResult
+    internal struct TestResult : IObjectSimulationResult
     {
-        internal Vector3 Position { get; set; } = Vector3.zero;
+        internal Vector3 Position { get; set; }
 
         /// <inheritdoc />
-        public override void Serialize(QNetMessageWriter writer)
+        public void Serialize(QNetMessageWriter writer)
         {
             writer.WriteVector3(Position);
         }
 
         /// <inheritdoc />
-        public override void DeSerialize(QNetMessageReader reader)
+        public void DeSerialize(QNetMessageReader reader)
         {
             Position = reader.ReadVector3();
         }
 
         /// <inheritdoc />
-        public override bool Compare(ObjectSimulationResult result, out float distance)
+        public bool Compare(IObjectSimulationResult result, out float distance)
         {
             if (result == null) throw new ArgumentNullException(nameof(result));
             if (!(result is TestResult testResult))
-                throw new InvalidOperationException($"Failed to convert {nameof(ObjectSimulationResult)} " +
+                throw new InvalidOperationException($"Failed to convert {nameof(IObjectSimulationResult)} " +
                                                     $"in to {nameof(TestResult)} type.");
 
             distance = Vector3.Distance(Position, testResult.Position);
@@ -101,13 +101,18 @@ namespace JEM.Test.Unity.QNet
         private void OnNetworkSpawned()
         {
             // Test runtime component add.
-            if (IsServer)
+            if (IsServer && !Identity.WasPooled)
             {
                 Test = gameObject.AddComponent<TestAnotherBehaviour>();
             }
             else
             {
                 Test = gameObject.GetComponent<TestAnotherBehaviour>();
+            }
+
+            if (IsOwner)
+            {
+                ActivePlayer = this;
             }
         }
 
@@ -128,7 +133,7 @@ namespace JEM.Test.Unity.QNet
             Right = Input.GetKey(KeyCode.D);
         }
 
-        private void OnSampleInput(out TestInput inputSample)
+        private void OnSampleInput(out IObjectInputSample inputSample)
         {
             // Collect your input.
             inputSample = new TestInput
@@ -140,21 +145,29 @@ namespace JEM.Test.Unity.QNet
             };
         }
 
-        private void OnResetState(TestResult results)
+        private void OnResetState(IObjectSimulationResult results)
         {
-            // Reset object state!
-            transform.position = results.Position;
+            if (results is TestResult myResults)
+            {
+                // Reset object state!
+                transform.position = myResults.Position;
+            }
         }
 
-        private TestResult OnSimulateWithResult(TestInput inputSample)
+        private IObjectSimulationResult OnSimulateWithResult(IObjectInputSample inputSample)
         {
-            var horizontal = inputSample.Left ? 1f : inputSample.Right ? -1f : 0f;
-            var vertical = inputSample.Forward ? 1f : inputSample.Backward ? -1f : 0f;
+            if (inputSample is TestInput myInput)
+            {
+                var horizontal = myInput.Left ? 1f : myInput.Right ? -1f : 0f;
+                var vertical = myInput.Forward ? 1f : myInput.Backward ? -1f : 0f;
 
-            transform.Translate(new Vector3(horizontal, 0f, vertical) * Time.fixedDeltaTime * SpeedMod);
+                transform.Translate(new Vector3(horizontal, 0f, vertical) * Time.fixedDeltaTime * SpeedMod);
+            }
 
             // Simulate your object!
             return new TestResult {Position = transform.position};
         }
+
+        public static TestPlayer ActivePlayer { get; private set; }
     }
 }

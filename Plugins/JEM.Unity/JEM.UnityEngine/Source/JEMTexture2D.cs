@@ -94,7 +94,7 @@ namespace JEM.UnityEngine
             if (file == null) throw new ArgumentNullException(nameof(file));
             if (!File.Exists(file))
             {
-                JEMLogger.InternalLogError($"Unable to read Texture2D from file. File {file} not exists.");
+                JEMLogger.LogError($"Unable to read Texture2D from file. File {file} not exists.", "JEM");
                 return null;
             }
 

@@ -61,7 +61,7 @@ namespace JEM.UnityEngine.Components
         }
 
         /// <summary>
-        /// Sets state of translator.
+        ///     Sets state of translator.
         /// </summary>
         public void SetState(bool state)
         {
@@ -71,21 +71,30 @@ namespace JEM.UnityEngine.Components
                 Target = GetComponent<RectTransform>();
 
             State = state;
-            JEMTranslatorScript.RegenerateLocalScript();
             if (UpdatePosition)
             {
-                if (SlavePosition != null) JEMTranslatorScript.Script.StopCoroutine(SlavePosition);
-                SlavePosition =
-                    JEMTranslatorScript.Script.StartCoroutine(
-                        JEMTranslatorScript.Script.RectSlavePosition(this, state));
+                if (SlavePosition != null) Script.StopCoroutine(SlavePosition);
+                SlavePosition = Script.StartCoroutine(Script.RectSlavePosition(this, state));
             }
 
             if (UpdateSize)
             {
-                if (SlaveSize != null) JEMTranslatorScript.Script.StopCoroutine(SlaveSize);
-                SlaveSize =
-                    JEMTranslatorScript.Script.StartCoroutine(JEMTranslatorScript.Script.RectSlaveSize(this, state));
+                if (SlaveSize != null) Script.StopCoroutine(SlaveSize);
+                SlaveSize = Script.StartCoroutine(Script.RectSlaveSize(this, state));
             }
         }
+
+        private static JEMTranslatorScript Script
+        {
+            get
+            {
+                if (_script == null)
+                    _script = JEMTranslatorScript.GetScript();
+
+                return _script;
+            }
+        }
+
+        private static JEMTranslatorScript _script;
     }
 }

@@ -5,7 +5,7 @@
 //
 
 //
-// Original Network simulation design and execution
+// Original Network simulation design and implementation
 //  by Damian 'Erdroy' Korczowski (https://github.com/Erdroy)
 //
 
@@ -19,7 +19,10 @@ using UnityEngine;
 
 namespace JEM.QNet.UnityEngine.Interpolation
 {
-    public interface ISnapshot { }
+    public interface ISnapshot
+    {
+        bool IsValid { get; set; }
+    }
 
     public interface IState<TSnapshot> where TSnapshot : ISnapshot
     {
@@ -55,20 +58,25 @@ namespace JEM.QNet.UnityEngine.Interpolation
         public IReadOnlyList<TState> States => _stateList;
 
         private readonly int _maxStates;
-        private readonly List<TState> _stateList;
+        private List<TState> _stateList;
         private TState _lastState;
 
         protected BaseInterpolator()
         {
             _maxStates = QNetTime.TickRate;
-            _lastState = default;
-            _stateList = new List<TState>(_maxStates);
+            Reset();
         }
 
         public void Dispose()
         {
             _stateList.Clear();
             _stateList.Capacity = 0;
+        }
+
+        public void Reset()
+        {
+            _lastState = default;
+            _stateList = new List<TState>(_maxStates);
         }
 
         public TResult Interpolate(float time, float interpolation, float extrapolation)
@@ -158,6 +166,19 @@ namespace JEM.QNet.UnityEngine.Interpolation
         {
             result = default;
 
+            // Update interpolated snapshot valid state.;
+            var snap = result.Snapshot;
+            if (from.Snapshot.IsValid && to.Snapshot.IsValid)
+                snap.IsValid = true;
+            else snap.IsValid = false;
+            result.Snapshot = snap;
+
+            if (!result.Snapshot.IsValid)
+            {
+                // When snapshot is invalid, do not interpolate anything.
+                return;
+            }
+
             if (t < float.Epsilon)
             {
                 ResetState(ref result, ref from);
@@ -166,7 +187,7 @@ namespace JEM.QNet.UnityEngine.Interpolation
 
             if (result != null)
             {
-                result.Frame = from.Frame + (uint)Mathf.RoundToInt((to.Frame - from.Frame) * t);
+                result.Frame = from.Frame + (uint) Mathf.RoundToInt((to.Frame - from.Frame) * t);
                 InternalInterpolateState(t, ref from, ref to, ref result);
             }
         }

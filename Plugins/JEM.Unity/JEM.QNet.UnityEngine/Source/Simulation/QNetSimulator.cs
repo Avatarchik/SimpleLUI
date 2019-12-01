@@ -5,10 +5,13 @@
 //
 
 //
-// Original Network simulation design and execution
+// Original Network simulation design and implementation
 //  by Damian 'Erdroy' Korczowski (https://github.com/Erdroy)
 //
 
+#define DEEP_DEBUG
+
+using JEM.QNet.UnityEngine.Objects;
 using System;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -18,6 +21,10 @@ namespace JEM.QNet.UnityEngine.Simulation
     /// <summary>
     ///     QNet Simulator class.
     /// </summary>
+    /// <remarks>
+    ///     To check if object should be simulated instead of <see cref="QNetIdentity.IsNetworkActive"/>
+    ///      we can just access the <see cref="MonoBehaviour.isActiveAndEnabled"/>.
+    /// </remarks>
     public static class QNetSimulator
     {
         internal static void UnsafeSimulate()
@@ -62,8 +69,18 @@ namespace JEM.QNet.UnityEngine.Simulation
             {
                 // Process frame
                 QNetObjectManager.Frame();
-                Physics.autoSimulation = false;
-                Physics.Simulate(QNetTime.TickStep);
+
+                Physics.autoSimulation = !QNetManager.Instance.IsUsingPhysics3D;
+                if (QNetManager.Instance.IsUsingPhysics3D)
+                {
+                    Physics.Simulate(QNetTime.TickStep);
+                }
+
+                Physics2D.autoSimulation = !QNetManager.Instance.IsUsingPhysics2D;
+                if (QNetManager.Instance.IsUsingPhysics2D)
+                {
+                    Physics2D.Simulate(QNetTime.TickStep);
+                }
 
                 // Increment frame count
                 QNetTime.Frame++;
@@ -91,7 +108,7 @@ namespace JEM.QNet.UnityEngine.Simulation
                 _framesToStep = 1;
                 QNetTime.Frame += Math.Max(0u, ReceivedServerFrame - EstimatedServerFrame);
 
-#if DEBUG
+#if DEBUG && DEEP_DEBUG
                 QNetManager.PrintLogMsc($"Frame forward ({_framesToStep} frames, local={EstimatedServerFrame}, server={ReceivedServerFrame}))");
 #endif
 

@@ -9,27 +9,20 @@ using UnityEngine.EventSystems;
 
 namespace JEM.UnityEngine.Interface.Window
 {
-    /// <inheritdoc cref="MonoBehaviour" />
+    /// <inheritdoc cref="JEMInterfaceWindowComponent" />
     /// <summary>
-    ///     Interface window header components.
+    ///     An component that defines a Header of <see cref="JEMInterfaceWindow"/>.
     ///     Defines draggable area of window.
     /// </summary>
-    [AddComponentMenu("JEM/Interface/Window/JEM Window Header")]
     [DisallowMultipleComponent]
-    public sealed class JEMInterfaceWindowHeader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler,
-        IPointerUpHandler
+    [AddComponentMenu("JEM/Interface/Window/JEM Window Header")]
+    public sealed class JEMInterfaceWindowHeader : JEMInterfaceWindowComponent, 
+        IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
-        /// <summary>
-        ///     Target window of this window header.
-        /// </summary>
-        [Header("Interface Window Header")]
-        public JEMInterfaceWindow Window;
-
         /// <summary>
         ///     True if this window header can work with current window.
         /// </summary>
-        public bool CanWorkWithWindow => Window != null && Window.WindowActive && Window.AllowDragging &&
-                                         Window.RootTransform != null;
+        public bool CanWorkWithWindow => Window != null && Window.AllowDragging &&  Window.WindowTransform != null;
 
         private bool _isMouseDown;
         private bool _isMouseOver;
@@ -46,10 +39,9 @@ namespace JEM.UnityEngine.Interface.Window
             if (JEMInterfaceWindow.AnyWindowIsUnderMotion) return;
             AnyHeaderIsDragging = true;
 
-            if (Window.AlwaysMoveOnTop) Window.MoveOnTop();
             _isMouseDown = true;
 
-            _startPosition = Window.RootTransform.position;
+            _startPosition = Window.WindowTransform.position;
             _mouseStartPosition = Input.mousePosition;
 
             JEMInterfaceCursor.SetCursorIcon(JEMCursorIconName.Move);
@@ -116,8 +108,8 @@ namespace JEM.UnityEngine.Interface.Window
             var mousePoint = Input.mousePosition;
             var delta = new Vector2(mousePoint.x - _mouseStartPosition.x, mousePoint.y - _mouseStartPosition.y);
 
-            Window.RootTransform.position = new Vector3(_startPosition.x + delta.x, _startPosition.y + delta.y, 0f);
-            Window.UpdateDisplay();
+            Window.WindowTransform.position = new Vector3(_startPosition.x + delta.x, _startPosition.y + delta.y, 0f);
+            Window.ClampWindowTransform();
         }
 
         /// <summary>

@@ -19,6 +19,7 @@ namespace JEM.UnityEngine.Resource
     /// <summary>
     ///     Loaded resource pack.
     /// </summary>
+    [Obsolete]
     public class JEMGameResourcePack
     {
         internal JEMGameResourcePack(string name, string description, string file)
@@ -91,6 +92,7 @@ namespace JEM.UnityEngine.Resource
     /// <summary>
     ///     Game resources class.
     /// </summary>
+    [Obsolete]
     public static class JEMGameResources
     {
         /// <summary>
@@ -130,53 +132,25 @@ namespace JEM.UnityEngine.Resource
             RegisteredResNotExist
         }
 
-        private static JEMGameResourcesScript script;
-        private static readonly List<JEMGameResourcePack> InternalGameResourcePacks = new List<JEMGameResourcePack>();
-
-        /// <summary>
-        ///     List of loaded resources packs.
-        /// </summary>
-        public static IReadOnlyList<JEMGameResourcePack> GameResourcePacks => InternalGameResourcePacks;
-
-        internal static void RegenerateLocalScript()
-        {
-            if (script != null)
-                return;
-
-            var obj = new GameObject(nameof(JEMGameResourcesScript));
-            Object.DontDestroyOnLoad(obj);
-            script = obj.AddComponent<JEMGameResourcesScript>();
-
-            if (script == null)
-                throw new NullReferenceException(
-                    $"System was unable to regenerate local script of {nameof(JEMGameResources)}@{nameof(JEMGameResourcesScript)}");
-        }
-
         /// <summary>
         ///     Get whole resource bank.
         /// </summary>
         /// <param name="packName">Name of loaded resource bank.</param>
-        public static JEMGameResourcePack GetPack(string packName)
-        {
-            return InternalGameResourcePacks.FirstOrDefault(r => r.Name == packName);
-        }
-
+        public static JEMGameResourcePack GetPack(string packName) =>
+            InternalGameResourcePacks.FirstOrDefault(r => r.Name == packName);
+        
         /// <summary>
         ///     Get array of packs from array of packs names.
         /// </summary>
-        public static JEMGameResourcePack[] FromStringArray(string[] packsNames)
-        {
-            return packsNames.Select(GetPack).Where(p => !p.Equals(default(JEMGameResourcePack))).ToArray();
-        }
-
+        public static JEMGameResourcePack[] FromStringArray(string[] packsNames) =>
+            packsNames.Select(GetPack).Where(p => !p.Equals(default(JEMGameResourcePack))).ToArray();
+        
         /// <summary>
         ///     Get array of packs names form array of packs.
         /// </summary>
-        public static string[] ToStringArray(JEMGameResourcePack[] packs)
-        {
-            return packs.Select(name => name.Name).ToArray();
-        }
-
+        public static string[] ToStringArray(JEMGameResourcePack[] packs) =>
+            packs.Select(name => name.Name).ToArray();
+        
         /// <summary>
         ///     Loads base info about resources that game can load.
         /// </summary>
@@ -184,7 +158,8 @@ namespace JEM.UnityEngine.Resource
         {
             var stopwatch = Stopwatch.StartNew();
             var cfg = JEMGameResourcesConfiguration.Get();
-            JEMLogger.Log($"New resources info load process has been started at directory {cfg.PackDirectory}");
+            JEMLogger.Log("New resources info load process has been started " +
+                          $"at directory {cfg.PackDirectory}", "JEM");
 
             if (Directory.Exists(cfg.PackDirectory))
             {
@@ -194,11 +169,11 @@ namespace JEM.UnityEngine.Resource
                         continue;
 
                     var fileStopWatch = Stopwatch.StartNew();
-                    JEMLogger.Log($"Reading File -> {file}");
+                    JEMLogger.Log($"Reading File -> {file}", "JEM");
                     var packName = JEMGameResourcesUtility.ResolveResourceNameFromPath(file);
                     var packDescription = string.Empty;
                     var packInfoFile = JEMGameResourcesUtility.ResolveMapDescPath(file);
-                    JEMLogger.Log($"Searching For -> {packInfoFile}");
+                    JEMLogger.Log($"Searching For -> {packInfoFile}", "JEM");
                     var packInfoFileInfo = new FileInfo(packInfoFile);
                     if (packInfoFileInfo.Exists)
                     {
@@ -215,19 +190,19 @@ namespace JEM.UnityEngine.Resource
                     InternalGameResourcePacks.Add(new JEMGameResourcePack(packName, packDescription, file));
 
                     fileStopWatch.Stop();
-                    JEMLogger.Log($"TOOK -> {fileStopWatch.Elapsed.TotalSeconds:0.0}s");
+                    JEMLogger.Log($"TOOK -> {fileStopWatch.Elapsed.TotalSeconds:0.0}s", "JEM");
                 }
             }
             else
             {
-                JEMLogger.LogError(
-                    $"Unable to load game resources info. Base resources patch `{cfg.PackDirectory}` not exist.");
+                JEMLogger.LogError("Unable to load game resources info. " +
+                                   $"Base resources patch `{cfg.PackDirectory}` not exist.", "JEM");
                 return false;
             }
 
             stopwatch.Stop();
-            JEMLogger.Log(
-                $"Resources info loaded in -> {stopwatch.Elapsed.TotalSeconds:0.0}s. Total resources loaded: {InternalGameResourcePacks.Count}");
+            JEMLogger.Log($"Resources info loaded in -> {stopwatch.Elapsed.TotalSeconds:0.0}s. " +
+                          $"Total resources loaded: {InternalGameResourcePacks.Count}", "JEM");
 
             return true;
         }
@@ -241,11 +216,8 @@ namespace JEM.UnityEngine.Resource
         /// <param name="progressEvent">Loading progress event.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public static void LoadResourcesAssets(string packName, bool async, ResourcesLoaded loadedEvent,
-            ResourcesLoadProgress progressEvent)
-        {
-            LoadResourcesAssets(new[] {packName}, async, loadedEvent, progressEvent);
-        }
-
+            ResourcesLoadProgress progressEvent) => LoadResourcesAssets(new[] {packName}, async, loadedEvent, progressEvent);
+        
         /// <summary>
         ///     Resources initialization function, used in start of the game.
         /// </summary>
@@ -258,8 +230,26 @@ namespace JEM.UnityEngine.Resource
             ResourcesLoadProgress progressEvent)
         {
             if (packList == null) throw new ArgumentNullException(nameof(packList));
-            RegenerateLocalScript();
-            script.StartCoroutine(script.InternalLoadResourcesAssets(packList, async, loadedEvent, progressEvent));
+            Script.StartCoroutine(Script.InternalLoadResourcesAssets(packList, async, loadedEvent, progressEvent));
         }
+
+        /// <summary>
+        ///     List of loaded resources packs.
+        /// </summary>
+        public static IReadOnlyList<JEMGameResourcePack> GameResourcePacks => InternalGameResourcePacks;
+        private static readonly List<JEMGameResourcePack> InternalGameResourcePacks = new List<JEMGameResourcePack>();
+
+        private static JEMGameResourcesScript Script
+        {
+            get
+            {
+                if (_script == null)
+                    _script = JEMGameResourcesScript.GetScript();
+
+                return _script;
+            }
+        }
+
+        private static JEMGameResourcesScript _script;
     }
 }

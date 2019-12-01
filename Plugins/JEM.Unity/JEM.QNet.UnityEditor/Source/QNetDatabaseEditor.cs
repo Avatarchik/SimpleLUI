@@ -55,12 +55,12 @@ namespace JEM.QNet.UnityEditor
             if (GUILayout.Button("Refresh Prefabs", GUILayout.Height(25)))
             {
                 EditorUtility.SetDirty(target);
-                var prefabsGUIDs = AssetDatabase.FindAssets($"t:{nameof(QNetObjectPrefabPair)}");
-                var loadedPrefabs = new QNetObjectPrefabPair[prefabsGUIDs.Length];
+                var prefabsGUIDs = AssetDatabase.FindAssets($"t:{nameof(QNetObjectPrefabObject)}");
+                var loadedPrefabs = new QNetObjectPrefabObject[prefabsGUIDs.Length];
                 for (var index = 0; index < prefabsGUIDs.Length; index++)
                     loadedPrefabs[index] =
-                        (QNetObjectPrefabPair) AssetDatabase.LoadAssetAtPath(
-                            AssetDatabase.GUIDToAssetPath(prefabsGUIDs[index]), typeof(QNetObjectPrefabPair));
+                        (QNetObjectPrefabObject) AssetDatabase.LoadAssetAtPath(
+                            AssetDatabase.GUIDToAssetPath(prefabsGUIDs[index]), typeof(QNetObjectPrefabObject));
                 Script.Prefabs = loadedPrefabs;
                 AssetDatabase.Refresh();
                 AssetDatabase.SaveAssets();

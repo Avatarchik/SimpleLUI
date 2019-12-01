@@ -90,7 +90,6 @@ namespace JEM.QNet.UnityEditor.Behaviour
                     if (GUILayout.Button("Regenerate"))
                     {
                         CustomIdentity.intValue = FixPredefinedIdentity(CustomIdentity.intValue);
-                        Debug.Log(CustomIdentity.intValue);
                     }
                     GUI.enabled = true;
                 });
@@ -163,6 +162,13 @@ namespace JEM.QNet.UnityEditor.Behaviour
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
                     EditorGUILayout.LabelField("Component Index", obj.ComponentIndex.ToString());
+                    if (QNetObject.GetQNetObjectIndex(obj.GetType(), out var typeIndex))
+                        EditorGUILayout.LabelField("Component Type Index",  typeIndex.ToString());
+                    else
+                    {
+                        EditorGUILayout.LabelField("Component Type Index", "Failed to resolve.");
+                    }
+
                     EditorGUILayout.ObjectField(obj, typeof(QNetObject), false);
 
                     if (obj is QNetBehaviour b)
@@ -175,15 +181,15 @@ namespace JEM.QNet.UnityEditor.Behaviour
                             for (var i = 0; i < b.MessagePointers.Count; i++)
                             {
                                 var msg = b.MessagePointers[i];
-                                EditorGUILayout.LabelField("Name", msg.Method.Name);
+                                EditorGUILayout.LabelField("Name", msg.Delegate.Method.Name);
                                 EditorGUI.indentLevel++;
-                                EditorGUILayout.LabelField("Identity", msg.Index.ToString());
-                                EditorGUILayout.LabelField("Is Generic", msg.Method.IsGenericMethod ? "Yes" : "No");
-                                if (msg.Method.IsGenericMethod)
+                                EditorGUILayout.LabelField("Index", msg.Index.ToString());
+                                EditorGUILayout.LabelField("Is Generic", msg.Delegate.Method.IsGenericMethod ? "Yes" : "No");
+                                if (msg.Delegate.Method.IsGenericMethod)
                                 {
                                     EditorGUI.indentLevel++;
                                     EditorGUILayout.LabelField("Generic Arguments",
-                                        msg.Method.GetGenericArguments().Length.ToString());
+                                        msg.Delegate.Method.GetGenericArguments().Length.ToString());
                                     EditorGUI.indentLevel--;
                                 }
 

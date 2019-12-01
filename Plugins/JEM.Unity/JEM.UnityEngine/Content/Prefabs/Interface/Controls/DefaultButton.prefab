@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3192778035151304904}
   - component: {fileID: 4641037714344836124}
   - component: {fileID: 1447951365959751915}
-  - component: {fileID: 6949949684125253997}
   - component: {fileID: 1306224539842806140}
   m_Layer: 5
   m_Name: Text
@@ -60,8 +59,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.92300004, g: 0.92300004, b: 0.92300004, a: 1}
-  m_RaycastTarget: 1
+  m_Color: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -73,7 +72,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 2
-    m_MaxSize: 20
+    m_MaxSize: 23
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -81,23 +80,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: BUTTON
---- !u!114 &6949949684125253997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2833355870395444698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
 --- !u!114 &1306224539842806140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,8 +110,9 @@ GameObject:
   - component: {fileID: 7692765619632868575}
   - component: {fileID: 7692765619632868574}
   - component: {fileID: 7692765619632868573}
-  - component: {fileID: 574658733}
+  - component: {fileID: 5499742979237921350}
   - component: {fileID: 2527913796199025043}
+  - component: {fileID: 3717627697896066530}
   m_Layer: 5
   m_Name: DefaultButton
   m_TagString: Untagged
@@ -221,7 +204,7 @@ MonoBehaviour:
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -240,7 +223,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &574658733
+--- !u!114 &5499742979237921350
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -249,14 +232,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7692765619632868571}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
+  m_ShowMaskGraphic: 1
 --- !u!114 &2527913796199025043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,3 +248,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9df87df9f9d52419fe92c3c3a4e124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3717627697896066530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692765619632868571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 985cb9d6a2319834e9cfd592d1c5d8df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetGraphic: {fileID: 1447951365959751915}
+  NormalColor: {r: 1, g: 1, b: 1, a: 1}
+  HighlightedColor: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+  PressedColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+  FadeDuration: 0.15

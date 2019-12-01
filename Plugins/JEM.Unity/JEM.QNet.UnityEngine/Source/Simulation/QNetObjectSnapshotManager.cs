@@ -4,11 +4,6 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-//
-// Original Network simulation design and execution
-//  by Damian 'Erdroy' Korczowski (https://github.com/Erdroy)
-//
-
 using UnityEngine.Profiling;
 
 namespace JEM.QNet.UnityEngine.Simulation

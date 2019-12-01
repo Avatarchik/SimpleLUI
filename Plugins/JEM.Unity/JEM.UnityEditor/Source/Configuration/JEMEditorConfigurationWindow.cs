@@ -4,6 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using System;
 using JEM.Core.Configuration;
 using JEM.Core.Extension;
 using JEM.UnityEditor.AssetBundles;
@@ -126,12 +127,19 @@ namespace JEM.UnityEditor.Configuration
             if (cfg.ConfigurationSaveMethod == JEMConfigurationSaveMethod.UNKNOWN) cfg.ConfigurationSaveMethod = JEMConfigurationSaveMethod.JSON;
             cfg.ConfigurationAppSaveDirectory =  EditorGUILayout.TextField("App Save Directory", cfg.ConfigurationAppSaveDirectory);
 
-            EditorGUILayout.Space();
-            cfg.ConfigurationBinFileExtension = EditorGUILayout.TextField("Bin File Extension", cfg.ConfigurationBinFileExtension);
-
-            EditorGUILayout.Space();
-            cfg.ConfigurationJsonFileExtension = EditorGUILayout.TextField("Json File Extension", cfg.ConfigurationJsonFileExtension);
-            cfg.JsonFormattingMethod = (Formatting)EditorGUILayout.EnumPopup("JSON Formatting Method", cfg.JsonFormattingMethod);
+            switch (cfg.ConfigurationSaveMethod)
+            {
+                case JEMConfigurationSaveMethod.UNKNOWN:
+                    EditorGUILayout.HelpBox("UNKNOWN", MessageType.Error, true);
+                    break;
+                case JEMConfigurationSaveMethod.JSON:
+                    EditorGUILayout.Space();
+                    cfg.ConfigurationJsonFileExtension = EditorGUILayout.TextField("Json File Extension", cfg.ConfigurationJsonFileExtension);
+                    cfg.JsonFormattingMethod = (Formatting)EditorGUILayout.EnumPopup("JSON Formatting Method", cfg.JsonFormattingMethod);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             EditorGUILayout.Space();
             cfg.NoLogs = EditorGUILayout.Toggle("No Logs",  cfg.NoLogs);

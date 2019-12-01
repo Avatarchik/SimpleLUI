@@ -63,7 +63,7 @@ namespace JEM.UnityEditor.Configuration
         public static void Save()
         {
             var file = ResolveConfigurationFile();
-            JEMLogger.InternalLog($"Saving JEMEditorConfiguration data at {file}");
+            JEMLogger.Log($"Saving JEMEditorConfiguration data at {file}", "JEM");
             File.WriteAllText(file, JsonConvert.SerializeObject(Configuration, Formatting.Indented));
         }
 

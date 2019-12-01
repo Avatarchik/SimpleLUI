@@ -28,8 +28,7 @@ namespace JEM.UnityEngine
             if (obj == null)
                 return;
 
-            RegenerateLocalScript();
-            _script.StartCoroutine(_script.InternalLiteDestroy(obj, onDone));
+            Script.StartCoroutine(Script.InternalLiteDestroy(obj, onDone));
         }
 
         /// <summary>
@@ -45,8 +44,7 @@ namespace JEM.UnityEngine
             where TObject : Object
         {
             if (original == null) throw new ArgumentNullException(nameof(original));
-            RegenerateLocalScript();
-            _script.StartCoroutine(_script.InternalLiteInstantiate(original, position, orientation, onDone));
+            Script.StartCoroutine(Script.InternalLiteInstantiate(original, position, orientation, onDone));
         }
 
         /// <summary>
@@ -63,9 +61,8 @@ namespace JEM.UnityEngine
             if (original == null) throw new ArgumentNullException(nameof(original));
             if (parent == null) throw new ArgumentNullException(nameof(parent));
 
-            LiteInstantiate(original, Vector3.zero, Quaternion.identity, go =>
+            LiteInstantiate(original, parent.transform, go =>
             {
-                go.transform.SetParent(parent.transform);
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
                 go.transform.localScale = Vector3.one;
@@ -88,9 +85,8 @@ namespace JEM.UnityEngine
             if (original == null) throw new ArgumentNullException(nameof(original));
             if (parent == null) throw new ArgumentNullException(nameof(parent));
 
-            LiteInstantiate(original, Vector3.zero, Quaternion.identity, go =>
+            LiteInstantiate(original, parent, go =>
             {
-                go.transform.SetParent(parent);
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
                 go.transform.localScale = Vector3.one;
@@ -112,9 +108,8 @@ namespace JEM.UnityEngine
             if (original == null) throw new ArgumentNullException(nameof(original));
             if (parent == null) throw new ArgumentNullException(nameof(parent));
 
-            LiteInstantiate(original, Vector3.zero, Quaternion.identity, t =>
+            LiteInstantiate(original, parent, t =>
             {
-                t.SetParent(parent);
                 t.localPosition = Vector3.zero;
                 t.localRotation = Quaternion.identity;
                 t.localScale = Vector3.one;
@@ -137,13 +132,12 @@ namespace JEM.UnityEngine
             if (original == null) throw new ArgumentNullException(nameof(original));
             if (parent == null) throw new ArgumentNullException(nameof(parent));
 
-            LiteInstantiate(original, Vector3.zero, Quaternion.identity, o =>
+            LiteInstantiate(original, parent, o =>
             {
                 var t = o as Transform;
                 if (t == null)
                     throw new NullReferenceException(nameof(t));
 
-                t.SetParent(parent);
                 t.localPosition = Vector3.zero;
                 t.localRotation = Quaternion.identity;
                 t.localScale = Vector3.one;
@@ -198,11 +192,10 @@ namespace JEM.UnityEngine
             if (original == null) throw new ArgumentNullException(nameof(original));
             if (parent == null) throw new ArgumentNullException(nameof(parent));
 
-            var t = Object.Instantiate(original, Vector3.zero, Quaternion.identity);
+            var t = Object.Instantiate(original, parent);
             if (t == null)
                 throw new NullReferenceException(nameof(t));
 
-            t.SetParent(parent);
             t.localPosition = Vector3.zero;
             t.localRotation = Quaternion.identity;
             t.localScale = Vector3.one;
@@ -210,18 +203,15 @@ namespace JEM.UnityEngine
             return t;
         }
 
-        private static void RegenerateLocalScript()
+        private static JEMObjectScript Script
         {
-            if (_script != null)
-                return;
+            get
+            {
+                if (_script == null)
+                    _script = JEMObjectScript.GetScript();
 
-            var obj = new GameObject(nameof(JEMObjectScript));
-            Object.DontDestroyOnLoad(obj);
-            _script = obj.AddComponent<JEMObjectScript>();
-
-            if (_script == null)
-                throw new NullReferenceException("System was unable to regenerate local script of " +
-                                                 $"{nameof(JEMObject)}@{nameof(JEMObjectScript)}");
+                return _script;
+            }
         }
 
         private static JEMObjectScript _script;

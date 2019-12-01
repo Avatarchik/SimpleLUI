@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f5c4141ca7ffa45a69aad6d37b4f92, type: 3}
   m_Name: EmptyInterfaceAudioDatabase
   m_EditorClassIdentifier: 
-  ControlEnter: {fileID: 0}
-  ButtonClick: {fileID: 0}
-  ToggleClick: {fileID: 0}
-  DropdownClick: {fileID: 0}
+  ControlEnter: {fileID: 8300000, guid: 8259c570ae5ec8943bb017c0790fa45d, type: 3}
+  ControlClick: {fileID: 8300000, guid: 8259c570ae5ec8943bb017c0790fa45d, type: 3}
+  ControlCheck: {fileID: 8300000, guid: 8259c570ae5ec8943bb017c0790fa45d, type: 3}
+  ControlExpand: {fileID: 8300000, guid: 8259c570ae5ec8943bb017c0790fa45d, type: 3}
+  ControlMoveEdit: {fileID: 8300000, guid: 8259c570ae5ec8943bb017c0790fa45d, type: 3}
+  ControlEndEdit: {fileID: 8300000, guid: 8259c570ae5ec8943bb017c0790fa45d, type: 3}

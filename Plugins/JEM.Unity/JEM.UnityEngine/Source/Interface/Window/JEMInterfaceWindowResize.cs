@@ -9,16 +9,18 @@ using UnityEngine.EventSystems;
 
 namespace JEM.UnityEngine.Interface.Window
 {
-    /// <inheritdoc cref="MonoBehaviour" />
+    /// <inheritdoc cref="JEMInterfaceWindowComponent" />
     /// <summary>
-    ///     Interface resize (button) element.
+    ///     A component that defines Resize point of <see cref="JEMInterfaceWindow"/>.
     /// </summary>
     [AddComponentMenu("JEM/Interface/Window/JEM Window Resize")]
     [DisallowMultipleComponent]
-    public sealed class JEMInterfaceWindowResize : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler,
+    public sealed class JEMInterfaceWindowResize : JEMInterfaceWindowComponent, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler,
         IPointerUpHandler
     {
-        private const float PositionMultiplier = 0.5f;
+        private const float Multiplier = 0.875f;
+        private const float PositionMultiplier = 0.575f;
+
         private bool _isMouseDown;
         private bool _isMouseOver;
 
@@ -28,22 +30,6 @@ namespace JEM.UnityEngine.Interface.Window
         private Vector3 _startPosition;
         private Vector3 _startSize;
 
-        /// <summary>
-        ///     Target window of this size element.
-        /// </summary>
-        [Header("Interface Size Element")]
-        public JEMInterfaceWindow Window;
-
-        /// <summary>
-        ///     True if this size element can work with current window.
-        /// </summary>
-        public bool CanWorkWithWindow => Window != null && Window.AllowResize && Window.RootTransform != null;
-
-        /// <summary>
-        ///     True if any window is currently re-sized by user.
-        /// </summary>
-        public static bool AnyWindowIsResized { get; private set; }
-
         /// <inheritdoc />
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
@@ -51,11 +37,10 @@ namespace JEM.UnityEngine.Interface.Window
             if (JEMInterfaceWindow.AnyWindowIsUnderMotion) return;
             AnyWindowIsResized = true;
 
-            if (Window.AlwaysMoveOnTop) Window.MoveOnTop();
             _isMouseDown = true;
 
-            _startPosition = Window.RootTransform.position;
-            _startSize = Window.RootTransform.sizeDelta;
+            _startPosition = Window.WindowTransform.position;
+            _startSize = Window.WindowTransform.sizeDelta;
             _mouseStartPosition = Input.mousePosition;
 
             JEMInterfaceCursor.SetCursorIcon(JEMCursorIconName.Resize);
@@ -120,12 +105,75 @@ namespace JEM.UnityEngine.Interface.Window
 
             _isWindowMoved = true;
             var mousePoint = Input.mousePosition;
-            var delta = new Vector2(mousePoint.x - _mouseStartPosition.x, mousePoint.y - _mouseStartPosition.y);
+            var delta = new Vector2(mousePoint.x - _mouseStartPosition.x, mousePoint.y - _mouseStartPosition.y) * Multiplier;
 
-            Window.RootTransform.position = new Vector3(_startPosition.x + delta.x * PositionMultiplier,
-                _startPosition.y + delta.y * PositionMultiplier, 0f);
-            Window.RootTransform.sizeDelta = new Vector3(_startSize.x + delta.x, _startSize.y - delta.y, 0f);
-            Window.UpdateDisplay();
+            var xPosition = Window.WindowTransform.position.x;
+            var yPosition = Window.WindowTransform.position.y;
+
+            var xSize = Window.WindowTransform.sizeDelta.x;
+            var ySize = Window.WindowTransform.sizeDelta.y;
+
+            if (Window.ResizeXAxis)
+            {
+                var xMax = false;
+                xSize = _startSize.x + delta.x;
+                if (xSize >= Window.WindowMinMaxSize.width)
+                {
+                    xSize = Window.WindowMinMaxSize.width;
+                    xMax = true;
+                }
+
+                if (xSize <= Window.WindowMinMaxSize.x)
+                {
+                    xSize = Window.WindowMinMaxSize.x;
+                    xMax = true;
+                }
+
+                if (!xMax)
+                    xPosition = _startPosition.x + delta.x * PositionMultiplier;
+                //else
+                //{
+                //    xPosition = _startPosition.x + (Window.WindowTransform.sizeDelta.x - xSize) * PositionMultiplier;
+                //}
+            }
+
+            if (Window.ResizeYAxis)
+            {
+                var yMax = false;
+                ySize = _startSize.y - delta.y;
+                if (ySize >= Window.WindowMinMaxSize.height)
+                {
+                    ySize = Window.WindowMinMaxSize.height;
+                    yMax = true;
+                }
+
+                if (ySize <= Window.WindowMinMaxSize.y)
+                {
+                    ySize = Window.WindowMinMaxSize.y;
+                    yMax = true;
+                }
+
+                if (!yMax)
+                    yPosition = _startPosition.y + delta.y * PositionMultiplier;
+                //else
+                //{
+                //    yPosition = _startPosition.y + (Window.WindowTransform.sizeDelta.y - ySize) * PositionMultiplier;
+                //}
+            }
+
+            Window.WindowTransform.position = new Vector3(xPosition, yPosition, 0f);
+            Window.WindowTransform.sizeDelta = new Vector3(xSize, ySize, 0f);
+            Window.ClampWindowTransform();
         }
+
+        /// <summary>
+        ///     True if this size element can work with current window.
+        /// </summary>
+        public bool CanWorkWithWindow => Window != null && Window.AllowResize && Window.WindowTransform != null;
+
+        /// <summary>
+        ///     True if any window is currently re-sized by user.
+        /// </summary>
+        public static bool AnyWindowIsResized { get; private set; }
     }
 }

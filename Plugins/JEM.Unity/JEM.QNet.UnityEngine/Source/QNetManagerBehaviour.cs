@@ -6,9 +6,10 @@
 
 using JEM.Core.Common;
 using JEM.QNet.Messages;
+using JEM.QNet.UnityEngine.Objects;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace JEM.QNet.UnityEngine
@@ -18,7 +19,7 @@ namespace JEM.QNet.UnityEngine
     ///     QNetManager Behaviour class.
     ///     Allows to handle methods like OnServerStarted etc.
     /// </summary>
-    public class QNetManagerBehaviour : MonoBehaviour
+    public abstract class QNetManagerBehaviour : MonoBehaviour
     {
         protected virtual void OnEnable()
         {
@@ -28,16 +29,11 @@ namespace JEM.QNet.UnityEngine
 
         protected virtual void OnDisable() => Behaviours.Remove(this);
         
-        /// <summary>
-        ///     RegisterCustomHandlers is called at the start of the peer to register your custom network handlers.
-        /// </summary>
-        private JEMSmartMethod _registerCustomHandlers;
-
         #region SERVER
         /// <summary>
         ///     Called right after the server peer start.
         /// </summary>
-        private JEMSmartMethod _onServerStarted;
+        private JEMSmartMethodS _onServerStarted;
 
         /// <summary>
         ///     Called on client connection to authorize if this client may connect the server.
@@ -47,19 +43,19 @@ namespace JEM.QNet.UnityEngine
 
         /// <summary>
         ///     Called when server receives approved client connection with newly created QNetPlayer object.
-        ///     Here we may also read data that has been written by client in XXX method.
+        ///     Here we may also read data that has been written by client in OnClientCustomData method.
         /// </summary>
-        private JEMSmartMethod _onServerNewPlayer;
+        private JEMSmartMethodS<QNetPlayer, QNetMessageReader> _onServerNewPlayer;
 
         /// <summary>
         ///     Called right after the player connection has been lost but before object destroy.
         /// </summary>
-        private JEMSmartMethod _onServerLostPlayer;
+        private JEMSmartMethodS<QNetPlayer, string> _onServerLostPlayer;
 
         /// <summary>
         ///     Called when the server stops.
         /// </summary>
-        private JEMSmartMethod _onServerStop;
+        private JEMSmartMethodS<string> _onServerStop;
 
         /// <summary>
         ///     Called when server need to resolve new spawn for a player.
@@ -75,20 +71,30 @@ namespace JEM.QNet.UnityEngine
         private JEMSmartMethod _onClientPrepare;
 
         /// <summary>
-        ///     Called right after the client peer start.
+        ///     Called right after the OnClientPrepare method but here you can read an serialize custom network data.
         /// </summary>
-        private JEMSmartMethod _onClientStarted;
+        private JEMSmartMethodS<QNetMessageReader, QNetMessageWriter> _onClientCustomData;
 
         /// <summary>
-        ///     Called then the client connect to the target server.
+        ///     Called right after the client peer start.
         /// </summary>
-        private JEMSmartMethod _onClientConnected;
+        private JEMSmartMethodS<QNetPeerConfiguration> _onClientStarted;
+
+        /// <summary>
+        ///     Called when the client connect to the target server.
+        /// </summary>
+        private JEMSmartMethodS _onClientConnected;
 
         /// <summary>
         ///     Called when the client stops (disconnects from server).
         /// </summary>
-        private JEMSmartMethod _onClientStop;
+        private JEMSmartMethodS<bool, string> _onClientStop;
         #endregion
+
+        /// <summary>
+        ///     RegisterCustomHandlers is called at the start of the peer to register your custom network handlers.
+        /// </summary>
+        private JEMSmartMethodS<QNetPeer, bool> _registerCustomHandlers;
 
         /// <summary>
         ///     Called at the end of the server's or client world initialization.
@@ -97,49 +103,56 @@ namespace JEM.QNet.UnityEngine
         /// <remarks>
         ///     While host is active, this message is called by the internal client.
         /// </remarks>
-        private JEMSmartMethod _onNetworkWorldInitialized;
+        private JEMSmartMethodS _onNetworkWorldInitialized;
+
+        /// <summary>
+        ///     Called at the very beginning of <see cref="QNetNetworkScene.LoadNetworkScene"/>
+        ///      to resolve unity scene of given name. You can use this method to load your scene via asset bundles.
+        /// </summary>
+        private JEMSmartMethodS<string, Action> _onResolveUnityScene;
 
         /// <summary>
         ///     Called by the <see cref="QNetNetworkScene.LoadNetworkScene"/> when the unity scene loading begins.
         /// </summary>
-        private JEMSmartMethod _onUnitySceneLoadingBegin;
+        private JEMSmartMethodS<string> _onUnitySceneLoadingBegin;
 
         /// <summary>
         ///     Called by the <see cref="QNetNetworkScene.LoadNetworkScene"/> when the unity scene loading ends.
+        ///     In this method you may load some content at the end of target scene load.
+        ///     At the end of this method you always need to invoke received onProcess action.
         /// </summary>
-        private JEMSmartMethod _onUnitySceneLoadingEnd;
+        private JEMSmartMethodS<Action, Action<float>> _onUnitySceneLoadingEnd;
 
         /// <summary>
         ///     Called when the <see cref="QNetNetworkScene.SceneState"/> changes.
         /// </summary>
-        private JEMSmartMethod _onSceneStateChange;
+        private JEMSmartMethodS<QNetSceneState> _onSceneStateChange;
 
         /// <summary>
         ///     Load the JEMSmartMethod based methods!
         /// </summary>
         private void LoadMethods()
         {
-            _registerCustomHandlers = new JEMSmartMethod(this, "RegisterCustomHandlers");
-
-            _onServerStarted = new JEMSmartMethod(this, "OnServerStarted");
-            _onNetworkWorldInitialized = new JEMSmartMethod(this, "OnNetworkWorldInitialized");
+            _onServerStarted = new JEMSmartMethodS(this, "OnServerStarted");
             _onServerAuthorizeClient = new JEMSmartMethod(this, "OnServerAuthorizeClient");
-            _onServerNewPlayer = new JEMSmartMethod(this, "OnServerNewPlayer");
-            _onServerLostPlayer = new JEMSmartMethod(this, "OnServerLostPlayer");
-            _onServerStop = new JEMSmartMethod(this, "OnServerStop");
+            _onServerNewPlayer = new JEMSmartMethodS<QNetPlayer, QNetMessageReader>(this, "OnServerNewPlayer");
+            _onServerLostPlayer = new JEMSmartMethodS<QNetPlayer, string>(this, "OnServerLostPlayer");
+            _onServerStop = new JEMSmartMethodS<string>(this, "OnServerStop");
             _onServerSpawnPlayer = new JEMSmartMethod(this, "OnServerSpawnPlayer");
 
             _onClientPrepare = new JEMSmartMethod(this, "OnClientPrepare");
-            _onClientStarted = new JEMSmartMethod(this, "OnClientStarted");
-            _onClientConnected = new JEMSmartMethod(this, "OnClientConnected");
-            _onClientStop = new JEMSmartMethod(this, "OnClientStop");
+            _onClientCustomData = new JEMSmartMethodS<QNetMessageReader, QNetMessageWriter>(this, "OnClientCustomData");
+            _onClientStarted = new JEMSmartMethodS<QNetPeerConfiguration>(this, "OnClientStarted");
+            _onClientConnected = new JEMSmartMethodS(this, "OnClientConnected");
+            _onClientStop = new JEMSmartMethodS<bool, string>(this, "OnClientStop");
 
-            _onUnitySceneLoadingBegin = new JEMSmartMethod(this, "OnUnitySceneLoadingBegin");
-            _onUnitySceneLoadingEnd = new JEMSmartMethod(this, "OnUnitySceneLoadingEnd");
-            _onSceneStateChange = new JEMSmartMethod(this, "OnSceneStateChange");
+            _registerCustomHandlers = new JEMSmartMethodS<QNetPeer, bool>(this, "RegisterCustomHandlers");
+            _onNetworkWorldInitialized = new JEMSmartMethodS(this, "OnNetworkWorldInitialized");
+            _onResolveUnityScene = new JEMSmartMethodS<string, Action>(this, "OnResolveUnityScene");
+            _onUnitySceneLoadingBegin = new JEMSmartMethodS<string>(this, "OnUnitySceneLoadingBegin");
+            _onUnitySceneLoadingEnd = new JEMSmartMethodS<Action, Action<float>>(this, "OnUnitySceneLoadingEnd");
+            _onSceneStateChange = new JEMSmartMethodS<QNetSceneState>(this, "OnSceneStateChange");
         }
-
-        internal void CallRegisterCustomHandlers(QNetPeer peer, bool isServer) => _registerCustomHandlers.Invoke(peer, isServer);
 
         internal void CallOnServerStarted() => _onServerStarted.Invoke();
         internal void CallOnServerAuthorize(QNetConnection connection, QNetMessageWriter writer, ref bool refuse)
@@ -151,14 +164,14 @@ namespace JEM.QNet.UnityEngine
         internal void CallOnServerNewPlayer(QNetPlayer player, QNetMessageReader reader) => _onServerNewPlayer.Invoke(player, reader);
         internal void CallOnServerLostPlayer(QNetPlayer player, string reason) => _onServerLostPlayer.Invoke(player, reason);
         internal void CallOnServerStop(string stopReason) => _onServerStop.Invoke(stopReason);
-        internal bool CallOnServerSpawnPlayer(QNetConnection connection, ref Objects.QNetObject obj)
+        internal bool CallOnServerSpawnPlayer(QNetConnection connection, ref QNetObject obj)
         {
             if (!_onServerSpawnPlayer.IsValid())
                 return false;
 
-            object[] p = {obj};
+            object[] p = {connection, obj};
             _onServerSpawnPlayer.Invoke(p);
-            obj = (Objects.QNetObject) p[0];
+            obj = (QNetObject) p[1];
 
             return true;
         }
@@ -170,18 +183,27 @@ namespace JEM.QNet.UnityEngine
             token = (uint) p[0];
             nickname = (string) p[1];
         }
-        internal void CallOnClientStarted(QNetConfiguration configurationUsed) => _onClientStarted.Invoke(configurationUsed);
+        internal void CallOnClientCustomData(QNetMessageReader reader, QNetMessageWriter writer) => _onClientCustomData.Invoke(reader, writer);
+        internal void CallOnClientStarted(QNetPeerConfiguration configurationUsed) => _onClientStarted.Invoke(configurationUsed);
         internal void CallOnClientConnected() => _onClientConnected.Invoke();
         internal void CallOnClientStop(bool connectionLost, string reason) => _onClientStop.Invoke(connectionLost, reason);
 
+        internal void CallRegisterCustomHandlers(QNetPeer peer, bool isServer) => _registerCustomHandlers.Invoke(peer, isServer);
         internal void CallOnNetworkWorldInitialized() => _onNetworkWorldInitialized.Invoke();
+        internal bool CallOnResolveUnityScene(string sceneName, Action onContinue)
+        {
+            if (!_onResolveUnityScene.IsValid())
+                return false;
+            _onResolveUnityScene.Invoke(sceneName, onContinue);
+            return true;
+        }
         internal void CallOnUnitySceneLoadingBegin(string sceneName) => _onUnitySceneLoadingBegin.Invoke(sceneName);
-        internal bool CallOnUnitySceneLoadingEnd(Action process)
+        internal bool CallOnUnitySceneLoadingEnd(Action process, Action<float> reportProgress)
         {
             if (!_onUnitySceneLoadingEnd.IsValid())
                 return false;
 
-            _onUnitySceneLoadingEnd.Invoke(process);
+            _onUnitySceneLoadingEnd.Invoke(process, reportProgress);
             return true;
         }  
         internal void CallOnSceneStateChange(QNetSceneState state) => _onSceneStateChange.Invoke(state);
@@ -200,7 +222,6 @@ namespace JEM.QNet.UnityEngine
                     b.Invoke(beh);
             }
         }
-
 
         /// <summary>
         ///     List of all active QNetManager behaviours.

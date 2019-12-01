@@ -45,6 +45,11 @@ namespace JEM.QNet.UnityEngine.Messages
         OBJECT_STATE,
 
         /// <summary>
+        ///     Object network active state change.
+        /// </summary>
+        OBJECT_ACTIVATION,
+
+        /// <summary>
         ///     Object delete message.
         /// </summary>
         OBJECT_DELETE,

@@ -42,13 +42,13 @@ namespace JEM.QNet.UnityEngine
         /// </summary>
         /// <exception cref="InvalidOperationException"/>
         /// <exception cref="ArgumentNullException"/>
-        public static void DestroyObjectOnAllConnections([NotNull] QNetObject qNetObject)
+        public static void DestroyObjectOnAllConnections([NotNull] QNetObject qNetObject, bool canPool)
         {
             if (!QNetManager.Instance.IsServerActive)
                 throw new InvalidOperationException("This methods can only be used by server.");
             if (qNetObject == null) throw new ArgumentNullException(nameof(qNetObject));
             QNetManager.SendToAll(QNetUnityChannel.OBJECT_QUERY, QNetMessageMethod.ReliableOrdered,
-                QNetUnityHeader.OBJECT_DELETE, (ushort) qNetObject.Identity);
+                QNetUnityHeader.OBJECT_DELETE, (ushort) qNetObject.Identity, canPool);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace JEM.QNet.UnityEngine
             var writer = QNetManager.GenerateServerMessage(QNetUnityHeader.OBJECT_CREATE);
 
             // Write base message.
-            writer.WriteMessage(new QNetObjectSerialized
+            var serializedObject = new QNetObjectSerialized
             {
                 ObjectIdentity = qNetObject.Identity,
                 OwnerIdentity = qNetObject.Identity.Owner,
@@ -114,8 +114,12 @@ namespace JEM.QNet.UnityEngine
                 Rotation = qNetObject.transform.rotation,
                 Scale = qNetObject.transform.localScale,
 
-                CustomComponents = qNetObject.Identity.GetArrayOfCustomComponentsTypes()
-            });
+                IsNetworkActive = qNetObject.Identity.IsNetworkActive,
+
+                CustomObjects = qNetObject.Identity.CustomObjects
+            };
+
+            writer.WriteMessage(serializedObject);
 
             // And write object's custom data.
             qNetObject.Identity.SerializeAllObjects(writer);

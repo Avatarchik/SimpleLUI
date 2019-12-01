@@ -46,7 +46,7 @@ namespace JEM.UnityEngine.Interface
     /// </summary>
     [AddComponentMenu("JEM/Interface/JEM Cursor Manager")]
     [DisallowMultipleComponent]
-    public sealed class JEMInterfaceCursor : MonoBehaviour
+    public sealed class JEMInterfaceCursor : JEMSingletonBehaviour<JEMInterfaceCursor>
     {
         /// <summary>
         ///     Cursor UI image.
@@ -76,15 +76,16 @@ namespace JEM.UnityEngine.Interface
         public Sprite CursorIconRotate;
 
         [Header("Debug")]
-        [JEMReadOnly]
+        [JEMReadonly]
         public List<string> ListOfLookcers;
 
-        [JEMReadOnly]
+        [JEMReadonly]
         public List<string> ListOfUnlockers;
 
-        private void Awake()
+        /// <inheritdoc />
+        protected override void OnAwake()
         {
-            Instance = this;
+            // ignore
         }
 
         private void Start()
@@ -267,7 +268,8 @@ namespace JEM.UnityEngine.Interface
             if (Instance.CursorImage.sprite != null) return;
             if (Instance.CursorIconDefault == null)
                 return;
-            JEMLogger.InternalLogWarning($"System was unable to set cursor icon {name}. Target sprite is not set.");
+            JEMLogger.LogWarning($"System was unable to set cursor icon {name}. " +
+                                 "Target sprite is not set.", "JEM");
             Instance.CursorImage.sprite = Instance.CursorIconDefault;
             Instance.CursorImage.enabled = Instance.CursorImage.sprite != null;
         }
@@ -313,10 +315,5 @@ namespace JEM.UnityEngine.Interface
         ///     Current interface cursor.
         /// </summary>
         public static JEMCursorIconName CurrentCursorIconName { get; private set; } = JEMCursorIconName.Default;
-
-        /// <summary>
-        ///     Current instance of script.
-        /// </summary>
-        internal static JEMInterfaceCursor Instance { get; private set; }
     }
 }

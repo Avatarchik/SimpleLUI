@@ -12,9 +12,14 @@ using UnityEngine.UI;
 namespace JEM.UnityEngine.Extension.Internal
 {
     /// <inheritdoc />
-    /// <summary />
-    internal class JEMExtensionTextScript : MonoBehaviour
+    internal class JEMExtensionTextScript : JEMRegenerableScript<JEMExtensionTextScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
         /// <summary/>
         internal IEnumerator InternalInsertText(Text text, string textToInset, float speed, Action onComplete)
         {

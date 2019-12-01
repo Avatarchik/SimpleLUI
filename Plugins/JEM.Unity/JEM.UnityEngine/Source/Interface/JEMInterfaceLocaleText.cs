@@ -15,8 +15,7 @@ namespace JEM.UnityEngine.Interface
     ///     Locale interface component for UI.Text.
     /// </summary>
     [AddComponentMenu("JEM/Interface/JEM Locale Text")]
-    [DisallowMultipleComponent]
-    [RequireComponent(typeof(Text))]
+    [DisallowMultipleComponent, RequireComponent(typeof(Text))]
     public class JEMInterfaceLocaleText : JEMInterfaceLocaleElement
     {
         /// <summary>
@@ -60,13 +59,13 @@ namespace JEM.UnityEngine.Interface
         {
             if (Text == null)
                 Text = GetComponent<Text>();
-
-            Text.text = AutoStart;
+  
             if (JEMLocale.GetSelectedLocale() != null)
             {
+                Text.text = AutoStart;
                 Text.text += JEMLocale.Resolve(Group, Key, AutoFormat);
+                Text.text += AutoEnd;
             }
-            Text.text += AutoEnd;
 
             if (ToUpper)
             {

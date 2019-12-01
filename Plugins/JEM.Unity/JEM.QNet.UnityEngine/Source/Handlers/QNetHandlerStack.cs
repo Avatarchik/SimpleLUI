@@ -40,6 +40,7 @@ namespace JEM.QNet.UnityEngine.Handlers
             client.SetHandler(new QNetMessage(false, QNetUnityHeader.OBJECT_CREATE, QNetHandlerObject.OnServerObjectCreate));
             client.SetHandler(new QNetMessage(false, QNetUnityHeader.OBJECT_DELETE, QNetHandlerObject.OnServerObjectDelete));
             client.SetHandler(new QNetMessage(false, QNetUnityHeader.OBJECT_STATE, QNetHandlerObject.OnServerObjectState));
+            client.SetHandler(new QNetMessage(false, QNetUnityHeader.OBJECT_ACTIVATION, QNetHandlerObject.OnServerObjectActivation));
             client.SetHandler(new QNetMessage(false, QNetUnityHeader.OBJECT_QUERY, QNetHandlerObject.OnClientObjectQuery));
 
             // For object query we can pass the same method as for the server.

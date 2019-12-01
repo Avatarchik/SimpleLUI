@@ -4,7 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using JEM.Core.CVar;
+using JEM.Core.Debugging.CVar;
 
 namespace JEM.QNet.UnityEngine.Simulation
 {
@@ -17,7 +17,8 @@ namespace JEM.QNet.UnityEngine.Simulation
         ///     The client-side prediction active state.
         ///     While prediction is disabled, client will be interpolated by server instead.
         /// </summary>
-        [JEMCVar("qnet.client_side_prediction", IsNetworkVar = true)]
+        [JEMCVar("qnet.client_side_prediction", "The client-side prediction active state." +
+                                                "While prediction is disabled, client will be interpolated by server instead.", IsNetworkVar = true)]
         public static bool ClientSidePrediction { get; set; } = true;
 
         /// <summary>

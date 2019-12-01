@@ -46,7 +46,6 @@ GameObject:
   - component: {fileID: 53344881702765638}
   - component: {fileID: 844244931346182267}
   - component: {fileID: 1604076479787204732}
-  - component: {fileID: 3532489227730651206}
   - component: {fileID: 7005085633870516293}
   m_Layer: 5
   m_Name: FieldBase
@@ -102,8 +101,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -114,23 +111,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3532489227730651206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3725674927113044222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
 --- !u!114 &7005085633870516293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,13 +120,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3725674927113044222}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e321aafc849426781bf2d030e7d6bfc, type: 3}
+  m_Script: {fileID: 11500000, guid: 4272e21f76b075b4ea019da0ad0ac6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enabled: 1
-  Text: 
-  LocaleGroup: SYSTEM
-  LocaleKey: 
+  TriggerUsingPointerEvents: 1
+  TooltipData:
+    Text: 
+    LocaleGroup: SYSTEM
+    LocaleKey: 
 --- !u!1 &6436938051442609930
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,7 +139,6 @@ GameObject:
   - component: {fileID: 8417151348183210987}
   - component: {fileID: 7074187116326938474}
   - component: {fileID: 2934614431218980272}
-  - component: {fileID: 5798532321085362347}
   - component: {fileID: 7509381962269742223}
   m_Layer: 5
   m_Name: Label
@@ -212,8 +192,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 4c672e82c265ed0438055ff624564a38, type: 3}
     m_FontSize: 14
@@ -228,23 +206,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: LABEL
---- !u!114 &5798532321085362347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6436938051442609930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
 --- !u!114 &7509381962269742223
 MonoBehaviour:
   m_ObjectHideFlags: 0

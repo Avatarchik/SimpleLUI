@@ -4,11 +4,9 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using JEM.UnityEngine.Extension;
 using JEM.UnityEngine.Internal;
 using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace JEM.UnityEngine
 {
@@ -23,6 +21,7 @@ namespace JEM.UnityEngine
     /// <summary>
     ///     Timer class.
     /// </summary>
+    [Obsolete]
     public class JEMTimer
     {
         /// <summary>
@@ -37,8 +36,8 @@ namespace JEM.UnityEngine
 
         private JEMTimer()
         {
-            var rootGameObject = GameObject.Find(nameof(JEMTimer)) ?? new GameObject(nameof(JEMTimer));
-            _script = rootGameObject.CollectComponent<JEMTimerScript>();
+            //var rootGameObject = GameObject.Find(nameof(JEMTimer)) ?? new GameObject(nameof(JEMTimer));
+            //_script = rootGameObject.CollectComponent<JEMTimerScript>();
         }
 
         /// <summary>
@@ -46,10 +45,10 @@ namespace JEM.UnityEngine
         /// </summary>
         public void DestroyTimer()
         {
-            if (_script == null)
-                return;
+            //if (_script == null)
+            //    return;
 
-            Object.Destroy(_script);
+            //Object.Destroy(_script);
         }
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace JEM.UnityEngine
                 Debug.LogWarning("OnUpdate event of UtilityInstance is equals null.");
 
             IsRunning = true;
-            _script.StartCoroutine(_script.CuntDownTimer(targetTime, time => { OnUpdate?.Invoke(time, targetTime); }));
+            Script.StartCoroutine(Script.CuntDownTimer(targetTime, time => { OnUpdate?.Invoke(time, targetTime); }));
         }
 
         /// <summary>
@@ -78,7 +77,7 @@ namespace JEM.UnityEngine
         public void StopTimer()
         {
             IsRunning = false;
-            _script.StopCoroutine(nameof(_script.CuntDownTimer));
+            Script.StopCoroutine(nameof(Script.CuntDownTimer));
         }
 
         /// <summary>
@@ -90,6 +89,17 @@ namespace JEM.UnityEngine
             return timer;
         }
 
-        private readonly JEMTimerScript _script;
+        private static JEMTimerScript Script
+        {
+            get
+            {
+                if (_script == null)
+                    _script = JEMTimerScript.GetScript();
+
+                return _script;
+            }
+        }
+
+        private static JEMTimerScript _script;
     }
 }

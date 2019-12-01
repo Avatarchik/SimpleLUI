@@ -11,9 +11,14 @@ using UnityEngine;
 namespace JEM.UnityEngine.Components.Internal
 {
     /// <inheritdoc />
-    /// <summary />
-    internal class JEMTranslatorScript : MonoBehaviour
+    internal class JEMTranslatorScript : JEMRegenerableScript<JEMTranslatorScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
         /// <summary/>
         internal IEnumerator RectSlavePosition(JEMTranslatorRect rect, bool activeState)
         {
@@ -59,23 +64,5 @@ namespace JEM.UnityEngine.Components.Internal
                 rect.SlaveSize = null;
             }
         }
-
-        /// <summary/>
-        internal static void RegenerateLocalScript()
-        {
-            if (Script != null)
-                return;
-
-            var obj = new GameObject(nameof(JEMTranslatorScript));
-            DontDestroyOnLoad(obj);
-            Script = obj.AddComponent<JEMTranslatorScript>();
-
-            if (Script == null)
-                throw new NullReferenceException(
-                    $"System was unable to regenerate local script of {nameof(JEMTranslator)}@{nameof(JEMTranslatorScript)}");
-        }
-
-        /// <summary/>
-        internal static JEMTranslatorScript Script { get; private set; }
     }
 }

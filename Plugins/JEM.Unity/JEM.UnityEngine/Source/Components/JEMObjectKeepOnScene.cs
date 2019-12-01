@@ -12,11 +12,20 @@ namespace JEM.UnityEngine.Components
     /// <summary>
     ///     Simple script that prevents from gameObject destroy on scene load.
     /// </summary>
-    [AddComponentMenu("JEM/Object/JEM KeepObjectOnScene")]
+    [AddComponentMenu("JEM/Object/JEM ObjectKeepOnScene")]
     [DisallowMultipleComponent]
     public sealed class JEMObjectKeepOnScene : MonoBehaviour
     {
         // yikes
-        private void Awake() => DontDestroyOnLoad(gameObject);     
+        private void Awake()
+        {
+            if (gameObject.transform.parent != null)
+            {
+                Debug.LogWarning("DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.", this);
+                return;
+            }
+
+            DontDestroyOnLoad(gameObject);
+        }
     }
 }

@@ -12,7 +12,7 @@ using System;
 
 namespace JEM.QNet.UnityEngine.Interpolation
 {
-    public delegate void FinalObjectInterpolation<in TSnapshot>(TSnapshot newState, float smooth)
+    public delegate void FinalObjectInterpolation<in TSnapshot>(TSnapshot newState)
         where TSnapshot : ISnapshot;
 
     public delegate void ObjectInterpolationReset<in TSnapshot>(TSnapshot newState, bool isFirst)
@@ -73,8 +73,12 @@ namespace JEM.QNet.UnityEngine.Interpolation
         public void Interpolate()
         {
             if ((!_interpolator?.Enabled ?? true) || QNetObject.IsServer) return;
-            if (_obj.IsOwner && QNetSettings.ClientSidePrediction)
+            var clientSidePrediction = _obj.IsOwner && QNetSettings.ClientSidePrediction;
+            if (clientSidePrediction)
+            {
+                // Interpolate only if client side prediction is disabled for local peer.
                 return;
+            }
 
             var interpolation = QNetSettings.Interpolation * 0.001f;
             var extrapolation = QNetSettings.Extrapolation * 0.001f;
@@ -90,22 +94,27 @@ namespace JEM.QNet.UnityEngine.Interpolation
         /// <remarks>
         ///     Should be called via UnsafeSimulate method.
         /// </remarks>
-        public void Apply(float objectSmoothing)
+        public void Apply()
         {
             if ((!_interpolator?.Enabled ?? true) || QNetObject.IsServer) return;
-            if (_obj.IsOwner && QNetSettings.ClientSidePrediction)
+            var clientSidePrediction = _obj.IsOwner && QNetSettings.ClientSidePrediction;
+            if (clientSidePrediction)
+            {
+                // Apply only if client side prediction is disabled for local peer.
                 return;
+            }
 
             // Interpolate frame state changes.
             _interpolator.InterpolateState(QNetTime.FrameAlpha, ref _previousState, ref _currentState, out var state);
+            if (!state.Snapshot.IsValid)
+                return;
 
             // Calculate server time
             InterpolationTime = state.Frame * QNetTime.TickStep;
 
             // Apply.
-            var smooth = objectSmoothing;
-            if (smooth > 0f || _stateReset == null)
-                _finalInterpolation.Invoke(state.Snapshot, smooth);
+            if (_stateReset == null)
+                _finalInterpolation.Invoke(state.Snapshot);
             else
             {
                 _stateReset.Invoke(state.Snapshot, false);
@@ -118,10 +127,10 @@ namespace JEM.QNet.UnityEngine.Interpolation
         public void AddSnapshot(TSnapshot snapshotData, uint serverFrame, bool reset = false)
         {
             if (_interpolator == null) return;
-            if (reset) _interpolator.Dispose();
+            if (reset) _interpolator.Reset();
             if (_interpolator.Enabled)
                 _interpolator.AddState(snapshotData, QNetTime.Time, serverFrame);
-
+    
             if (_interpolator.Enabled && _interpolator.States.Count > 1)
                 return;
 

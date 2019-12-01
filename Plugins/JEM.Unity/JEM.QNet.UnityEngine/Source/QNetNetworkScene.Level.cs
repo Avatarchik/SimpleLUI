@@ -10,7 +10,10 @@ using JEM.QNet.UnityEngine.Messages;
 using JEM.QNet.UnityEngine.Objects;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -53,6 +56,8 @@ namespace JEM.QNet.UnityEngine
     // Network level initialization methods
     public static partial class QNetNetworkScene
     {
+        public const float FixedSceneWait = 0.25f;
+
         /// <summary>
         ///     Server initialization process called by <see cref="QNetManager.StartServer"/>.
         /// </summary>
@@ -73,6 +78,9 @@ namespace JEM.QNet.UnityEngine
             // Restart scene
             RestartScene();
 
+            // Update the active scene name.
+            // NOTE: Need to update the scene name before the SceneState change to allow OnSceneStateChange event have access to it.
+            SceneName = levelName;
             // Update scene state: LOADING
             SceneState = QNetSceneState.Loading;
             // Load network level.
@@ -80,6 +88,8 @@ namespace JEM.QNet.UnityEngine
 
             // Allow objects to be spawned.
             CanSpawnNetworkObjects = true;
+            // :D
+            yield return new WaitForSeconds(1.0f);
             // Update scene state: LOADED
             SceneState = QNetSceneState.Loaded;
             // Start the server.
@@ -118,8 +128,10 @@ namespace JEM.QNet.UnityEngine
             if (!QNetManager.Instance.IsServerActive)
             {
                 RestartScene();
-            } 
+            }
 
+            // Update the active scene name.
+            SceneName = levelName;
             // Update scene state: LOADING
             SceneState = QNetSceneState.Loading;
             // Load network level.
@@ -158,6 +170,9 @@ namespace JEM.QNet.UnityEngine
             SceneState = QNetSceneState.Loaded;
             yield return new WaitForEndOfFrame();
 
+            // Call onNetworkWorldInitialized.
+            QNetManagerBehaviour.ForEach(b => b.CallOnNetworkWorldInitialized());
+
             // Second phase done.
             // Call the server about.
             QNetManager.Send(QNetBaseChannel.DEFAULT, QNetMessageMethod.ReliableOrdered, QNetUnityHeader.WORLD_SERIALIZED);
@@ -173,6 +188,25 @@ namespace JEM.QNet.UnityEngine
         /// </summary>
         internal static IEnumerator LoadNetworkScene(string levelName)
         {
+            // Lul
+            yield return new WaitForSeconds(FixedSceneWait);
+
+            // Try to fix the levelName.
+            levelName = Path.GetFileName(levelName);
+
+            // Try to resolve level.
+            bool isResolving = false;
+            QNetManagerBehaviour.ForEach(b =>
+            {
+                var resolving = b.CallOnResolveUnityScene(levelName, () => { isResolving = false; });
+                if (resolving)
+                    isResolving = true;
+            });
+
+            // Wait for level to resolve.
+            while (isResolving)
+                yield return new WaitForEndOfFrame();
+
             // Check if the scene is valid.
             if (!Application.CanStreamedLevelBeLoaded(levelName))
             {
@@ -188,27 +222,57 @@ namespace JEM.QNet.UnityEngine
             yield return new WaitForEndOfFrame();
 
             var asyncOperation = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Single);
-            yield return asyncOperation;
+            while (!asyncOperation.isDone)
+            {
+                var progress = Mathf.Clamp01(asyncOperation.priority / 0.9f) - 0.5f;
+                OnReportSceneLoadingProgress?.Invoke(progress);
+                yield return new WaitForEndOfFrame();
+            }
 
             // call onUnitySceneLoadingEnd
             // NOTE: As a additional feature, we will give user a ability to load his content on base network level load.
             bool process = false;
-            bool isMethod = false;
+            List<float> method = new List<float>();
+            
             void OnProcess() => process = true;
             QNetManagerBehaviour.ForEach(b =>
             {
-                if (b.CallOnUnitySceneLoadingEnd(OnProcess))
+                int index = method.Count;
+                void OnReportProgress(float progress)
                 {
-                    isMethod = true;
+                    if (index >= method.Count)
+                        return;
+
+                    // Update.
+                    method[index] = progress;
+
+                    // Report progress.
+                    OnReportSceneLoadingProgress?.Invoke(0.5f + (method.Sum() / method.Count - 0.5f));
+                }
+
+                if (b.CallOnUnitySceneLoadingEnd(OnProcess, OnReportProgress))
+                {
+                    method.Add(0f);
                 }
             });
 
-            if (isMethod)
+            if (method.Count != 0)
             {
                 while (!process)
                     yield return new WaitForEndOfFrame();
             }
 
+            // Final progress report to tell everything was loaded.
+            OnReportSceneLoadingProgress?.Invoke(1f);
+
+            // Lol
+            yield return new WaitForSeconds(FixedSceneWait);
+
+            // At the end of every scene loading, collect all methods from all QNetBehaviour based types
+            QNetBehaviour.PrepareAllMethodsTypes();
+
+            // Prepare list of all network methods QNetBehaviour based types can use.
+            QNetBehaviour.LoadAllNetworkMethods();
             yield return new WaitForEndOfFrame();
         }
 
@@ -229,18 +293,25 @@ namespace JEM.QNet.UnityEngine
             // Update scene state: UNLOADING
             SceneState = QNetSceneState.UnLoading;
 
+            // Destroy all the objects.
+            QNetObject.LocalDestroyAll();
+            QNetHandlerObject.DestroySerializedObjects();
+
+            // Load the menu level.
             var asyncOperation = SceneManager.LoadSceneAsync(QNetManager.Instance.MenuLevel, LoadSceneMode.Single);
             yield return asyncOperation;
 
             // Restart scene.
             RestartScene();
 
-            // reset routine process
+            // Reset routine process.
             _runningProcess = null;
 
             stopwatch.Stop();
             QNetManager.PrintLogInfo("Unload network scene done. " +
                                 $"It took {stopwatch.Elapsed.TotalMilliseconds:0.00} ms to complete.");
+
+            onUnloadDone?.Invoke();
         }
 
         /// <summary>
@@ -259,6 +330,11 @@ namespace JEM.QNet.UnityEngine
         /// </summary>
         internal static void RunInitializationProcess(IEnumerator routine)
         {
+
+#if DEBUG
+            QNetManager.PrintLogMsc("QNetNetworkScene.RunInitializationProcess()");
+#endif
+
             if (_runningProcess != null)
             {
                 QNetManager.PrintLogWarning("New initialization process is starting but whe have reference to the last one. " +
@@ -268,6 +344,11 @@ namespace JEM.QNet.UnityEngine
 
             _runningProcess = QNetManager.Instance.StartCoroutine(routine);
         }
+
+        /// <summary>
+        ///     Event called when progress has been made during scene loading.
+        /// </summary>
+        public static event Action<float> OnReportSceneLoadingProgress;
 
         /// <summary>
         ///     Defines if network objects can be currently spawned in locale scene or not.
@@ -285,6 +366,11 @@ namespace JEM.QNet.UnityEngine
             get => _sceneState;
             private set
             {
+                if (_sceneState == value)
+                {
+                    return;
+                }
+
                 _sceneState = value;
                 QNetManagerBehaviour.ForEach(b => b.CallOnSceneStateChange(value));
             }

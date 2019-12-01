@@ -11,8 +11,8 @@ using UnityEngine;
 
 namespace JEM.QNet.UnityEditor.Behaviour
 {
-    [CustomEditor(typeof(QNetObjectPrefabPair))]
-    internal class QNetObjectPrefabPairEditor : Editor
+    [CustomEditor(typeof(QNetObjectPrefabObject))]
+    internal class QNetObjectPrefabObjectEditor : Editor
     {
         /// <inheritdoc />
         public override void OnInspectorGUI()
@@ -24,14 +24,14 @@ namespace JEM.QNet.UnityEditor.Behaviour
             if (GUILayout.Button("Regenerate Identity", GUILayout.Height(25)))
             {
                 EditorUtility.SetDirty(target);
-                var prefab = (QNetObjectPrefabPair) target;
+                var prefab = (QNetObjectPrefabObject) target;
 
-                var prefabsGUIDs = AssetDatabase.FindAssets($"t:{nameof(QNetObjectPrefabPair)}");
-                var loadedPrefabs = new QNetObjectPrefabPair[prefabsGUIDs.Length];
+                var prefabsGUIDs = AssetDatabase.FindAssets($"t:{nameof(QNetObjectPrefabObject)}");
+                var loadedPrefabs = new QNetObjectPrefabObject[prefabsGUIDs.Length];
                 for (var index = 0; index < prefabsGUIDs.Length; index++)
                     loadedPrefabs[index] =
-                        (QNetObjectPrefabPair) AssetDatabase.LoadAssetAtPath(
-                            AssetDatabase.GUIDToAssetPath(prefabsGUIDs[index]), typeof(QNetObjectPrefabPair));
+                        (QNetObjectPrefabObject) AssetDatabase.LoadAssetAtPath(
+                            AssetDatabase.GUIDToAssetPath(prefabsGUIDs[index]), typeof(QNetObjectPrefabObject));
 
                 var identity = (ushort) Random.Range(ushort.MinValue, ushort.MaxValue);
                 while (loadedPrefabs.Any(p => p.PrefabIdentity == identity))

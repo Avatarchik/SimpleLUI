@@ -72,7 +72,9 @@ namespace JEM.UnityEditor.AssetBundles
         public static void Save()
         {
             if (Configuration == null)
-                throw new NullReferenceException($"{nameof(Configuration)} is null.");
+            {
+                return;
+            }
 
             JEMConfiguration.WriteData(ConfigurationFile, Configuration, JEMConfigurationSaveMethod.JSON);
         }

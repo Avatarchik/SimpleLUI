@@ -5,9 +5,11 @@
 //
 
 //
-// Original Network simulation design and execution
+// Original Network simulation design and implementation
 //  by Damian 'Erdroy' Korczowski (https://github.com/Erdroy)
 //
+
+#define DEEP_DEBUG
 
 using JEM.Core.Common;
 using JEM.QNet.Messages;
@@ -16,6 +18,8 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace JEM.QNet.UnityEngine.Objects
 {
@@ -23,85 +27,62 @@ namespace JEM.QNet.UnityEngine.Objects
     /// <summary>
     ///     Base class for object input sample used for simulation.
     /// </summary>
-    public abstract class ObjectInputSample : QNetSerializedMessage
+    public interface IObjectInputSample : IQNetSerializedMessage
     {
         /// <summary>
         ///     Client frame this input sample was generated from.
         /// </summary>
-        public uint ClientFrame { get; internal set; }
-
-        protected ObjectInputSample() { }
-
-        /// <inheritdoc />
-        public override void Serialize(QNetMessageWriter writer)
-        {
-            writer.WriteUInt32(ClientFrame);   
-        }
-
-        /// <inheritdoc />
-        public override void DeSerialize(QNetMessageReader reader)
-        {
-            ClientFrame = reader.ReadUInt32();
-        }
+        uint ClientFrame { get; set; }
     }
 
     /// <inheritdoc />
     /// <summary>
     ///     Base class for object simulation result.
     /// </summary>
-    public abstract class ObjectSimulationResult : QNetSerializedMessage
+    public interface IObjectSimulationResult : IQNetSerializedMessage
     {
-        protected ObjectSimulationResult() { }
-
         /// <summary>
         ///     Compare two results.
         ///     Return true if everything is ok.
         /// </summary>
-        public abstract bool Compare([NotNull] ObjectSimulationResult result, out float distance);
+        bool Compare([NotNull] IObjectSimulationResult result, out float distance);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IQNetSerializedMessage" />
     /// <summary>
     ///     Object simulation correction data.
     /// </summary>
-    internal sealed class ObjectSimulationCorrection : QNetSerializedMessage
+    internal struct ObjectSimulationCorrection : IQNetSerializedMessage
     {
         /// <summary>
         ///     A simulation result this object correction wants to apply.
         /// </summary>
-        public ObjectSimulationResult Result { get; set; }
+        public IObjectSimulationResult Result { get; set; }
 
         /// <summary>
-        ///     The frame this correction was generated on.
+        ///     The server frame this correction was generated on.
         /// </summary>
-        public uint Frame { get; internal set; }
+        public uint ServerFrame { get; internal set; }
+
+        /// <summary>
+        ///     A client of input this correction was generated from.
+        /// </summary>
+        public uint ClientFrame { get; internal set; }
 
         /// <inheritdoc />
-        public override void Serialize(QNetMessageWriter writer)
+        public void Serialize(QNetMessageWriter writer)
         {
-            if (QNetBehaviour.GetSerializedMessageIndex(Result.GetType(), out byte typeIndex))
-            {
-                writer.WriteByte(typeIndex);
-            }
-            else throw new NullReferenceException("Failed to serialize ObjectSimulationCorrection class. " +
-                                                  $"Unable to find typeIndex of type {Result.GetType().FullName}.");
-
-            writer.WriteMessage(Result);
-            writer.WriteUInt32(Frame);
+            writer.WriteMessage(Result, true);
+            writer.WriteUInt32(ServerFrame);
+            writer.WriteUInt32(ClientFrame);
         }
 
         /// <inheritdoc />
-        public override void DeSerialize(QNetMessageReader reader)
+        public void DeSerialize(QNetMessageReader reader)
         {
-            var typeIndex = reader.ReadByte();
-            if (QNetBehaviour.GetSerializedMessageType(typeIndex, out var resultType))
-            {
-                Result = reader.ReadMessage(resultType) as ObjectSimulationResult;
-            }
-            else throw new NullReferenceException("Failed to deserialize ObjectSimulationCorrection class. " +
-                                                  $"Unable to find type of index {typeIndex}.");
-
-            Frame = reader.ReadUInt32();
+            Result = reader.ReadMessage() as IObjectSimulationResult;
+            ServerFrame = reader.ReadUInt32();
+            ClientFrame = reader.ReadUInt32();
         }
     }
 
@@ -113,12 +94,12 @@ namespace JEM.QNet.UnityEngine.Objects
         /// <summary>
         ///     Command input sample.
         /// </summary>
-        public ObjectInputSample Input { get; set; }
+        public IObjectInputSample Input { get; set; }
 
         /// <summary>
         ///     Command simulation result.
         /// </summary>
-        public ObjectSimulationResult Result { get; set; }
+        public IObjectSimulationResult Result { get; set; }
 
         /// <summary>
         ///     First execution state.
@@ -130,27 +111,49 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     Should we reset the state?
         /// </summary>
         public bool ResetState { get; set; }
-
-        /// <summary>
-        ///     Command execution frame.
-        /// </summary>
-        public uint ServerFrame { get; set; }
     }
 
     // QNetBehaviour simulation stuff.
     public abstract partial class QNetBehaviour
     {
         /// <summary>
+        ///     Controls if entity should be simulated if it's a server object.
+        ///     When true, by default the simulation will be done on both server and all clients.
+        ///     To simulate object only on the server set <see cref="AllowClientSidePrediction"/> to false.
+        /// </summary>
+        public bool SimulateServerObject { get; set; } = false;
+
+        /// <summary>
+        ///     Local flag that tells if this <see cref="QNetBehaviour"/> based component can use client side prediction.
+        /// </summary>
+        public bool AllowClientSidePrediction { get; set; } = true;
+
+        /// <summary>
         ///     Defines if entity can be simulated.
         /// </summary>
-        internal bool CanSimulate => _hasMethodsToSimulate && QNetTime.ServerFrame > _simulationSkip && (IsServer || HasStateDeserialized);
+        public bool CanSimulate => _hasMethodsToSimulate && QNetTime.ServerFrame > _simulationSkip && (IsServer || HasStateDeserialized);
+
+        /// <summary>
+        ///     State of client side prediction.
+        ///     False if this <see cref="QNetBehaviour"/> based object can't use this feature.
+        ///     While prediction is disabled, client will be interpolated by server instead.
+        /// </summary>
+        public bool ClientSidePrediction => QNetSettings.ClientSidePrediction && AllowClientSidePrediction;
+
+        /// <summary>
+        ///     True if this <see cref="QNetBehaviour"/> based object is a server object and can be simulated in local peer.
+        /// </summary>
+        public bool CanSimulateServerObject => Identity.IsServerObject && SimulateServerObject && (IsServer || IsClient && AllowClientSidePrediction);
+
+        // TODO: Create method that allow to set this field so local peer cloud skip the simulation to given frame
+        // TODO:  (by skipping we mean ignoring all the corrections received by client or requests to simulate received by client).
         private uint _simulationSkip;
 
         private bool _canQueueCommands = true;
         private uint _lastClientUpdateFrame;
 
         private readonly Queue<ObjectSimulationCommand> _commandQueue = new Queue<ObjectSimulationCommand>();
-        private List<ObjectInputSample> _inputHistory = new List<ObjectInputSample>();
+        private List<IObjectInputSample> _inputHistory = new List<IObjectInputSample>();
 
         /// <summary>
         ///     False, if this QNetBehaviour based component does not have defined all the methods needed to simulate the object.
@@ -167,14 +170,14 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     OnResetState called by <see cref="ExecuteCommand"/> to restart the object state to received result.
         ///     Usually result of a invalid client simulation result.
         /// </summary>
-        private JEMSmartMethod _onResetState;
+        private JEMSmartMethodS<IObjectSimulationResult> _onResetState;
 
         /// <summary>
         ///     OnAdjustCameraState called by <see cref="ExecuteCommand"/> when the client-side prediction is disabled
         ///      and server need to adjust the camera state.
         ///     Invoked right after OnResetState.
         /// </summary>
-        private JEMSmartMethod _onAdjustCameraState;
+        private JEMSmartMethodS<IObjectInputSample> _onAdjustCameraState;
 
         /// <summary>
         ///     OnSimulateWithResult called on both server and client(if prediction enabled) to simulate current frame.
@@ -182,44 +185,57 @@ namespace JEM.QNet.UnityEngine.Objects
         /// <remarks>
         ///     You should only simulate core movement mechanics that can be predicted in this method.
         /// </remarks>
-        private JEMSmartMethod _onSimulateWithResult;
+        private JEMSmartMethodR<IObjectSimulationResult, IObjectInputSample> _onSimulateWithResult;
 
         /// <summary>
         ///     OnSimulateFirstExecution called on both server and client to simulate the rest of object logic. ex.: animations, weapons...
         /// </summary>
-        private JEMSmartMethod _onSimulateFirstExecution;
+        private JEMSmartMethodS<ObjectSimulationCommand> _onSimulateFirstExecution;
 
         /// <summary>
         ///     OnSimulateOwner is called to simulate the object on server side only.
         /// </summary>
-        private JEMSmartMethod _onSimulateServer;
+        private JEMSmartMethodS _onSimulateServer;
 
         /// <summary>
         ///     OnSimulateClient is called to simulate the object on the client that is not a owner and the server is not active.
         /// </summary>
-        private JEMSmartMethod _onSimulateClient;
+        private JEMSmartMethodS _onSimulateClient;
+
+        private QNetMessagePointer _clientRequestSimulationPointer;
+        private QNetMessagePointer _serverCorrectsSimulationPointer;
 
         private void LoadSimulationMethods()
         {
+            Profiler.BeginSample("QNetBehaviour.LoadSimulationMethods");
+
             // Setup input history of length at most one second.
-            _inputHistory = new List<ObjectInputSample>(QNetTime.TickRate);
+            _inputHistory = new List<IObjectInputSample>(QNetTime.TickRate);
 
             // Collect methods.
             _onSampleInput = new JEMSmartMethod(this, "OnSampleInput");
 
-            _onResetState = new JEMSmartMethod(this, "OnResetState");
-            _onAdjustCameraState = new JEMSmartMethod(this, "OnAdjustCameraState");
+            _onResetState = new JEMSmartMethodS<IObjectSimulationResult>(this, "OnResetState");
+            _onAdjustCameraState = new JEMSmartMethodS<IObjectInputSample>(this, "OnAdjustCameraState");
 
-            _onSimulateWithResult = new JEMSmartMethod(this, "OnSimulateWithResult");
-            _onSimulateFirstExecution = new JEMSmartMethod(this, "OnSimulateFirstExec");
+            _onSimulateWithResult = new JEMSmartMethodR<IObjectSimulationResult, IObjectInputSample>(this, "OnSimulateWithResult");
+            _onSimulateFirstExecution = new JEMSmartMethodS<ObjectSimulationCommand>(this, "OnSimulateFirstExec");
 
-            _onSimulateServer = new JEMSmartMethod(this, "OnSimulateServer");
-            _onSimulateClient = new JEMSmartMethod(this, "OnSimulateClient");
+            _onSimulateServer = new JEMSmartMethodS(this, "OnSimulateServer");
+            _onSimulateClient = new JEMSmartMethodS(this, "OnSimulateClient");
 
             // Check if we can simulate.
+            // We can only simulate if all core methods for simulation are implemented in to the object.
             _hasMethodsToSimulate = _onSampleInput.IsValid() && _onResetState.IsValid() && _onSimulateWithResult.IsValid();
+
+            // Get message pointers.
+            _clientRequestSimulationPointer = GetMessagePointer(nameof(ClientRequestsSimulation));
+            _serverCorrectsSimulationPointer = GetMessagePointer(nameof(ServerCorrectsSimulation));
+
+            Profiler.EndSample();
         }
 
+        /* No need to implement object interpolation internaly. User can write his own code or use QNetInterpolator
         /// <inheritdoc />
         internal override void InterpolateFrame()
         {
@@ -230,6 +246,11 @@ namespace JEM.QNet.UnityEngine.Objects
          
             // TODO: Interpolate
         }
+        */
+
+        // UPDATE: Override InterpolateFrame so the object extending QNetBehaviour dont need to.
+        /// <inheritdoc />
+        public override void InterpolateFrame() { }
 
         /// <inheritdoc />
         internal override void SimulateFrame()
@@ -245,12 +266,12 @@ namespace JEM.QNet.UnityEngine.Objects
                 _onSimulateServer.Invoke();
             }
 
-            if (IsOwner)
+            if (IsOwner || CanSimulateServerObject)
             {
                 // Sample input.
-                object[] p = {null};
+                object[] p = { null };
                 _onSampleInput.Invoke(p);
-                var inputSample = (ObjectInputSample) p[0];
+                var inputSample = (IObjectInputSample)p[0];
                 // Set frame.
                 inputSample.ClientFrame = QNetTime.Frame;
 
@@ -259,7 +280,6 @@ namespace JEM.QNet.UnityEngine.Objects
                 {
                     IsFirstExecution = true,
                     ResetState = false,
-                    ServerFrame = QNetTime.ServerFrame,
                     Input = inputSample
                 };
 
@@ -268,7 +288,7 @@ namespace JEM.QNet.UnityEngine.Objects
             }
 
             // Call onSimulateClient
-            if (!IsServer && !IsOwner)
+            if (!IsServer && !IsOwner || CanSimulateServerObject)
             {
                 _onSimulateClient.Invoke();
             }
@@ -306,27 +326,41 @@ namespace JEM.QNet.UnityEngine.Objects
                     // Send input and results to server
                     // Note: Should be called only when this command was executed
                     // The first time (i.e.: not a move correction command).
-                    SendMessage(nameof(ClientRequestsSimulation), command.Input, command.Result);
+
+                    // SendMessage(nameof(ClientRequestsSimulation), command.Input, command.Result);
+                    var writer = CreateNetworkMessage(false, _clientRequestSimulationPointer, out var outgoingMessage);
+                    writer.WriteMessage(command.Input, true);
+                    writer.WriteMessage(command.Result, true);
+                    outgoingMessage.SendMessage();
                 }
 
-                if (IsServer && !IsOwner)
+                // Correct only when this is not a host owned object but still a player owned.
+                if (IsServer && !IsOwner && !CanSimulateServerObject)
                 {
                     var serverResults = command.Result;
-                    if (!serverResults.Compare(clientResults, out var resultDistance))
+                    var isGood = serverResults.Compare(clientResults, out var resultDistance);
+                    if (!isGood)
                     {
 #if DEBUG
-                        QNetManager.PrintLogWarning($"The server will send correction because of client({Identity.Owner}) error. ({resultDistance})", this);
+#if DEEP_DEBUG
+                        QNetManager.PrintLogWarning($"The server will send correction because of client({Identity.Owner}) error. ({resultDistance:0.000})", this);
+#endif
+                        TotalSimulationCorrections++;
 #endif
 
                         // Send back server results.
                         var correction = new ObjectSimulationCorrection
                         {
-                            Result =  serverResults,
-                            Frame = QNetTime.ServerFrame
+                            Result = serverResults,
+                            ServerFrame = QNetTime.ServerFrame,
+                            ClientFrame = command.Input.ClientFrame
                         };
 
                         // Send the message to owner of object.
-                        SendMessage(Identity, nameof(ServerCorrectsSimulation), correction);
+                        // SendMessage(Identity, nameof(ServerCorrectsSimulation), correction);
+                        var writer = CreateNetworkMessage(true, _serverCorrectsSimulationPointer, out var outgoingMessage);
+                        writer.WriteMessage(correction);
+                        outgoingMessage.SendMessage(Identity);
                     }
                 }
             }
@@ -338,35 +372,36 @@ namespace JEM.QNet.UnityEngine.Objects
         /// </summary>
         protected virtual void ExecuteCommand(ObjectSimulationCommand command, bool resetState)
         {
-            var disableClientPrediction = IsServer && !QNetSettings.ClientSidePrediction;
+            // Get if client prediction is disabled.
+            // As server this will be always true.
+            var disableClientPrediction = IsServer && !ClientSidePrediction;
 
-            if (resetState || disableClientPrediction)
+            if (resetState)
             {
-                // Note: When client-side prediction is disabled,
-                // We use the reset state on server to apply client-side position.
-                // Additionally we must set yaw angle.
-
                 // Reset state.
                 _onResetState.Invoke(command.Result);
 
                 // Adjust camera state.
                 if (disableClientPrediction)
                     _onAdjustCameraState.Invoke(command.Input);
+
+                return;
             }
 
-            if (IsClient || !disableClientPrediction)
+            // Simulate authoritative movement and setup result.
+            // This can be done only on server or on client when client prediction is enabled.
+            if (IsServer || ClientSidePrediction)
             {
-                // Simulate authoritative movement and setup result.
-                command.Result = _onSimulateWithResult.Invoke(command.Input) as ObjectSimulationResult;
+                command.Result = _onSimulateWithResult.Invoke(command.Input);
                 if (command.Result == null)
                     throw new NullReferenceException("Method OnSimulateWithResult has returned a null value or " +
                                                      "value that can't be converted in to ObjectSimulationResult type.");
-            }
 
-            if (command.IsFirstExecution)
-            {
-                // Simulate the rest of the object logic.
-                _onSimulateFirstExecution.Invoke(command);
+                if (command.IsFirstExecution)
+                {
+                    // Simulate the rest of the object logic.
+                    _onSimulateFirstExecution.Invoke(command);
+                }
             }
         }
 
@@ -377,7 +412,8 @@ namespace JEM.QNet.UnityEngine.Objects
         {
             QNetManager.PrintLogAssert(_canQueueCommands, "Cannot queue commands from the current context!", this);
 
-            if (IsOwner && command.IsFirstExecution)
+            // Update the history only if local peer is a owner of this object or this is a server object that could be simulated.
+            if ((IsOwner || CanSimulateServerObject) && command.IsFirstExecution)
             {
                 // Add input to the history.
                 // Note: This is needed only for the owner, as owner
@@ -393,22 +429,40 @@ namespace JEM.QNet.UnityEngine.Objects
         }
 
         [QNetMessage(Method = QNetMessageMethod.Unreliable)]
-        private void ClientRequestsSimulation<TInputSample, TSimulationResult>(TInputSample sample, TSimulationResult clientResult) 
-            where TInputSample : ObjectInputSample where TSimulationResult : ObjectSimulationResult
+        private void ClientRequestsSimulation(QNetMessageReader reader)
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             if (!CanSimulate)
             {
-#if DEBUG
+#if DEBUG && DEEP_DEBUG
                 QNetManager.PrintLogMsc("Refusing to simulate request.", this);
 #endif
                 return;
             }
 
+            if (CanSimulateServerObject)
+            {
+                // Don't know how somone get here, but no... you can't request simulation of a server object :)
+                return;
+            }
+
+            // Resolve sample.
+            if (!(reader.ReadMessage() is IObjectInputSample sample))
+                throw new InvalidOperationException();
+
+            // Resolve simulation result.
+            if (!(reader.ReadMessage() is IObjectSimulationResult clientResult))
+                throw new InvalidOperationException();
+
             // Discard old frames (out-of order)
             // This is naive check, can be hacked, but this should only check ordering.
             if (sample.ClientFrame <= _lastClientUpdateFrame)
             {
-#if DEBUG
+#if DEBUG && DEEP_DEBUG
                 QNetManager.PrintLogMsc("Dropping client movement update due to message being out-of-order", this);
 #endif
                 return;
@@ -420,7 +474,6 @@ namespace JEM.QNet.UnityEngine.Objects
             {
                 Input = sample,
                 Result = clientResult,
-                ServerFrame = QNetTime.ServerFrame,
                 IsFirstExecution = true
             };
 
@@ -429,26 +482,74 @@ namespace JEM.QNet.UnityEngine.Objects
         }
 
         [QNetMessage(Method = QNetMessageMethod.Unreliable)]
-        private void ServerCorrectsSimulation(ObjectSimulationCorrection correct)
+        private void ServerCorrectsSimulation(QNetMessageReader reader)
         {
             if (IsServer)
             {
                 // Ignore correction on server.
-                return; 
+                return;
             }
+
+            // Resolve correction
+            var correction = reader.ReadMessage<ObjectSimulationCorrection>();
+
+            // Reconciliate
+            // Find first input that is essential for correction (input that failed on the server side).
+            var baseInputIndex = _inputHistory.FindIndex(x => x.ClientFrame == correction.ClientFrame);
 
             // Clear current commands (should be empty, tho).
             _commandQueue.Clear();
 
-            // Queue command.
-            QueueCommand(new ObjectSimulationCommand
+            if (baseInputIndex == -1)
             {
-                IsFirstExecution = false,
-                ResetState = true,
-                ServerFrame = QNetTime.ServerFrame,
-                Input = _inputHistory.LastOrDefault(),
-                Result = correct.Result
-            });
+                // Construct and queue command.
+                QueueCommand(new ObjectSimulationCommand
+                {
+                    IsFirstExecution = false,
+                    ResetState = true,
+                    Input = _inputHistory.LastOrDefault(),
+                    Result = correction.Result
+                });
+            }
+            else
+            {
+                //Construct and queue base command
+                QueueCommand(new ObjectSimulationCommand
+                {
+                    IsFirstExecution = false,
+                    ResetState = true,
+                    Input = _inputHistory[baseInputIndex],
+                    Result = correction.Result
+                });
+
+                // Write all newer input commands to match the new move
+                for (var i = baseInputIndex + 1; i < _inputHistory.Count; i++)
+                {
+                    var input = _inputHistory[i];
+
+                    // Construct and queue base command
+                    QueueCommand(new ObjectSimulationCommand
+                    {
+                        IsFirstExecution = false,
+                        ResetState = false,
+                        Input = input
+                    });
+                }
+            }
+
+#if DEBUG
+            TotalSimulationCorrections++;
+#endif
         }
+
+#if DEBUG
+        /// <summary>
+        ///     Amount of all simulation corrections generated.
+        /// </summary>
+        /// <remarks>
+        ///     For server this is total generated, but for client total received (includes all objects).
+        /// </remarks>
+        public static int TotalSimulationCorrections { get; set; } = 0;
+#endif
     }
 }

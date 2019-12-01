@@ -11,9 +11,14 @@ using UnityEngine;
 namespace JEM.UnityEngine.Extension.Internal
 {
     /// <inheritdoc />
-    /// <summary />
-    internal class JEMExtensionGameObjectScript : MonoBehaviour
+    internal class JEMExtensionGameObjectScript : JEMRegenerableScript<JEMExtensionGameObjectScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
         /// <summary/>
         internal IEnumerator InternalSetActiveEasy(GameObject go, bool activeState, Action onDone)
         {

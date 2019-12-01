@@ -11,9 +11,14 @@ using UnityEngine;
 namespace JEM.UnityEngine.Extension.Internal
 {
     /// <inheritdoc />
-    /// <summary />
-    internal class JEMExtensionAudioSourceScript : MonoBehaviour
+    internal class JEMExtensionAudioSourceScript : JEMRegenerableScript<JEMExtensionAudioSourceScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
         /// <summary/>
         internal IEnumerator InternalFadeOut(AudioSource audioSource, float speed, Action onComplete)
         {

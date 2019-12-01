@@ -5,7 +5,7 @@
 //
 
 using JEM.Core.Debugging;
-using JEM.UnityEngine.Interface;
+using JEM.UnityEngine.Interface.Animation;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -61,7 +61,7 @@ namespace JEM.UnityEngine.Components
             IsLoading = true;
             if (StartPanelAsDeactivated)
             {
-                LoadingPanel.ForceDeactivation();
+                LoadingPanel.SetActive(false, true);
             }
 
             LoadingPanel.SetActive(true);

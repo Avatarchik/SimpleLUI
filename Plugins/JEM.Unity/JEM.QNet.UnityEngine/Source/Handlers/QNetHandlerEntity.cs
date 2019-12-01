@@ -26,28 +26,61 @@ namespace JEM.QNet.UnityEngine.Handlers
             var componentIndex = reader.ReadByte();
             var methodIndex = reader.ReadByte();
 
+            var serverFrame = reader.ReadUInt32();
             if (message.IsClientMessage)
             {
-                QNetSimulator.ReceivedServerFrame = reader.ReadUInt32();
+                QNetSimulator.ReceivedServerFrame = serverFrame;
                 QNetSimulator.AdjustServerFrames = QNetSimulator.ReceivedServerFrame > QNetTime.ServerFrame;
-            } else reader.ReadUInt32(); // No need to adjust frames on server side (host).
+            } // No need to adjust frames on server side (host).
 
             // Get object.
             var qNetObject = QNetObject.GetObject(objectIdentity);
             if (qNetObject == null)
             {
-                QNetManager.PrintLogWarning("Local machine received QNetEntity query message " +
+                QNetManager.PrintLogWarning("Local peer received QNetEntity query message " +
                                             $"but object of identity {objectIdentity} not exists in local world.");
                 return;
             }
 
-            // Get component.
-            var component = qNetObject.GetObjectByIndex(componentIndex) as QNetBehaviour;
-            if (component == null)
-                throw new NullReferenceException();
+            if (!qNetObject.HasStateDeserialized)
+            {
+            /*
+#if DEBUG
+                QNetManager.PrintLogMsc("Local peer received QNetEntity query message " +
+                                        $"but state of object of identity {objectIdentity} has been not deserialized yet.");
+#endif
+            */
+                return;
+            }
+
+            // Get object.
+            var componentObject = qNetObject.GetObjectByIndex(componentIndex);
+            if (componentObject == null)
+            {
+#if DEBUG
+                QNetManager.PrintLogMsc($"List of Components(Objects) at {objectIdentity} ->\n" +
+                                        $"{qNetObject.GetStringOfCurrentObjects()}");
+#endif
+
+                throw new NullReferenceException("Local peer received QNetEntity query message " +
+                                                 $"buy we failed to find component of index {componentIndex} on object of identity {objectIdentity}.");
+            }
+
+            // Get behaviour.
+            if (!(componentObject is QNetBehaviour behaviour))
+            {
+#if DEBUG
+                QNetManager.PrintLogMsc($"List of Components(Objects) at {objectIdentity} ->\n" +
+                                        $"{qNetObject.GetStringOfCurrentObjects()}");
+#endif
+
+                throw new InvalidCastException("Local peer received QNetEntity query message " +
+                                               $"but target componentObject of index {componentIndex} on object of identity {objectIdentity} " +
+                                               $"is not a QNetBehaviour based type ({componentObject.GetType().FullName}).");
+            }
 
             // Execute message.
-            component.ExecuteMessage(methodIndex, reader);
+            behaviour.ExecuteMessage(methodIndex, reader);
         }
     }
 }

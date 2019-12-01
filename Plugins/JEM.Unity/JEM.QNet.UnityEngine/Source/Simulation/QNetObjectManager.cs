@@ -4,11 +4,6 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-//
-// Original Network simulation design and execution
-//  by Damian 'Erdroy' Korczowski (https://github.com/Erdroy)
-//
-
 using UnityEngine.Profiling;
 
 namespace JEM.QNet.UnityEngine.Simulation
@@ -23,6 +18,7 @@ namespace JEM.QNet.UnityEngine.Simulation
             Profiler.BeginSample("QNetObjectManager.Frame");
             var objects = QNetSimulableObject.SimulableObjects;
 
+            Profiler.BeginSample("QNetObjectManager.Frame (Simulation)");
             // Begin simulation.
             for (var index = 0; index < objects.Count; index++)
             {
@@ -72,6 +68,7 @@ namespace JEM.QNet.UnityEngine.Simulation
 
                 obj.CallFinishSimulate();
             }
+            Profiler.EndSample();
 
             // Update the snapshot
             QNetObjectSnapshotManager.Frame();

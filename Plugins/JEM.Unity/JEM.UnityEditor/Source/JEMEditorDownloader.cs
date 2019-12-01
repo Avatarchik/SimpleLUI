@@ -48,13 +48,13 @@ namespace JEM.UnityEditor
             var local = LoadFromFile(url);
             if (local != null)
             {
-                JEMLogger.InternalLog(
-                    $"JEMEditor is getting texture from {url}. Local texture exist! WWW download process will be ignored.");
+                JEMLogger.Log($"JEMEditorDownloader is getting texture from {url}. " +
+                              "Local texture exist! WWW download process will be ignored.", "JEM");
                 callBack?.Invoke(local);
             }
             else
             {
-                JEMLogger.InternalLog($"JEMEditor is getting texture from {url}");
+                JEMLogger.Log($"JEMEditorDownloader is getting texture from {url}", "JEM");
                 var d = new JEMEditorDownloader
                 {
                     URL = url,
@@ -70,7 +70,7 @@ namespace JEM.UnityEditor
         {
             if (www.isDone)
             {
-                JEMLogger.InternalLog($"Texture {URL} has been received.");
+                JEMLogger.Log($"Texture {URL} has been received.", "JEM");
                 EditorApplication.update -= Update;
                 if (www.texture == null)
                     return;
@@ -111,14 +111,11 @@ namespace JEM.UnityEditor
         /// <summary>
         ///     Resolves path to file.
         /// </summary>
-        public static string ResolveFilePath(string fileName)
-        {
-            return $"{Environment.CurrentDirectory}{LocalStoragePath}{fileName}{JEMTexture2D.JEMTextureFileExtension}";
-        }
-
+        public static string ResolveFilePath(string fileName) => $"{Environment.CurrentDirectory}{LocalStoragePath}{fileName}{JEMTexture2D.JEMTextureFileExtension}";
+        
         /// <summary>
         ///     Path to storage of downloaded textures.
         /// </summary>
-        public static string LocalStoragePath = $@"{JEMVar.DirectorySeparatorChar}JEM{JEMVar.DirectorySeparatorChar}Temp{JEMVar.DirectorySeparatorChar}";
+        public static string LocalStoragePath => $@"{JEMProgram.DirectorySeparator}JEM{JEMProgram.DirectorySeparator}Temp{JEMProgram.DirectorySeparator}";
     }
 }

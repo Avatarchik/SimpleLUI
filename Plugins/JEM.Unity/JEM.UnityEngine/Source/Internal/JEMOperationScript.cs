@@ -11,9 +11,15 @@ using UnityEngine;
 namespace JEM.UnityEngine.Internal
 {
     /// <inheritdoc />
-    /// <summary />
-    internal class JEMOperationScript : MonoBehaviour
+    [AddComponentMenu("HIDDEN/_JEM _OPERATION _SCRIPT")]
+    internal class JEMOperationScript : JEMRegenerableScript<JEMOperationScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // Ignore
+        }
+
         /// <summary/>
         internal IEnumerator InternalInvokeAction(float sleep, Action targetAction)
         {

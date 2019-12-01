@@ -11,9 +11,14 @@ using UnityEngine;
 namespace JEM.UnityEngine.Internal
 {
     /// <inheritdoc />
-    /// <summary/>
-    internal class JEMTimerScript : MonoBehaviour
+    internal class JEMTimerScript : JEMRegenerableScript<JEMTimerScript>
     {
+        /// <inheritdoc />
+        protected override void OnAwake()
+        {
+            // ignore
+        }
+
         /// <summary/>
         internal IEnumerator CuntDownTimer(int targetTime, Action<int> onTick)
         {

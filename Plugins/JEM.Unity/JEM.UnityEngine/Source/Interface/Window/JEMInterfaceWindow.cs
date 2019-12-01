@@ -4,370 +4,260 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using JEM.UnityEngine.Attribute;
+using JEM.UnityEngine.Extension;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace JEM.UnityEngine.Interface.Window
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="MonoBehaviour" />
     /// <summary>
     ///     Draggable and re-sizable window for unity's UI system.
     /// </summary>
-    [AddComponentMenu("JEM/Interface/Window/JEM Window Base")]
     [DisallowMultipleComponent]
-    public class JEMInterfaceWindow : MonoBehaviour
+    [AddComponentMenu("JEM/Interface/Window/JEM Window Base"), HelpURL("https://github.com/TylkoDemon/JEM.Unity/wiki")]
+    public sealed class JEMInterfaceWindow : MonoBehaviour, IPointerDownHandler
     {
         /// <summary>
         ///     An unique window name.
         /// </summary>
-        [Header("Identity Settings")]
-        public string UniqueWindowName;
+        /// <remarks>
+        ///     You can use this field to know what window is for.
+        /// </remarks>
+        [JEMHeader("Identity Settings")]
+        public string UniqueWindowName = "Unknown_Window";
 
         /// <summary>
-        ///     Root window transform.
+        ///     An root <see cref="RectTransform"/> of window.
         /// </summary>
-        [Header("Base Settings")]
-        public RectTransform RootTransform;
+        [JEMHeader("Base Settings"), JEMPropertyInfo(JEMPropertyInfoCondition.NegativeValue, "Object reference is missing!", MessageType = JEMMessageType.Error)]
+        public RectTransform WindowTransform;
 
         /// <summary>
         ///     Allow to drag this window.
         /// </summary>
+        [JEMIndentLevel, JEMPropertyBased(nameof(WindowTransform))]
         public bool AllowDragging;
 
         /// <summary>
         ///     Allow to resize this window.
         /// </summary>
+        [JEMHeader("Resizing")]
+        [JEMIndentLevel, JEMPropertyBased(nameof(WindowTransform))]
         public bool AllowResize;
+
+        /// <summary>
+        ///     Defines if x axis can be resized.
+        /// </summary>
+        [JEMIndentLevel(2), JEMPropertyBased(nameof(AllowResize))]
+        public bool ResizeXAxis = true;
+
+        /// <summary>
+        ///     Defines if y axis can be resized.
+        /// </summary>
+        [JEMIndentLevel(2), JEMPropertyBased(nameof(AllowResize))]
+        public bool ResizeYAxis = true;
+
+        /// <summary>
+        ///     Defines whether system could save and restore state of this window.
+        /// </summary>
+        [JEMHeader("Serialization")]
+        [JEMIndentLevel]
+        public bool AllowWindowSaving = true;
+
+        /// <summary>
+        ///     When true, window will also serialize and restore gameObject.activeSelf state.
+        /// </summary>
+        [JEMIndentLevel(2), JEMPropertyBased(nameof(AllowWindowSaving))]
+        public bool SerializeGameobjectState = true;
+
+        /// <summary>
+        ///     State of the window will be automatically saved at <see cref="OnDisable"/> method.
+        /// </summary>
+        [JEMIndentLevel(2), JEMPropertyBased(nameof(AllowWindowSaving))]
+        public bool AutoSaveAtDisable = true;
+
+        /// <summary>
+        ///     State of the window will be automatically restored at <see cref="OnEnable"/> method.
+        /// </summary>
+        [JEMIndentLevel(2), JEMPropertyBased(nameof(AllowWindowSaving))]
+        public bool AutoRestoreAtEnable = true;
 
         /// <summary>
         ///     If set to true, the window will always move on top of others if moved.
         /// </summary>
+        [JEMHeader("Msc")]
+        [JEMIndentLevel, JEMPropertyBased(nameof(WindowTransform))]
         public bool AlwaysMoveOnTop = true;
 
         /// <summary>
         ///     Defines whether the window size clamp feature should be enabled.
         /// </summary>
-        [Header("Size Settings")]
+        [JEMHeader("Size Settings")]
         public bool ClampWindowSize = true;
 
         /// <summary>
         ///     Maximal possible window size.
         /// </summary>
-        public Vector2 MaxWindowSize;
+        [JEMIndentLevel, JEMPropertyBased(nameof(ClampWindowSize))]
+        public Rect WindowMinMaxSize;
 
         /// <summary>
-        ///     Minimal possible window size.
+        ///     Root transform of this window that defines on what space this window should work.
         /// </summary>
-        public Vector2 MinWindowSize;
+        /// <remarks>
+        ///     User will be unable to move this window outside given <see cref="RectTransform"/> rect.
+        /// </remarks>
+        [JEMHeader("Workspace"), JEMPropertyInfo(JEMPropertyInfoCondition.NegativeValue, "RootTransform reference is missing!", MessageType = JEMMessageType.Error)]
+        public RectTransform RootTransform;
 
         /// <summary>
-        ///     If set to true, system will not activate gameobject of this window. Good for custom activation behaviour.
+        ///     Called on object enable.
         /// </summary>
-        [Header("Behaviour")]
-        public bool ShouldActivateGameObject = true;
+        [Space]
+        [JEMFoldoutBegin("Events"), JEMUnityEventDrawer]
+        public UnityEvent OnWindowEnabled;
 
         /// <summary>
-        ///     Called on window activate.
+        ///     Called on object disable.
         /// </summary>
-        [Header("Events")]
-        public UnityEvent OnWindowActivated;
+        [JEMFoldoutEnd, JEMUnityEventDrawer]
+        public UnityEvent OnWindowDisabled;
 
         /// <summary>
-        ///     Called on window deactivate.
+        ///     Name of <see cref="RectTransform"/> anchor.
         /// </summary>
-        public UnityEvent OnWindowDeactivated;
+        public JEMRectAnchorName CurrentAnchorName { get; private set; }
 
         /// <summary>
-        ///     Current canvas of this window.
+        ///     A initialize anchored position and size of window.
         /// </summary>
-        public Canvas WindowCanvas { get; private set; }
+        public Rect InitialFixedRect { get; private set; }
 
         /// <summary>
-        ///     Defines whether the window is active..
+        ///     List of additional serialized data that should be saved and restored with window state.
         /// </summary>
-        public bool WindowActive { get; private set; }
+        public Dictionary<string, object> AdditionalSerializedData { get; set; } = new Dictionary<string, object>();
 
-        /// <summary>
-        ///     Current anchor of window.
-        /// </summary>
-        public JEMInterfaceWindowAnchorName CurrentAnchorName { get; private set; }
-
-        private void Start()
+        private void Awake()
         {
-            if (RootTransform == null) RootTransform = GetComponent<RectTransform>();
-            CurrentAnchorName = JEMInterfaceWindowUtil.GetAnchorName(RootTransform);
+            // Try to get RectTransform from this object if missing.
+            if (WindowTransform == null) WindowTransform = GetComponent<RectTransform>();
+            // Try to get root canvas if missing
+            if (RootTransform == null)
+            {
+                var rootCanvas = GetComponentInParent<Canvas>();
+                if (rootCanvas != null)
+                    RootTransform = rootCanvas.GetComponent<RectTransform>();
+            }
+
+            Debug.Assert(WindowTransform != null, "WindowTransform is missing!", this);
+            Debug.Assert(RootTransform != null, "RootTransform is missing!", this);
+
+            // Get anchor of target transform.
+            CurrentAnchorName = WindowTransform.GetAnchor();
+
+            // Apply initial rect
+            InitialFixedRect = WindowTransform.GetFixedRect();
         }
 
-        private void OnEnable()
+#if UNITY_EDITOR
+        private void OnValidate()
         {
-            if(SafeWindowUpdate()) WindowActive = true;
+            if (string.IsNullOrEmpty(UniqueWindowName))
+            {
+                Debug.LogError("UniqueName field of this JEMInterfaceWindow is empty.", this);
+            }
+            else
+            {
+                if (UniqueWindowName.Contains(" "))
+                {
+                    Debug.LogError("UniqueName of JEMInterfaceWindow can't contains spaces.", this);
+                }
+            }
+
+            if (RootTransform != transform.parent)
+                Debug.LogError("Using RootTransform that is not a parent of window is not currently supported!", this);
+        }
+
+        private void Reset()
+        {
+            WindowTransform = GetComponent<RectTransform>();
+            if (WindowTransform != null)
+            {
+                WindowMinMaxSize = new Rect(WindowTransform.sizeDelta / 2, WindowTransform.sizeDelta * 2);
+            }
+
+            var rootCanvas = GetComponentInParent<Canvas>();
+            RootTransform = rootCanvas.GetComponent<RectTransform>();
+        }
+#endif
+
+        private bool _firstGameobjectStateDeserialized;
+        public void OnEnable()
+        {
+            if (AllowWindowSaving && AutoRestoreAtEnable)
+            {
+                RestoreState(!_firstGameobjectStateDeserialized, true);
+                _firstGameobjectStateDeserialized = true;
+            }
+
+            OnWindowEnabled.Invoke();
         }
 
         private void OnDisable()
         {
-            WindowActive = false;
+            if (AllowWindowSaving && AutoSaveAtDisable)
+            {
+                SaveState();
+            }
+
+            OnWindowDisabled?.Invoke();
         }
 
         /// <summary>
-        ///     Changes window active state.
+        ///     Clamps window size and anchored position.
         /// </summary>
-        /// <param name="active">Active state.</param>
-        public void SetActive(bool active)
+        public void ClampWindowTransform()
         {
-            if (ShouldActivateGameObject)
-            {
-                gameObject.SetActive(active);
-            }
-            else
-            {
-                WindowActive = active;
-            }
+            if (WindowTransform == null) return;
+            if (RootTransform == null) throw new NullReferenceException(nameof(RootTransform));
 
-            if (active)
-            {
-                OnWindowActivated.Invoke();
-            }
-            else
-            {
-                OnWindowDeactivated.Invoke();
-            }
-        }
-
-        /// <summary>
-        ///     Register window canvas.
-        /// </summary>
-        public void RegisterWindowCanvas(Canvas canvas)
-        {
-            WindowCanvas = canvas;
-        }
-
-        /// <summary>
-        ///     Safe window update...
-        /// </summary>
-        public bool SafeWindowUpdate()
-        {
-            if (WindowCanvas == null) RegisterWindowCanvas(GetComponentInParent<Canvas>());
-            if (WindowCanvas == null) return false;
-            UpdateDisplay();
-            return true;
-        }
-
-        /// <summary>
-        ///     Updates window.
-        /// </summary>
-        public void UpdateDisplay()
-        {
-            if (WindowCanvas == null) throw new NullReferenceException(nameof(WindowCanvas));
-            var canvasTransform = WindowCanvas.GetComponent<RectTransform>();
-            if (canvasTransform == null) return;
-
-            #region SIZE_CLAMP
-
+            // Clamp window size.
             if (ClampWindowSize)
             {
-                if (RootTransform.sizeDelta.x < MinWindowSize.x)
-                    RootTransform.sizeDelta = new Vector2(MinWindowSize.x, RootTransform.sizeDelta.y);
-                if (RootTransform.sizeDelta.y < MinWindowSize.y)
-                    RootTransform.sizeDelta = new Vector2(RootTransform.sizeDelta.x, MinWindowSize.y);
-                if (RootTransform.sizeDelta.x > MaxWindowSize.x)
-                    RootTransform.sizeDelta = new Vector2(MaxWindowSize.x, RootTransform.sizeDelta.y);
-                if (RootTransform.sizeDelta.y > MaxWindowSize.y)
-                    RootTransform.sizeDelta = new Vector2(RootTransform.sizeDelta.x, MaxWindowSize.y);
+                WindowTransform.ClampSizeToRect(WindowMinMaxSize);
             }
 
-            #endregion
-
-            #region SCREEN_CLAMP
-
-            switch (CurrentAnchorName)
+            // Clamp window position.
+            if (RootTransform == transform.parent)
+                WindowTransform.ClampPositionToRegion(CurrentAnchorName, RootTransform.rect.size);
+            else
             {
-                case JEMInterfaceWindowAnchorName.Unknown:
-                    break;
-                case JEMInterfaceWindowAnchorName.TopLeft:
-                {
-                    var minScreen = new Vector2(RootTransform.sizeDelta.x / 2f, -(RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y > minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x < minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(canvasTransform.sizeDelta.x - RootTransform.sizeDelta.x / 2f,
-                        -(canvasTransform.sizeDelta.y - RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y < maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x > maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.Top:
-                {
-                    var minScreen = new Vector2(-(canvasTransform.sizeDelta.x / 2f - RootTransform.sizeDelta.x / 2f),
-                        -(RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y > minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x < minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(canvasTransform.sizeDelta.x / 2f - RootTransform.sizeDelta.x / 2f,
-                        -(canvasTransform.sizeDelta.y - RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y < maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x > maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.TopRight:
-                {
-                    var minScreen = new Vector2(-RootTransform.sizeDelta.x / 2f, -(RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y > minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x > minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(-(canvasTransform.sizeDelta.x - RootTransform.sizeDelta.x / 2f),
-                        -(canvasTransform.sizeDelta.y - RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y < maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x < maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.MiddleLeft:
-                {
-                    var minScreen = new Vector2(RootTransform.sizeDelta.x / 2f,
-                        canvasTransform.sizeDelta.y / 2f - RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y > minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x < minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(canvasTransform.sizeDelta.x - RootTransform.sizeDelta.x / 2f,
-                        -(canvasTransform.sizeDelta.y / 2f - RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y < maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x > maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.Middle:
-                {
-                    var minScreen = new Vector2(
-                        -(canvasTransform.sizeDelta.x / 2f - RootTransform.sizeDelta.x / 2f),
-                        canvasTransform.sizeDelta.y / 2f - RootTransform.sizeDelta.y / 2f);
-                    if (RootTransform.anchoredPosition.y > minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x < minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(canvasTransform.sizeDelta.x / 2f - RootTransform.sizeDelta.x / 2f,
-                        -(canvasTransform.sizeDelta.y / 2f - RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y < maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x > maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.MiddleRight:
-                {
-                    var minScreen = new Vector2(-RootTransform.sizeDelta.x / 2f,
-                        canvasTransform.sizeDelta.y / 2f - RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y > minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x > minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(-(canvasTransform.sizeDelta.x - RootTransform.sizeDelta.x / 2f),
-                        -(canvasTransform.sizeDelta.y / 2f - RootTransform.sizeDelta.y / 2f));
-
-                    if (RootTransform.anchoredPosition.y < maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x < maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.BottomLeft:
-                {
-                    var minScreen = new Vector2(RootTransform.sizeDelta.x / 2f, RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y < minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x < minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(canvasTransform.sizeDelta.x - RootTransform.sizeDelta.x / 2f,
-                        canvasTransform.sizeDelta.y - RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y > maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x > maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.Bottom:
-                {
-                    var minScreen = new Vector2(
-                        -(canvasTransform.sizeDelta.x / 2f - RootTransform.sizeDelta.x / 2f),
-                        RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y < minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x < minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(canvasTransform.sizeDelta.x / 2f - RootTransform.sizeDelta.x / 2f,
-                        canvasTransform.sizeDelta.y - RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y > maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x > maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                case JEMInterfaceWindowAnchorName.BottomRight:
-                {
-                    var minScreen = new Vector2(-RootTransform.sizeDelta.x / 2f, RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y < minScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, minScreen.y);
-                    if (RootTransform.anchoredPosition.x > minScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(minScreen.x, RootTransform.anchoredPosition.y);
-
-                    var maxScreen = new Vector2(-(canvasTransform.sizeDelta.x - RootTransform.sizeDelta.x / 2f),
-                        canvasTransform.sizeDelta.y - RootTransform.sizeDelta.y / 2f);
-
-                    if (RootTransform.anchoredPosition.y > maxScreen.y)
-                        RootTransform.anchoredPosition = new Vector2(RootTransform.anchoredPosition.x, maxScreen.y);
-                    if (RootTransform.anchoredPosition.x < maxScreen.x)
-                        RootTransform.anchoredPosition = new Vector2(maxScreen.x, RootTransform.anchoredPosition.y);
-                }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                // TODO
             }
-
-            #endregion
         }
 
-        private void LateUpdate()
+        /// <inheritdoc />
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
             if (!AlwaysMoveOnTop) return;
-            var l = RootTransform.InverseTransformPoint(Input.mousePosition);
-            if (!RootTransform.rect.Contains(l)) return;
-            if (Input.GetMouseButtonDown(0))
-            {
-                //MoveOnTop();
-            }
+            MoveOnTop();
+        }
+
+        /// <summary>
+        ///     Moves window on top in local container.
+        /// </summary>
+        public void MoveOnTop()
+        {
+            WindowTransform.SetAsLastSibling();
         }
 
         /// <summary>
@@ -385,28 +275,66 @@ namespace JEM.UnityEngine.Interface.Window
         }
 
         /// <summary>
-        ///     Gets Rect of this window.
+        ///     Saves the state of window.
         /// </summary>
-        public Rect GetRect()
+        public void SaveState()
         {
-            return new Rect(RootTransform.anchoredPosition, RootTransform.sizeDelta);
+            if (!AllowWindowSaving)
+            {
+                return;
+            }
+
+            // Create serialized window obj.
+            var serializedWindow = new JEMSerializedWindow
+            {
+                WindowName = UniqueWindowName,
+                ActiveState = gameObject.activeSelf,
+                AdditionalData = AdditionalSerializedData
+            };
+
+            // Apply fixed rect.
+            serializedWindow.SetFixedRect(WindowTransform.GetFixedRect());
+
+            // Append serialized window.
+            AppendSerializedWindow(serializedWindow);
         }
 
         /// <summary>
-        ///     Sets rect of this window.
+        ///     Restores the state of window.
         /// </summary>
-        public void SetRect(Rect rect)
+        public bool RestoreState(bool shouldActivateGameObject, bool silently = false)
         {
-            RootTransform.anchoredPosition = rect.position;
-            RootTransform.sizeDelta = rect.size;
-        }
+            if (!AllowWindowSaving)
+            {
+                return false;
+            }
 
-        /// <summary>
-        ///     Moves window on top in local container.
-        /// </summary>
-        public void MoveOnTop()
-        {
-            RootTransform.SetAsLastSibling();
+            // Get serialized window data.
+            var window = GetSerializedWindow(UniqueWindowName);
+            if (window == null)
+            {
+                if (!silently)
+                    Debug.LogWarning("You are trying to restore state of window that " +
+                                     "does not have it's JEMSerializedWindow data generated. To restore state of window, you need call SaveState first.", this);
+                return false;
+            }
+
+            // Restore data
+            AdditionalSerializedData = window.AdditionalData ?? new Dictionary<string, object>();
+
+            // Restore transform state.
+            WindowTransform.SetFixedRect(window.GetFixedRect());
+
+            if (SerializeGameobjectState && shouldActivateGameObject)
+            {
+                // Restore gameObject state
+                gameObject.SetActive(window.ActiveState);
+            }
+
+            // Make sure that window clamps to active workspace.
+            ClampWindowTransform();
+
+            return true;
         }
 
         /// <summary>
@@ -418,9 +346,67 @@ namespace JEM.UnityEngine.Interface.Window
             foreach (var window in windows) window.Restart();
         }
 
+        private static JEMSerializedWindow GetSerializedWindow(string windowName)
+        {
+            ResolveSerializedWindows();
+            for (var index = 0; index < SerializedWindows.Count; index++)
+            {
+                var s = SerializedWindows[index];
+                if (string.Equals(s.WindowName, windowName, StringComparison.CurrentCultureIgnoreCase))
+                    return s;
+            }
+
+            return null;
+        }
+
+        private static void AppendSerializedWindow([NotNull] JEMSerializedWindow window)
+        {
+            if (window == null) throw new ArgumentNullException(nameof(window));
+            var existingWindow = GetSerializedWindow(window.WindowName);
+            if (existingWindow != null)
+                SerializedWindows.Remove(existingWindow);
+            SerializedWindows.Add(window);
+
+            var path = Environment.CurrentDirectory + "\\" + SerializedWindowsDirectory + "\\" + window.WindowName.ToLower() + ".json";
+            File.WriteAllText(path, JsonConvert.SerializeObject(window, Formatting.Indented));
+        }
+
+        private static void ResolveSerializedWindows()
+        {
+            if (SerializedWindows != null)
+            {
+                return;
+            }
+
+            SerializedWindows = new List<JEMSerializedWindow>();
+            var dir = Environment.CurrentDirectory + "\\" + SerializedWindowsDirectory;
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                return;
+            }
+
+            var files = Directory.GetFiles(dir, "*.json");
+            foreach (var f in files)
+            {
+                var window = JsonConvert.DeserializeObject<JEMSerializedWindow>(File.ReadAllText(f));
+                if (window == null)
+                    continue;
+                
+                SerializedWindows.Add(window);
+            }
+        }
+
         /// <summary>
         ///     True if any window is currently moving or re-sized by user.
         /// </summary>
         public static bool AnyWindowIsUnderMotion => JEMInterfaceWindowHeader.AnyHeaderIsDragging || JEMInterfaceWindowResize.AnyWindowIsResized;
+
+        /// <summary>
+        ///     Relative path to the save directory of serialized windows data.
+        /// </summary>
+        public static string SerializedWindowsDirectory = "Config\\Windows";
+
+        private static List<JEMSerializedWindow> SerializedWindows { get; set; }
     }
 }

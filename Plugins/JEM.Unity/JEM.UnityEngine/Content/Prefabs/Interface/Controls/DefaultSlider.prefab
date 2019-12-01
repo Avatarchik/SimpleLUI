@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7338971201460942573}
   - component: {fileID: 3337821103369660917}
   - component: {fileID: 9011085714191622210}
-  - component: {fileID: 117823325010912545}
   m_Layer: 5
   m_Name: Handle
   m_TagString: Untagged
@@ -76,23 +75,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &117823325010912545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 369607228999170680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
 --- !u!1 &1744186169020422713
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,7 +158,6 @@ GameObject:
   - component: {fileID: 1397167320041230433}
   - component: {fileID: 376307818225933158}
   - component: {fileID: 4451417449464019378}
-  - component: {fileID: 1371683751780221397}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -241,23 +222,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1371683751780221397
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5553743289989748735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
 --- !u!1 &7532084286892616332
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +233,6 @@ GameObject:
   - component: {fileID: 1434270133776172886}
   - component: {fileID: 940046696129126268}
   - component: {fileID: 5253587496618850596}
-  - component: {fileID: 2091781355379007151}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -334,23 +297,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2091781355379007151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7532084286892616332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5e447a486bc9647bdc2525ad1703cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IgnoreGroup: 0
-  AlwaysFalseRaycast: 0
-  ApplyStateToGameObject: 1
-  DisallowLiteActivation: 0
-  FixedAlphaTarget: 1
 --- !u!1 &8422217135806206838
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,6 +307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7409869272532145623}
   - component: {fileID: 5822233138226387291}
+  - component: {fileID: 5950327707973151078}
   m_Layer: 5
   m_Name: DefaultSlider
   m_TagString: Untagged
@@ -411,12 +358,12 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.811, g: 0.811, b: 0.811, a: 1}
-    m_PressedColor: {r: 0.636, g: 0.636, b: 0.636, a: 1}
+    m_HighlightedColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+    m_PressedColor: {r: 0.4, g: 0.4, b: 0.4, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
+    m_FadeDuration: 0.15
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
@@ -442,3 +389,16 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &5950327707973151078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8422217135806206838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6afeef91b27744c43ba83848aa262fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioSensitivity: 15

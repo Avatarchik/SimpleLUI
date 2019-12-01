@@ -8,7 +8,6 @@ using JEM.UnityEngine.Extension.Internal;
 using JetBrains.Annotations;
 using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace JEM.UnityEngine.Extension
 {
@@ -62,8 +61,7 @@ namespace JEM.UnityEngine.Extension
                 return;
             }
 
-            RegenerateLocalScript();
-            _script.StartCoroutine(_script.InternalSetActiveEasy(go, activeState, onDone));
+            Script.StartCoroutine(Script.InternalSetActiveEasy(go, activeState, onDone));
         }
 
         /// <summary>
@@ -118,18 +116,15 @@ namespace JEM.UnityEngine.Extension
             return i;
         }
 
-        internal static void RegenerateLocalScript()
+        private static JEMExtensionGameObjectScript Script
         {
-            if (_script != null)
-                return;
+            get
+            {
+                if (_script == null)
+                    _script = JEMExtensionGameObjectScript.GetScript();
 
-            var obj = new GameObject(nameof(JEMExtensionGameObjectScript));
-            Object.DontDestroyOnLoad(obj);
-            _script = obj.AddComponent<JEMExtensionGameObjectScript>();
-
-            if (_script == null)
-                throw new NullReferenceException(
-                    $"System was unable to regenerate local script of {nameof(JEMExtensionGameObject)}@{nameof(JEMExtensionGameObjectScript)}");
+                return _script;
+            }
         }
 
         private static JEMExtensionGameObjectScript _script;

@@ -15,7 +15,7 @@ namespace JEM.UnityEngine.VersionManagement
     /// <summary>
     ///     JEM Build.
     ///     It defined current build number and major game version that is later used by
-    ///         for example QNet to validate if clients are the same game version.
+    ///         for example QNet to validate if clients have the same game version.
     ///     It also has some statistics data about total compilations or total time spend in unity.
     /// </summary>
     public static class JEMBuild

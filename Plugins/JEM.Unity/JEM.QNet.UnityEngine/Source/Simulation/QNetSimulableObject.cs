@@ -7,6 +7,7 @@
 using JEM.Core.Common;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace JEM.QNet.UnityEngine.Simulation
 {
@@ -24,28 +25,28 @@ namespace JEM.QNet.UnityEngine.Simulation
         /// <summary>
         ///      UnsafeSimulate is a Unity's Update equivalent.
         /// </summary>
-        private JEMSmartMethod _onUnsafeSimulate;
+        private JEMSmartMethodS _onUnsafeSimulate;
 
         /// <summary>
         ///      UnsafeSimulate is a Unity's LateUpdate equivalent.
         /// </summary>
-        private JEMSmartMethod _onUnsafeLateSimulate;
+        private JEMSmartMethodS _onUnsafeLateSimulate;
 
         /// <summary>
         ///     OnBeginSimulate called at the beginning of object simulation.
         /// </summary>
-        private JEMSmartMethod _onBeginSimulate;
+        private JEMSmartMethodS _onBeginSimulate;
 
         /// <summary>
         ///     UnsafeSimulate is a Unity's FixedUpdate equivalent.
-        ///     Called before QNetBehaviour.SimulateWithResult bot after OnBeginSimulate.
+        ///     Called before QNetBehaviour.SimulateWithResult but after OnBeginSimulate.
         /// </summary>
-        private JEMSmartMethod _onSimulate;
+        private JEMSmartMethodS _onSimulate;
 
         /// <summary>
         ///     OnFinishSimulate called at the very end of the object simulation.
         /// </summary>
-        private JEMSmartMethod _onFinishSimulate;
+        private JEMSmartMethodS _onFinishSimulate;
 
         /// <summary>
         ///     OnSendSnapshot called by snapshot manager to send a for ex. object interpolation snapshot.
@@ -53,28 +54,32 @@ namespace JEM.QNet.UnityEngine.Simulation
         /// <remarks>
         ///     Called only on the server side.
         /// </remarks>
-        private JEMSmartMethod _onSendSnapshot;
+        private JEMSmartMethodS _onSendSnapshot;
 
         /// <summary>
         ///     Load all JEMSmartMethod based methods in this class.
         /// </summary>
         protected virtual void LoadMethods()
         {
-            _onUnsafeSimulate = new JEMSmartMethod(this, "UnsafeSimulate");
-            _onUnsafeLateSimulate = new JEMSmartMethod(this, "UnsafeLateSimulate");
+            Profiler.BeginSample("QNetSimulableObject.LoadMethods");
 
-            _onBeginSimulate = new JEMSmartMethod(this, "OnBeginSimulate");
-            _onSimulate = new JEMSmartMethod(this, "Simulate");
-            _onFinishSimulate = new JEMSmartMethod(this, "OnFinishSimulate");
+            _onUnsafeSimulate = new JEMSmartMethodS(this, "UnsafeSimulate");
+            _onUnsafeLateSimulate = new JEMSmartMethodS(this, "UnsafeLateSimulate");
 
-            _onSendSnapshot = new JEMSmartMethod(this, "OnSendSnapshot");
+            _onBeginSimulate = new JEMSmartMethodS(this, "OnBeginSimulate");
+            _onSimulate = new JEMSmartMethodS(this, "Simulate");
+            _onFinishSimulate = new JEMSmartMethodS(this, "OnFinishSimulate");
+
+            _onSendSnapshot = new JEMSmartMethodS(this, "OnSendSnapshot");
 
             SimulableObjects.Add(this);
+
+            Profiler.EndSample();
         }
 
         protected virtual void OnDestroy() => SimulableObjects.Remove(this);
 
-        internal abstract void InterpolateFrame();
+        public abstract void InterpolateFrame();
         internal abstract void SimulateFrame();
 
         internal void CallUnsafeSimulate() => _onUnsafeSimulate.Invoke();
@@ -83,7 +88,6 @@ namespace JEM.QNet.UnityEngine.Simulation
         internal void CallSimulate() => _onSimulate.Invoke();    
         internal void CallFinishSimulate() =>_onFinishSimulate.Invoke();
         
-
         internal void CallOnSendSnapshot()
         {
             _onSendSnapshot.Invoke();

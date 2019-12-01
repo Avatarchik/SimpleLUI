@@ -10,11 +10,14 @@ using JEM.QNet.UnityEngine.Handlers;
 using JEM.QNet.UnityEngine.Messages;
 using JEM.QNet.UnityEngine.Objects;
 using JEM.QNet.UnityEngine.Simulation;
+using JEM.UnityEngine;
 using JEM.UnityEngine.Components;
 using JEM.UnityEngine.Extension;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using JEM.QNet.Extras;
+using JEM.UnityEngine.Console;
 using UnityEngine;
 using UnityEngine.Profiling;
 using Object = UnityEngine.Object;
@@ -60,7 +63,8 @@ namespace JEM.QNet.UnityEngine
     /// <remarks>
     ///     Once QNetManager is initialized, should never be destroyed!
     /// </remarks>
-    public sealed partial class QNetManager : MonoBehaviour
+    [DisallowMultipleComponent]
+    public sealed partial class QNetManager : JEMSingletonBehaviour<QNetManager>
     {
         /// <summary>
         ///     Default IP Address used by manager.
@@ -96,6 +100,17 @@ namespace JEM.QNet.UnityEngine
         public QNetDatabase DatabaseReference;
 
         /// <summary>
+        ///     Should be set to true if your game is using <see cref="Physics"/>.
+        /// </summary>
+        [Header("Physics Settings")]
+        public bool IsUsingPhysics3D = true;
+
+        /// <summary>
+        ///     Should be set to true if your game is using <see cref="Physics2D"/>.
+        /// </summary>
+        public bool IsUsingPhysics2D = false;
+
+        /// <summary>
         ///     Defines the active debugging level QNetManager has.
         /// </summary>
         [Header("Debugging Settings")]
@@ -113,7 +128,7 @@ namespace JEM.QNet.UnityEngine
         ///     In most cases there will be only one running peer (client or server),
         ///      or two (host that creates a server instance with internal client).
         /// </remarks>
-        internal List<QNetPeer> RunningPeers { get; } = new List<QNetPeer>();
+        public List<QNetPeer> RunningPeers { get; } = new List<QNetPeer>();
 
         /// <summary>
         ///     Active QNetClient instance.
@@ -171,17 +186,9 @@ namespace JEM.QNet.UnityEngine
         /// </summary>
         public bool IsStopping { get; private set; }
 
-        private void Awake()
+        /// <inheritdoc />
+        protected override void OnAwake()
         {
-            if (Instance != null)
-            {
-                PrintLogWarning("Another QNetManager component detected!. Only one QNetManager is allowed.", this);
-                gameObject.SetActive(false);
-                return;
-            }
-
-            Instance = this;
-
             // Always keep QNetManager
             gameObject.CollectComponent<JEMObjectKeepOnScene>();
 
@@ -190,12 +197,17 @@ namespace JEM.QNet.UnityEngine
             {
                 PrintLogError("QNetDatabase reference is not set!", this);
             }
+            else
+            {
+                DatabaseReference.RefreshPrefabs();
+            }
 
-            // Collect the QNetSerializedMessages types.
-            QNetBehaviour.CollectAllSerializedMessageTypes();
             // Collect the QNetObject types.
             QNetObject.CollectAllQNetObjectTypes();
         }
+
+        /// <inheritdoc />
+        protected override void OnDuplicate() => PrintLogWarning("Another QNetManager component detected!. Only one QNetManager is allowed.", this);
 
         private void Update()
         {
@@ -285,6 +297,10 @@ namespace JEM.QNet.UnityEngine
         {
             QNetTime.Frame = 0;
             QNetSimulator.EstimatedServerFrame = 0;
+
+#if DEBUG
+            QNetBehaviour.TotalSimulationCorrections = 0;
+#endif
         }
 
         /// <summary>
@@ -294,7 +310,7 @@ namespace JEM.QNet.UnityEngine
         /// <param name="configuration">Configuration of peer.</param>
         /// <param name="onRegisterHandlers"/>
         /// <exception cref="ArgumentNullException"/>
-        private T InternalStartPeer<T>([NotNull] T peer, [NotNull] QNetConfiguration configuration, Action onRegisterHandlers) where T : QNetPeer
+        private T InternalStartPeer<T>([NotNull] T peer, [NotNull] QNetPeerConfiguration configuration, Action onRegisterHandlers) where T : QNetPeer
         {
             if (peer == null) throw new ArgumentNullException(nameof(peer));
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
@@ -341,7 +357,7 @@ namespace JEM.QNet.UnityEngine
         /// <exception cref="InvalidOperationException"/>
         public void StartServer()
         {
-            StartServer(new QNetConfiguration
+            StartServer(new QNetPeerConfiguration
             {
                 IpAddress = DefaultAddress,
                 Port = DefaultPort,
@@ -352,13 +368,13 @@ namespace JEM.QNet.UnityEngine
         /// <summary>
         ///     Cashed server configuration to use at the end of <see cref="QNetNetworkScene.RunServerInitialization"/>.
         /// </summary>
-        internal QNetConfiguration CashedServerConfiguration;
+        internal QNetPeerConfiguration CashedServerConfiguration;
 
         /// <summary>
         ///     Starts local server based on given or local configuration.
         /// </summary>
         /// <exception cref="InvalidOperationException"/>
-        public void StartServer([NotNull] QNetConfiguration configuration, Action onInitializationDone = null)
+        public void StartServer([NotNull] QNetPeerConfiguration configuration, Action onInitializationDone = null)
         {
             // Load the game level first.
             CashedServerConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -375,7 +391,7 @@ namespace JEM.QNet.UnityEngine
         ///     This method starts just the server, so to load the game level we need to call <see cref="StartServer()"/> method instead.
         /// </remarks>
         /// <exception cref="InvalidOperationException"/>
-        internal void InternalStartServer(QNetConfiguration configuration)
+        internal void InternalStartServer(QNetPeerConfiguration configuration)
         {
             if (IsServerActive)
                 throw new InvalidOperationException("QNet is unable to start server while " +
@@ -384,7 +400,7 @@ namespace JEM.QNet.UnityEngine
             // Check if configuration is set.
             if (configuration == null)
             {
-                configuration = new QNetConfiguration
+                configuration = new QNetPeerConfiguration
                 {
                     IpAddress = DefaultAddress,
                     Port = DefaultPort,
@@ -424,6 +440,10 @@ namespace JEM.QNet.UnityEngine
                 var r = refuse;
                 QNetManagerBehaviour.ForEach(b => b.CallOnServerAuthorize(connection, writer, ref r));
                 refuse = r;
+
+#if DEBUG
+                PrintLogMsc($"QNetManager.Server.OnConnectionAuthorizing({connection.ToStringExtended()}, writer, {refuse})", this);
+#endif
             };
 
             // Read the connection init data (as a respond for our onConnectionAuthorizing)
@@ -431,6 +451,10 @@ namespace JEM.QNet.UnityEngine
             {     
                 var clientToken = reader.ReadUInt32();
                 var clientNickname = reader.ReadString();
+
+#if DEBUG
+                PrintLogMsc($"QNetManager.Server.OnConnectionReady({clientToken}, {clientNickname})", this);
+#endif
 
                 // PrintLog($"{reader.Connection.ConnectionIdentity} {Client.ConnectionIdentity}");
                 // Check if the received connection is a internal host connection.
@@ -478,6 +502,10 @@ namespace JEM.QNet.UnityEngine
             // We lost the connection! Destroy all objects related with it.
             Server.OnConnectionLost += (connection, reason) =>
             {
+#if DEBUG
+                PrintLogMsc($"QNetManager.Server.OnConnectionLost({connection.ToStringExtended()}, {reason})", this);
+#endif
+
                 var qNetPlayer = QNetPlayer.GetQNetPlayer(connection);
                 if (qNetPlayer == null) return; // Well.. we failed to find QNetPlayer of this connection so...
 
@@ -495,7 +523,13 @@ namespace JEM.QNet.UnityEngine
             // Server stop! de-initialize game.
             Server.OnServerStop += reason =>
             {
+#if DEBUG
+                PrintLogMsc($"QNetManager.Server.OnServerStop({reason})", this);
+#endif
                 // Server has been stopped, try to de-initialize game
+                // Before de-initialization, destroy all players
+                QNetPlayer.DestroyAllQNetPlayers();
+
                 if (!ShuttingDownByApplicationQuit)
                 {
                     QNetNetworkScene.RunInitializationProcess(QNetNetworkScene.UnloadNetworkScene(() =>
@@ -516,6 +550,10 @@ namespace JEM.QNet.UnityEngine
                 IsHostActive = false;
             };
 
+#if DEBUG
+            PrintLogMsc("QNetManager.InternalStartServer()", this);
+#endif
+
             // call onServerStarted
             QNetManagerBehaviour.ForEach(b => b.CallOnServerStarted());
         }
@@ -530,7 +568,7 @@ namespace JEM.QNet.UnityEngine
             if (ipAddress == null) throw new ArgumentNullException(nameof(ipAddress));
 
             // Setup configuration
-            var configuration = new QNetConfiguration
+            var configuration = new QNetPeerConfiguration
             {
                 IpAddress = ipAddress,
                 Port = port,
@@ -547,7 +585,7 @@ namespace JEM.QNet.UnityEngine
         /// <exception cref="ArgumentNullException"/>
         public void StartClient()
         {
-            StartClient(new QNetConfiguration
+            StartClient(new QNetPeerConfiguration
             {
                 IpAddress = DefaultAddress,
                 Port = DefaultPort
@@ -559,7 +597,7 @@ namespace JEM.QNet.UnityEngine
         /// </summary>
         /// <exception cref="InvalidOperationException"/>
         /// <exception cref="ArgumentNullException"/>
-        public void StartClient([NotNull] QNetConfiguration configuration)
+        public void StartClient([NotNull] QNetPeerConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
             if (IsClientActive)
@@ -593,13 +631,24 @@ namespace JEM.QNet.UnityEngine
             };
 
             // Handle the OnClientConnected just for the manager behaviour.
-            Client.OnConnected += () => QNetManagerBehaviour.ForEach(b => b.CallOnClientConnected());
+            Client.OnConnected += () =>
+            {
+#if DEBUG
+                PrintLogMsc("QNetManager.Client.OnConnected()", this);
+#endif
+
+                QNetManagerBehaviour.ForEach(b => b.CallOnClientConnected());
+            };
 
             // OnConnectionReady is a result of server's OnConnectionAuthorizing
             //   we need to read tickRate and serverFrame here.
             // In on connection ready we also need to get and write the local client token.
             Client.OnConnectionReady += (reader, writer) =>
             {
+#if DEBUG
+                PrintLogMsc("QNetManager.Client.OnConnectionReady()", this);
+#endif
+
                 var tickRate = reader.ReadInt32();
                 var serverFrame = reader.ReadUInt32();
 
@@ -615,11 +664,16 @@ namespace JEM.QNet.UnityEngine
                 QNetManagerBehaviour.ForEach(b => b.CallOnClientPrepare(ref token, ref nickname));
                 writer.WriteUInt32(token);
                 writer.WriteString(nickname);
+                QNetManagerBehaviour.ForEach(b => b.CallOnClientCustomData(reader, writer));
             };
 
             // Handle client disconnection event
             Client.OnDisconnection += (lostConnection, reason) =>
             {
+#if DEBUG
+                PrintLogMsc($"QNetManager.Client.OnDisconnection({lostConnection}, {reason}) isClientActive_{IsClientActive}", this);
+#endif
+
                 // Ignore next events if client is not active. (BUG: QNet is sending a OnDisconnection duplicates)
                 if (!IsClientActive)
                 {
@@ -646,6 +700,7 @@ namespace JEM.QNet.UnityEngine
                             // call onClientStop.
                             QNetManagerBehaviour.ForEach(b => b.CallOnClientStop(lostConnection, reason));
                         }));
+
                         return;
                     }
                 }
@@ -653,6 +708,10 @@ namespace JEM.QNet.UnityEngine
                 // call onClientStop.
                 QNetManagerBehaviour.ForEach(b => b.CallOnClientStop(lostConnection, reason));
             };
+
+#if DEBUG
+            PrintLogMsc("QNetManager.StartClient()", this);
+#endif
 
             // call onClientStarted
             QNetManagerBehaviour.ForEach(b => b.CallOnClientStarted(configuration));
@@ -665,7 +724,7 @@ namespace JEM.QNet.UnityEngine
         /// <exception cref="ArgumentNullException"/>
         public void StartHost()
         {
-            StartHost(new QNetConfiguration
+            StartHost(new QNetPeerConfiguration
             {
                 IpAddress = DefaultAddress,
                 Port = DefaultPort,
@@ -681,7 +740,7 @@ namespace JEM.QNet.UnityEngine
         /// </remarks>
         /// <exception cref="InvalidOperationException"/>
         /// <exception cref="ArgumentNullException"/>
-        public void StartHost([NotNull] QNetConfiguration configuration)
+        public void StartHost([NotNull] QNetPeerConfiguration configuration)
         {
             if (IsHostActive)
                 throw new InvalidOperationException("QNet is unable to start host while " +
@@ -693,12 +752,16 @@ namespace JEM.QNet.UnityEngine
             // Set the host active state.
             IsHostActive = true;
 
+#if DEBUG
+            PrintLogMsc("QNetManager.StartHost()", this);
+#endif
+
             // Start server connection.
             StartServer(configuration, () =>
             {
                 // Start the internal client when server is ready.
                 StartClient(configuration.IpAddress, configuration.Port);
-                Server.TagAsHostServer(Client.OriginalConnection);
+                // Server.TagAsHostServer(Client.OriginalConnection);
 
                 // Handle internal client disconnection event
                 Client.OnDisconnection += (lostConnection, reason) =>
@@ -752,6 +815,29 @@ namespace JEM.QNet.UnityEngine
             HostClientConnection = default;
         }
 
+        /// <summary>
+        ///     Updates cVar or executes command including execution scope.
+        /// </summary>
+        public static void ExecuteCVarOrCommand(IQNetSerializedMessage serialized, string command) =>
+            ExecuteCVarOrCommand(new QNetExecutor(default(QNetConnection), serialized), command);
+        
+        /// <summary>
+        ///     Updates cVar or executes command including execution scope.
+        /// </summary>
+        public static void ExecuteCVarOrCommand(QNetExecutor executor, string command)
+        {
+            if (JEMConsole.TryExecuteCVar(command, out _))
+            {
+                return;
+            }
+
+            var err = QNetCommandManager.ExecuteRaw(executor, command);
+            if (!string.IsNullOrEmpty(err))
+            {
+                JEMLogger.LogWarning($"Command exec failed. {err}", "COMMAND");
+            }
+        }
+
         #region PRINT_LOG
 
         /// <summary>
@@ -794,7 +880,7 @@ namespace JEM.QNet.UnityEngine
                 return;
 
             if (Instance.ForceUnityDebug)
-                Debug.Log($"QNet :: {log}", context);
+                Debug.Log($"QNet (MSC) :: {log}", context);
             else
             {
                 JEMLogger.Log(log, "QNet");
@@ -813,7 +899,7 @@ namespace JEM.QNet.UnityEngine
         {
             if (Instance == null)
                 return; // Ignore logs if manager is not active.
-            if (Instance.DebuggingLevel != QNetDebuggingLevel.Full || 
+            if (Instance.DebuggingLevel != QNetDebuggingLevel.Full &&
                 Instance.DebuggingLevel != QNetDebuggingLevel.Developer)
                 return;
 
@@ -910,10 +996,5 @@ namespace JEM.QNet.UnityEngine
         }
 
         #endregion
-
-        /// <summary>
-        ///     Reference to the currently active <see cref="QNetManager"/> component.
-        /// </summary>
-        public static QNetManager Instance { get; private set; }
     }
 }

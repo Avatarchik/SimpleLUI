@@ -5,20 +5,18 @@
 //
 
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace JEM.UnityEngine.Audio.Interface
 {
-    /// <inheritdoc cref="MonoBehaviour" />
+    /// <inheritdoc />
     /// <summary>
-    ///     Base of audio controller for interface control.
+    ///     Base class of every audio controller used by user interface controls.
     /// </summary>
-    internal abstract class JEMAudioForControl : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
+    public abstract class JEMAudioForControl : MonoBehaviour
     {
-        /// <inheritdoc />
-        public virtual void OnPointerEnter(PointerEventData eventData) { }
-
-        /// <inheritdoc />
-        public virtual void OnPointerClick(PointerEventData eventData) { }
+        /// <summary>
+        ///     Reference to the <see cref="JEMAudioInterfaceDatabase.Instance"/>.
+        /// </summary>
+        public JEMAudioInterfaceDatabase Database => JEMAudioInterfaceDatabase.Instance;
     }
 }

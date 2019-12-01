@@ -4,6 +4,8 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+#define DEEP_DEBUG
+
 using JEM.Core.Common;
 using JEM.QNet.Messages;
 using JEM.QNet.UnityEngine.Messages;
@@ -11,7 +13,9 @@ using JEM.QNet.UnityEngine.Simulation;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace JEM.QNet.UnityEngine.Objects
 {
@@ -95,10 +99,10 @@ namespace JEM.QNet.UnityEngine.Objects
         /// </summary>
         public bool IsDestroying { get; private set; }
 
-        private void Awake()
+        protected virtual void Awake()
         {
-            var identity = GetComponent<QNetIdentity>();
-            if (identity == null)
+            Identity = GetComponent<QNetIdentity>();
+            if (Identity == null)
             {
                 enabled = false;
                 QNetManager.PrintLogError("QNetObject based component has been activated on gameObject that does not have QNetIdentity on it.", this);
@@ -106,10 +110,10 @@ namespace JEM.QNet.UnityEngine.Objects
             }
 
             // Initialize this object with local identity.
-            identity.InitializeObject(this);
+            Identity.InitializeObject(this);
 
             // Check if the identity is initialized.
-            if (identity.IsInitialized && QNetNetworkScene.SceneState == QNetSceneState.Loaded)
+            if (Identity.IsInitialized && QNetNetworkScene.SceneState == QNetSceneState.Loaded)
             {
                 // The identity is already initialized so we need to init this component and spawn it from here.
                 if (ClientIsModifyingCustomComponent)
@@ -131,19 +135,27 @@ namespace JEM.QNet.UnityEngine.Objects
                                                      $"Unable to find typeIndex for type {GetType().FullName}.");
                 }
 
-                // Send component to other clients.
-                QNetManager.SendToAll(QNetBaseChannel.DEFAULT, QNetMessageMethod.ReliableOrdered, QNetUnityHeader.OBJECT_QUERY, (ushort) Identity,
-                    QNetObjectComponentQuery.AddComponent, typeIndex);
+#if DEBUG && DEEP_DEBUG
+                QNetManager.PrintLogMsc($"QNetObject.Awake() add_component_type: {typeIndex}", this);
+#endif
+
+                // Create outgoing message
+                var outgoingMessage = QNetManager.GenerateServerMessage(QNetUnityHeader.OBJECT_QUERY);
+
+                // Write header
+                outgoingMessage.WriteUInt16(Identity);
+                outgoingMessage.WriteEnum(QNetObjectComponentQuery.AddComponent);
+                outgoingMessage.WriteByte(ComponentIndex);
+                outgoingMessage.WriteByte(typeIndex);
 
                 // Initialize custom component.
-                InitializeCustomComponent(typeIndex, identity.IsSpawned);
+                InitializeCustomComponent(ComponentIndex, typeIndex, Identity.IsSpawned);
 
-                /**
-                enabled = false;
+                // Serialize component
+                CallOnSerializeServerState(outgoingMessage);
 
-                // TODO: The main reason this is not currently supported is to serialize this one object and call all the initialization method respectively.
-                throw new NotSupportedException("Adding new QNetObject based component in runtime is not currently supported.");
-                **/
+                // Send component to other clients.
+                QNetManager.SendToAll(QNetBaseChannel.DEFAULT, QNetMessageMethod.ReliableOrdered, outgoingMessage);
             }
         }
 
@@ -173,6 +185,10 @@ namespace JEM.QNet.UnityEngine.Objects
                                                     "can only be done from the server!");
                 }
 
+#if DEBUG && DEEP_DEBUG
+                QNetManager.PrintLogMsc($"QNetObject.OnDestroy component_index: {ComponentIndex}", this);
+#endif
+
                 // Send component destroy to other clients.
                 QNetManager.SendToAll(QNetBaseChannel.DEFAULT, QNetMessageMethod.ReliableOrdered, QNetUnityHeader.OBJECT_QUERY, (ushort) Identity,
                     QNetObjectComponentQuery.DestroyComponent, ComponentIndex);
@@ -187,22 +203,34 @@ namespace JEM.QNet.UnityEngine.Objects
         /// </summary>
         internal void Initialize(QNetIdentity prefab, ushort prefabIdentity, ushort identity, QNetConnection ownerConnection, ushort owner)
         {
+            if (IsInitialized)
+            {
+                return;
+            }
+
             if (identity == 0)
-                throw new NotSupportedException("You are trying to initialize QNetObject based component!");
+                throw new NotSupportedException("You are trying to initialize QNetObject based component with invalid identity (zero)!");
+
+            Profiler.BeginSample("QNetObject.Initialize");
 
             // Set prefab.
             Prefab = prefab;
             PrefabIdentity = prefabIdentity;
 
             // Collect components.
-            Identity = GetComponent<QNetIdentity>();
+            //Identity = GetComponent<QNetIdentity>();
 
             // Check.
             QNetManager.PrintLogAssert(Identity, "QNetIdentity component not found " +
                                                  "on object of QNetObject based lass.", this);
 
+            Profiler.BeginSample("QNetObject.Initialize loads methods");
+
             // Load methods.
             LoadMethods();
+
+            Profiler.EndSample();
+
             // call onInitialize.
             _onInitialize.Invoke();
 
@@ -222,28 +250,34 @@ namespace JEM.QNet.UnityEngine.Objects
             IsServerObject = !Identity.HasOwner;
             // Update local owner state
             IsOwner = QNetManager.Instance.Client != null && Identity.IsOwner(QNetManager.Instance.Client.ConnectionIdentity);
+
+#if DEBUG && DEEP_DEBUG
+            QNetManager.PrintLogMsc($"QNetObject of type {GetType().Name} initialized with identity {identity} and component index {ComponentIndex}.");
+#endif
+
+            Profiler.EndSample();
         }
 
         /// <summary>
         ///     OnInitialize is called on the QNetObject first spawn.
         ///     This method is a first called method from the init chain. 
         /// </summary>
-        private JEMSmartMethod _onInitialize;
+        private JEMSmartMethodS _onInitialize;
 
         /// <summary>
         ///     Called when the object is being destroyed by the server.
         /// </summary>
-        private JEMSmartMethod _onDestroyObject;
+        private JEMSmartMethodS _onNetworkDestroy;
 
         /// <summary>
         ///     Called on server to serialize current state of the object that next will be send to client.
         /// </summary>
-        private JEMSmartMethod _onSerializeServerState;
+        private JEMSmartMethodS<QNetMessageWriter> _onSerializeServerState;
 
         /// <summary>
         ///     Called on client to de-serialize current state of the object.
         /// </summary>
-        private JEMSmartMethod _onDeserializeServerState;
+        private JEMSmartMethodS<QNetMessageReader> _onDeserializeServerState;
 
         /// <inheritdoc />
         protected override void LoadMethods()
@@ -251,11 +285,15 @@ namespace JEM.QNet.UnityEngine.Objects
             // Invoke base method
             base.LoadMethods();
 
-            _onInitialize = new JEMSmartMethod(this, "OnInitialize");
-            _onDestroyObject = new JEMSmartMethod(this, "OnDestroyObject");
+            Profiler.BeginSample("QNetObject.LoadMethods");
 
-            _onSerializeServerState = new JEMSmartMethod(this, "OnSerializeServerState");
-            _onDeserializeServerState = new JEMSmartMethod(this, "OnDeserializeServerState");
+            _onInitialize = new JEMSmartMethodS(this, "OnInitialize");
+            _onNetworkDestroy = new JEMSmartMethodS(this, "OnNetworkDestroy");
+
+            _onSerializeServerState = new JEMSmartMethodS<QNetMessageWriter>(this, "OnSerializeServerState");
+            _onDeserializeServerState = new JEMSmartMethodS<QNetMessageReader>(this, "OnDeserializeServerState");
+
+            Profiler.EndSample();
         }
 
         /// <summary>
@@ -266,7 +304,7 @@ namespace JEM.QNet.UnityEngine.Objects
             // Update the isDestroying state.
             IsDestroying = true;
 
-            _onDestroyObject.Invoke();
+            _onNetworkDestroy.Invoke();
         }
 
         /// <summary>
@@ -313,13 +351,39 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     Initializes thi component like it has been added runtime via <see cref="GameObject.AddComponent()"/>
         /// </summary>
         /// <param name="typeIndex"/>
+        /// <param name="componentIndex"/>
         /// <param name="full">If false, the onNetworkSpawn call will be ignored.</param>
-        internal void InitializeCustomComponent(byte typeIndex, bool full)
+        internal void InitializeCustomComponent(byte componentIndex, byte typeIndex, bool full)
         {
             // Set custom component active state.
             IsCustomComponent = true;
+
+            // Update component index.
+            ComponentIndex = componentIndex;
+
             // Register the custom component to list, so server can this new component for new clients.
-            Identity.CustomComponentsAdded.Add(ComponentIndex, typeIndex);
+            //if (Identity.WasPooled && Identity.CustomComponentsAdded.ContainsKey(ComponentIndex))
+            //    Identity.CustomComponentsAdded[ComponentIndex] = typeIndex;
+            //else
+            //{
+            //    Identity.CustomComponentsAdded.Add(ComponentIndex, typeIndex);
+            //}
+
+            if (Identity == null)
+            {
+                Debug.LogWarning("Identity component reference was missing when initializing custom component.", this);
+                Identity = GetComponent<QNetIdentity>();
+            }
+
+            if (IsClient && Identity.CustomObjects.ContainsKey(ComponentIndex))
+            {
+                // As client, we may force override component type index.
+                Identity.CustomObjects[ComponentIndex] = typeIndex;
+            }
+            else
+            {
+                Identity.CustomObjects.Add(ComponentIndex, typeIndex);
+            }
 
             // Network spawn.
             if (!full) return;
@@ -338,7 +402,9 @@ namespace JEM.QNet.UnityEngine.Objects
             DestroyObject();
 
             // Remove custom component from list.
-            Identity.CustomComponentsAdded.Remove(ComponentIndex);
+            // Identity.CustomComponentsAdded.Remove(ComponentIndex);
+
+            Identity.CustomObjects.Remove(ComponentIndex);
             Identity.Objects.Remove(this);
            
             // TODO: Update the ComponentIndex of the rest of the components in QNetIdentity
@@ -368,6 +434,7 @@ namespace JEM.QNet.UnityEngine.Objects
         {
             QNetObjectTypes.Clear();
 
+            var baseType = typeof(QNetObject);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             for (var index1 = 0; index1 < assemblies.Length; index1++)
             {
@@ -381,7 +448,7 @@ namespace JEM.QNet.UnityEngine.Objects
                         continue;
                     }
 
-                    if (!type.IsSubclassOf(typeof(QNetObject))) continue;
+                    if (!type.IsSubclassOf(baseType)) continue;
                     if (!GetQNetObjectIndex(type, out _))
                     {
                         QNetObjectTypes.Add((byte) QNetObjectTypes.Count, type);
@@ -389,8 +456,12 @@ namespace JEM.QNet.UnityEngine.Objects
                 }
             }
 
-#if DEBUG
-            QNetManager.PrintLogMsc($"All QNetObject based types collected ({QNetObjectTypes.Count}).");
+#if DEBUG && DEEP_DEBUG
+            var sb = new StringBuilder($"All QNetObject based types collected ({QNetObjectTypes.Count}).\n");
+            foreach (var t in QNetObjectTypes)
+                sb.AppendLine($"\t{t.Value.FullName}: {t.Key}");
+
+            QNetManager.PrintLogMsc(sb.ToString());
 #endif
         }
 
@@ -401,7 +472,7 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     Utilized by runtime component add/remove support.
         /// </remarks>
         /// <exception cref="ArgumentNullException"/>
-        internal static bool GetQNetObjectIndex([NotNull] Type type, out byte index)
+        public static bool GetQNetObjectIndex([NotNull] Type type, out byte index)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             index = 255;
@@ -421,7 +492,7 @@ namespace JEM.QNet.UnityEngine.Objects
         /// <remarks>
         ///     Utilized by runtime component add/remove support.
         /// </remarks>
-        internal static bool GetQNetObjectType(byte index, out Type type)
+        public static bool GetQNetObjectType(byte index, out Type type)
         {
             type = null;
             if (!QNetObjectTypes.ContainsKey(index)) return false;

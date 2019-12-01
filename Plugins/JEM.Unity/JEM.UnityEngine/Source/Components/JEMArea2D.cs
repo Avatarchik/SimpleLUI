@@ -141,6 +141,14 @@ namespace JEM.UnityEngine.Components
         ///     Point generation is always reliable and will always end with successful effect. In case if HitMask mode fail to get point, new point will be generated using Space mode instead.
         /// </summary>
         /// <param name="point"/>
+        /// <remarks>Returns false, if reliable point generation was forced to return center or point using Space mode.</remarks>
+        public bool GenerateReliablePoint(out Vector2 point) => GenerateReliablePoint(out point, out _);
+       
+        /// <summary>
+        ///     Try to random point from this JEM Area2D component.
+        ///     Point generation is always reliable and will always end with successful effect. In case if HitMask mode fail to get point, new point will be generated using Space mode instead.
+        /// </summary>
+        /// <param name="point"/>
         /// <param name="angle"/>
         /// <remarks>Returns false, if reliable point generation was forced to return center or point using Space mode.</remarks>
         public bool GenerateReliablePoint(out Vector2 point, out float angle)
@@ -184,6 +192,15 @@ namespace JEM.UnityEngine.Components
             return false;
         }
 
+        /// <summary>
+        ///     Try to random point from this JEM Area2D component.
+        ///     Point generation is unreliable and can end with unsuccessful effect.
+        /// </summary>
+        /// <param name="point"/>
+        /// <param name="customMode"/>
+        public bool GenerateUnreliablePoint(out Vector2 point, JEMArea2DMode customMode = JEMArea2DMode.Unknown) =>
+            GenerateUnreliablePoint(out point, out _, customMode);
+        
         /// <summary>
         ///     Try to random point from this JEM Area2D component.
         ///     Point generation is unreliable and can end with unsuccessful effect.
@@ -303,6 +320,22 @@ namespace JEM.UnityEngine.Components
             }
 
             return hasHit;
+        }
+
+        /// <summary>
+        ///     Gets random Area2D from active scene.
+        /// </summary>
+        public static JEMArea2D GetRandomArea()
+        {
+            var spawnAreas = FindObjectsOfType<JEMArea2D>();
+            if (spawnAreas.Length == 0)
+                throw new InvalidOperationException("System was unable to get JEMArea2D. " +
+                                                    "There is no JEMAreas2D defined in current world.");
+
+            if (spawnAreas.Length == 1)
+                return spawnAreas[0];
+
+            return spawnAreas[Random.Range(0, spawnAreas.Length)];
         }
     }
 }

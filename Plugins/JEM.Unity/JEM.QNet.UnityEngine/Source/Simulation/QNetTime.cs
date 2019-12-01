@@ -5,11 +5,11 @@
 //
 
 //
-// Original Network simulation design and execution
+// Original Network simulation design and implementation
 //  by Damian 'Erdroy' Korczowski (https://github.com/Erdroy)
 //
 
-using JEM.Core.CVar;
+using JEM.Core.Debugging.CVar;
 using UnityEngine;
 
 namespace JEM.QNet.UnityEngine.Simulation

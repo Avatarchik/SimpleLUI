@@ -64,8 +64,20 @@ namespace JEM.QNet.UnityEngine.Interpolation
             }
         }
 
+        private void OnPooled()
+        {
+            switch (_method)
+            {
+                case QNetInterpolationMethod.Transform:
+                    PoolTransform();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         /// <inheritdoc />
-        internal override void InterpolateFrame()
+        public override void InterpolateFrame()
         {
             switch (_method)
             {

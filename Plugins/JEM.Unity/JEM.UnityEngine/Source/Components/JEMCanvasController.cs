@@ -4,7 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using JEM.UnityEngine.Interface;
+using JEM.Core.Debugging;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +20,7 @@ namespace JEM.UnityEngine.Components
     [AddComponentMenu("JEM/Interface/JEM Canvas Controller")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Canvas)), RequireComponent(typeof(CanvasScaler))]
-    internal class JEMCanvasController : MonoBehaviour
+    public class JEMCanvasController : MonoBehaviour
     {
         /// <summary>
         ///     A default canvas resolution.
@@ -48,10 +48,6 @@ namespace JEM.UnityEngine.Components
         /// </summary>
         public CanvasScaler Scaler { get; private set; }
 
-        private Action<object> _cfgUIScaleMode;
-        private Action<object> _cfgUIScaleFactor;
-        private Action<object> _cfgUIResolution;
-
         private void Awake() => AllControllers.Add(this);    
         private void Start()
         {
@@ -59,64 +55,8 @@ namespace JEM.UnityEngine.Components
             Canvas = GetComponent<Canvas>();
             Scaler = GetComponent<CanvasScaler>();
 
-            // Check if the database is loaded.
-            if (!JEMUnity.HasDatabaseLoaded())
-            {
-                return;
-            }
-
-            // Register the change events.
-            _cfgUIScaleMode = JEMUnity.Database.RegisterObjectChange<int>("ui_scale_mode", change =>
-            {
-                var mode = (CanvasMode)change;
-                switch (mode)
-                {
-                    case CanvasMode.ScaleWithScreenSize:
-                        Scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                        break;
-                    default:
-                        Scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
-                        break;
-                }
-            });
-
-            _cfgUIScaleFactor = JEMUnity.Database.RegisterObjectChange<float>("ui_scale_factor", change =>
-            {
-                var factor = Mathf.Clamp(change, 0.8f, 1.5f);
-                Scaler.scaleFactor = factor;
-            });
-
-            _cfgUIResolution = JEMUnity.Database.RegisterObjectChange<string>("ui_resolution", change =>
-            {
-                var i = change.Split('x');
-                if (i.Length != 2)
-                {
-                    // apply default
-                    Scaler.referenceResolution = DefaultResolution;
-                }
-                else
-                {
-                    if (float.TryParse(i[0], out var x))
-                    {
-                        if (float.TryParse(i[1], out var y))
-                        {
-                            x = Mathf.Clamp(x, MinResolution.x, MaxResolution.x);
-                            y = Mathf.Clamp(y, MinResolution.y, MaxResolution.y);
-                            Scaler.referenceResolution = new Vector2(x, y);
-                        }
-                        else
-                        {
-                            // Apply default.
-                            Scaler.referenceResolution = DefaultResolution;
-                        }
-                    }
-                    else
-                    {
-                        // Apply default.
-                        Scaler.referenceResolution = DefaultResolution;
-                    }
-                }
-            });
+            // Try to register events.
+            RegisterEvents();
         }
 
         private void OnDestroy()
@@ -124,34 +64,132 @@ namespace JEM.UnityEngine.Components
             // Remove.
             AllControllers.Remove(this);
 
-            // Check if the database is loaded.
-            if (!JEMUnity.HasDatabaseLoaded())
+            // Try to unregister events
+            UnRegisterEvents();
+        }
+
+        private bool _hasEventsRegistered;
+        private void RegisterEvents()
+        {
+            if (_hasEventsRegistered)
             {
                 return;
             }
 
-            // Unregister the object change events.
-            JEMUnity.Database.UnregisterObjectChange("ui_scale_mode", _cfgUIScaleMode);
-            JEMUnity.Database.UnregisterObjectChange("ui_scale_factor", _cfgUIScaleFactor);
-            JEMUnity.Database.UnregisterObjectChange("ui_resolution", _cfgUIResolution);
+//            if (OnUIScaleModeChange == null || OnUIScaleFactor == null || OnUIResolution == null)
+//            {
+//#if DEBUG
+//                JEMLogger.LogWarning("You are trying to register events for JEMCanvasController " +
+//                                     "but Change Actions Events has been not set.");
+//#endif
+//                return;
+//            }
+
+            _hasEventsRegistered = true;
+
+            OnUIScaleModeChange += OnScaleModeChanged;
+            OnUIScaleFactor += OnScaleFactorChanged;
+            OnUIResolution += OnScaleResolutionChanged;
+        }
+
+        private void UnRegisterEvents()
+        {
+            if (!_hasEventsRegistered)
+            {
+                return;
+            }
+
+            _hasEventsRegistered = false;
+
+            OnUIScaleModeChange -= OnScaleModeChanged;
+            OnUIScaleFactor -= OnScaleFactorChanged;
+            OnUIResolution -= OnScaleResolutionChanged;
+        }
+
+        #region EVENTS
+
+        private void OnScaleModeChanged(CanvasMode mode)
+        {
+            switch (mode)
+            {
+                case CanvasMode.ScaleWithScreenSize:
+                    Scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                    break;
+                default:
+                    Scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+                    break;
+            }
+        }
+
+        private void OnScaleFactorChanged(float scaleFactor)
+        {
+            var factor = Mathf.Clamp(scaleFactor, 0.8f, 1.5f);
+            Scaler.scaleFactor = factor;
+        }
+
+        private void OnScaleResolutionChanged(string resolution)
+        {
+            var i = resolution.Split('x');
+            if (i.Length != 2)
+            {
+                // apply default
+                Scaler.referenceResolution = DefaultResolution;
+            }
+            else
+            {
+                if (float.TryParse(i[0], out var x))
+                {
+                    if (float.TryParse(i[1], out var y))
+                    {
+                        x = Mathf.Clamp(x, MinResolution.x, MaxResolution.x);
+                        y = Mathf.Clamp(y, MinResolution.y, MaxResolution.y);
+                        Scaler.referenceResolution = new Vector2(x, y);
+                    }
+                    else
+                    {
+                        // Apply default.
+                        Scaler.referenceResolution = DefaultResolution;
+                    }
+                }
+                else
+                {
+                    // Apply default.
+                    Scaler.referenceResolution = DefaultResolution;
+                }
+            }
+        }
+
+        #endregion
+       
+        /// <summary>
+        ///     Registers events for all <see cref="JEMCanvasController"/> in <see cref="AllControllers"/> list.
+        /// </summary>
+        public static void RegisterEventsAll()
+        {
+            for (var index = 0; index < AllControllers.Count; index++)
+            {
+                var c = AllControllers[index];
+                c.RegisterEvents();
+            }
         }
 
         /// <summary>
-        ///     Calls all the <see cref="JEMCanvasController"/> components to update the scale mode.
+        ///     A UIScaleMode Change event.
         /// </summary>
-        public static void CallUIScaleMode(CanvasMode canvasMode) => AllControllers.ForEach(c => { c._cfgUIScaleMode.Invoke(canvasMode); });
+        /// <remarks>
+        ///     Should be always called when scale mode of UI changes.
+        /// </remarks>
+        public static Action<CanvasMode> OnUIScaleModeChange { get; set; }
 
         /// <summary>
-        ///     Calls all the <see cref="JEMCanvasController"/> components to update the scale factor.
+        ///     A UIScaleFactor Change event.
         /// </summary>
-        /// <param name="value"></param>
-        public static void CallUIScaleFactor(float value) => AllControllers.ForEach(c => { c._cfgUIScaleFactor.Invoke(value); });
+        public static Action<float> OnUIScaleFactor { get; set; }
 
         /// <summary>
-        ///     Calls all the <see cref="JEMCanvasController"/> components to update the resolution.
+        ///     A UIResolution Change event.
         /// </summary>
-        /// <param name="resolution"></param>
-        public static void CallUIResolution(string resolution) => AllControllers.ForEach(c => { c._cfgUIResolution.Invoke(resolution); });
+        public static Action<string> OnUIResolution { get; set; }
 
         /// <summary>
         ///     List of all <see cref="JEMCanvasController"/> components in current scene.

@@ -5,12 +5,14 @@
 //
 
 using JEM.QNet.Messages;
+using JEM.QNet.UnityEngine.Messages;
 using JEM.QNet.UnityEngine.Objects;
 using JEM.UnityEngine;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using UnityEngine;
 
 // ReSharper disable RedundantAssignment
 
@@ -24,6 +26,7 @@ namespace JEM.QNet.UnityEngine.Handlers
         {
             public QNetObjectSerialized Object;
             public QNetMessageReader Reader;
+            public bool IsSerialized;
         }
 
         /// <summary>
@@ -54,14 +57,32 @@ namespace JEM.QNet.UnityEngine.Handlers
             switch (operationType)
             {
                 case QNetObjectComponentQuery.AddComponent:
-                    // Get component type.
+                    // Get target component data.
+                    var componentIndex = reader.ReadByte();
                     var typeIndex = reader.ReadByte();
-                    AddCustomComponent(qNetObject, typeIndex, true);
+                    
+                    // Add custom component.
+                    var customComponent = AddCustomComponent(qNetObject, componentIndex, typeIndex, true);
+
+                    // Deserialize component state.
+                    customComponent.CallOnDeserializeServerState(reader);
+
+                    // call late network spawn
+                    if (customComponent is QNetBehaviour b)
+                    {
+                        b.CallOnLateNetworkSpawned();
+                    }
+
                     break;
                 case QNetObjectComponentQuery.DestroyComponent:
-                    // Destroy!
-                    var componentIdentity = reader.ReadByte();
-                    qNetObject.GetObjectByIndex(componentIdentity).DestroyCustomComponent(true);
+                    // Get target component.
+                    componentIndex = reader.ReadByte();
+                    var component = qNetObject.GetObjectByIndex(componentIndex);
+                    if (component == null)
+                        throw new NullReferenceException($"Unable to destroy component. Component of index {componentIndex} not exist.");
+
+                    // Destroy custom component.
+                    component.DestroyCustomComponent(true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(operationType), operationType, null);
@@ -72,23 +93,44 @@ namespace JEM.QNet.UnityEngine.Handlers
         ///     Adds new component of given type index to given object.
         /// </summary>
         /// <exception cref="ArgumentNullException"/>
-        private static void AddCustomComponent([NotNull] QNetObject qNetObject, byte typeIndex, bool full)
+        private static QNetObject AddCustomComponent([NotNull] QNetObject qNetObject, byte componentIndex, byte typeIndex, bool full)
         {
             if (qNetObject == null) throw new ArgumentNullException(nameof(qNetObject));
             if (!QNetObject.GetQNetObjectType(typeIndex, out var type))
                 throw new NullReferenceException($"Failed to add new component to QNetIdentity object({(ushort) qNetObject.Identity}). " +
                                                  $"Type index type of type index {typeIndex} not exist.");
 
-            // Add component.
-            QNetObject.ClientIsModifyingCustomComponent = true;
-            var component = qNetObject.gameObject.AddComponent(type) as QNetObject;
-            QNetObject.ClientIsModifyingCustomComponent = false;
-            if (component == null)
-                throw new NullReferenceException("Failed to add new component. " +
-                                                 "AddComponent returned null or received value can't be converted to QNetObject based type.");
+            QNetObject component = null;
+            bool invalidType = false;
+            if (qNetObject.Identity.CustomObjects.ContainsKey(componentIndex))
+            {
+                component = qNetObject.Identity.GetObjectByIndex(componentIndex);
+                invalidType = qNetObject.Identity.CustomObjects[componentIndex] != typeIndex;
+            }
+
+            if (component == null || invalidType)
+            {
+                // Component at given index not exist or has invalid type.
+                if (component != null && invalidType)
+                {
+                    // Invalid type of component.
+                    // Destroy old component instance.
+                    component.DestroyCustomComponent(true);
+                }
+
+                // Add component.
+                QNetObject.ClientIsModifyingCustomComponent = true;
+                component = qNetObject.gameObject.AddComponent(type) as QNetObject;
+                QNetObject.ClientIsModifyingCustomComponent = false;
+                if (component == null)
+                    throw new NullReferenceException("Failed to add new component. " +
+                                                     "AddComponent returned null or received value that can't be converted to QNetObject based type." +
+                                                     $"Target type was {type} resolved from index {typeIndex}.");
+            }
 
             // Initialize custom component.
-            component.InitializeCustomComponent(typeIndex, full);
+            component.InitializeCustomComponent(componentIndex, typeIndex, full);
+            return component;
         }
 
         /// <summary>
@@ -120,8 +162,10 @@ namespace JEM.QNet.UnityEngine.Handlers
         {
             // Read what QNetObject to delete.
             var objectIdentity = reader.ReadUInt16();
+            var canPool = reader.ReadBool();
+
             // And process.
-            RemoveSerializedObject(objectIdentity);
+            RemoveSerializedObject(objectIdentity, canPool);
         }
 
         /// <summary>
@@ -158,6 +202,38 @@ namespace JEM.QNet.UnityEngine.Handlers
             component.CallOnDeserializeServerState(reader);
         }
 
+        /// <summary>
+        ///     Header handle for <see cref="QNetUnityHeader.OBJECT_ACTIVATION"/>
+        /// </summary>
+        public static void OnServerObjectActivation(QNetMessage message, QNetMessageReader reader,
+            ref bool disallowRecycle)
+        {
+            // As server(host), object activation change should be always ignore.
+            if (QNetManager.Instance.IsServerActive)
+            {
+                return;
+            }
+
+            if (!QNetNetworkScene.CanSpawnNetworkObjects || QNetNetworkScene.IsSecondPhaseRunning)
+                return; // As the network object can't be currently spawned, ignore the incoming objects states.
+
+            // Read header.
+            var objectIdentity = reader.ReadUInt16();
+            var state = reader.ReadBool();
+
+            // Get object.
+            var qNetObject = QNetObject.GetObject(objectIdentity);
+            if (qNetObject == null)
+            {
+                QNetManager.PrintLogWarning("Local client has received a ServerObjectActivation " +
+                                            $"for object of identity {objectIdentity} that not exist in local network scene.");
+                return;
+            }
+
+            // Set object state.
+            qNetObject.SetNetworkActive(state);
+        }
+
         private static void WriteSerializedObject(LocalSerializedObject serializedObject)
         {
             // As server(host), ignore write serialized object just for sure
@@ -171,12 +247,16 @@ namespace JEM.QNet.UnityEngine.Handlers
             }
 
             // Check if this is not a duplicate.
-            if (!GetSerializedObject(serializedObject.Object.ObjectIdentity).Equals(default(LocalSerializedObject)))
+            var isDuplicate = !GetSerializedObject(serializedObject.Object.ObjectIdentity, out var arrayIndex).Equals(default(LocalSerializedObject));
+            if (isDuplicate)
             {
                 // Duplicate detected.
-                // TODO: Overwrite serialized data?
+                // Overwrite serialized data.
+                SerializedObjects[arrayIndex] = serializedObject;
                 return;
             }
+
+            // Debug.Log($"Add {serializedObject.Object.ObjectIdentity}");
 
             if (QNetNetworkScene.SceneState != QNetSceneState.Loaded)
             {
@@ -192,7 +272,7 @@ namespace JEM.QNet.UnityEngine.Handlers
             }
         }
 
-        private static void RemoveSerializedObject(ushort objectIdentity)
+        private static void RemoveSerializedObject(ushort objectIdentity, bool canPool)
         {
             // As server(host), ignore remove serialized object.
             if (QNetManager.Instance.IsServerActive)
@@ -200,6 +280,7 @@ namespace JEM.QNet.UnityEngine.Handlers
                 return;
             }
 
+            // Debug.Log($"Remove {objectIdentity}");
             if (QNetNetworkScene.SceneState != QNetSceneState.Loaded)
             {
                 // The network scene was not loaded yet.
@@ -213,9 +294,13 @@ namespace JEM.QNet.UnityEngine.Handlers
                 }
                 else
                 {
-                    // Serialized object found.
-                    // Just remove it from the list.
-                    SerializedObjects.Remove(obj);
+                    if (!obj.IsSerialized)
+                    {
+                        // Serialized object found.
+                        // Just remove it from the list.
+                        SerializedObjects.Remove(obj);
+                    }
+
                     return;
                 }
             }
@@ -228,7 +313,7 @@ namespace JEM.QNet.UnityEngine.Handlers
                 return;
             }
 
-            QNetObject.LocalDestroy(qNetObject);
+            QNetObject.LocalDestroy(qNetObject, canPool);
         }
 
         /// <summary>
@@ -240,11 +325,19 @@ namespace JEM.QNet.UnityEngine.Handlers
             for (var index = 0; index < SerializedObjects.Count; index++)
             {
                 var obj = SerializedObjects[index];
+                obj.IsSerialized = true;
+                SerializedObjects[index] = obj;
+
                 yield return FromSerializedObject(obj);
             }
 
             SerializedObjects.Clear();
         }
+
+        /// <summary>
+        ///     Clears the <see cref="SerializedObjects"/> list.
+        /// </summary>
+        internal static void DestroySerializedObjects() => SerializedObjects.Clear();
 
         /// <summary>
         ///     Create QNetObject from LocaleSerializedObject data.
@@ -268,7 +361,7 @@ namespace JEM.QNet.UnityEngine.Handlers
                 }
 
                 var objectPrefab = QNetManager.Instance.DatabaseReference.GetPrefab(obj.Object.PrefabIdentity);
-                if (objectPrefab == null)
+                if (!objectPrefab.IsValid)
                 {
                     // Manual message recycling.
                     QNetManager.RecycleClient(obj.Reader);
@@ -281,30 +374,55 @@ namespace JEM.QNet.UnityEngine.Handlers
                 qnetObject = QNetObject.LocalSpawn(objectPrefab.Prefab, objectPrefab.PrefabIdentity, obj.Object.ObjectIdentity, default, obj.Object.OwnerIdentity);
                 yield return qnetObject;
             }
+            
+            if (qnetObject == null)
+                throw new NullReferenceException("Failed to resolve QNetObject. " +
+                                                 "QNetHandlerObject.FromSerializeObject failed to get or spawn new QNetObject based object. " +
+                                                 $"(identity_{obj.Object.ObjectIdentity} prefab_{obj.Object.PrefabIdentity})");
 
             // Create custom components.
-            for (var index = 0; index < obj.Object.CustomComponents.Length; index++)
+            //for (var index = 0; index < obj.Object.CustomObjects.Length; index++)
+            //{
+            //    var typeIndex = obj.Object.CustomObjects[index];
+            //    if (!qnetObject.WasPooled)
+            //        AddCustomComponent(qnetObject, typeIndex, false);
+            //    else
+            //    {
+            //        // When object was pooled at least once, check if component at given index already exist.
+                   
+            //    }
+            //}
+
+            foreach (var c in obj.Object.CustomObjects)
             {
-                var typeIndex = obj.Object.CustomComponents[index];
-                AddCustomComponent(qnetObject, typeIndex, false);
+                AddCustomComponent(qnetObject, c.Key, c.Value, false);
             }
 
             // Spawn.
-            qnetObject.Spawn(obj.Object.Position, obj.Object.Rotation, obj.Object.Scale);
+            qnetObject.Spawn(obj.Object.Position, obj.Object.Rotation, obj.Object.Scale, obj.Object.IsNetworkActive);
 
             // Deserialize his state.
             qnetObject.DeserializeAllObjects(obj.Reader);
+
+            // Call late spawn.
+            qnetObject.ForEachBehaviour(b => b.CallOnLateNetworkSpawned());
 
             // Manual message recycling.
             QNetManager.RecycleClient(obj.Reader);
         }
 
-        private static LocalSerializedObject GetSerializedObject(ushort objectIdentity)
+        private static LocalSerializedObject GetSerializedObject(ushort objectIdentity) => GetSerializedObject(objectIdentity, out _);
+        private static LocalSerializedObject GetSerializedObject(ushort objectIdentity, out int arrayIndex)
         {
-            foreach (var s in SerializedObjects)
+            arrayIndex = -1;
+            for (var index = 0; index < SerializedObjects.Count; index++)
             {
+                var s = SerializedObjects[index];
                 if (s.Object.ObjectIdentity == objectIdentity)
+                {
+                    arrayIndex = index;
                     return s;
+                }
             }
 
             return default;

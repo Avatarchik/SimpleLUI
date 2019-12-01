@@ -37,7 +37,7 @@ namespace JEM.UnityEditor.VersionManagement
             Timer.Elapsed += (sender, args) =>
             {
                 if (!JEMEditorConfiguration.Configuration.UpdateWorkTime) return;
-                if (JEMBuildEditor.CurrentCompilation == null) return;
+                if (JEMBuildEditor.CurrentCompilation == null || !Application.isFocused) return;
                 JEMBuildEditor.CurrentSessionTime += space / 1000;
                 JEMBuildEditor.CurrentCompilation.SessionTime += space / 1000;
 

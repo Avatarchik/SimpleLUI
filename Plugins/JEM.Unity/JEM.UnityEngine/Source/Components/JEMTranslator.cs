@@ -4,6 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using JEM.UnityEngine.Components.Internal;
 using System.Collections;
 using UnityEngine;
 
@@ -64,6 +65,7 @@ namespace JEM.UnityEngine.Components
             _transform.position = State ? EndPoint.position : StartPoint.position;
         }
 
+        // TODO: Move coroutine to JEMTranslatorScript
         private IEnumerator Slave(bool activeState)
         {
             if (_transform == null)
@@ -81,5 +83,18 @@ namespace JEM.UnityEngine.Components
             }
             _slave = null;
         }
+
+        private static JEMTranslatorScript Script
+        {
+            get
+            {
+                if (_script == null)
+                    _script = JEMTranslatorScript.GetScript();
+
+                return _script;
+            }
+        }
+
+        private static JEMTranslatorScript _script;
     }
 }

@@ -4,12 +4,18 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+// #define DEEP_DEBUG
+
 using JEM.QNet.Messages;
+using JEM.QNet.UnityEngine.Messages;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Profiling;
+using Random = UnityEngine.Random;
 
 namespace JEM.QNet.UnityEngine.Objects
 {
@@ -19,7 +25,7 @@ namespace JEM.QNet.UnityEngine.Objects
     ///     Defines a network object in scene and enables communication between peers.
     ///     Every QNetIdentity have guaranteed to has unique identity (ushort).
     /// </summary>
-    [DisallowMultipleComponent]
+    [DisallowMultipleComponent, DefaultExecutionOrder(-5)]
     public sealed class QNetIdentity : QNetObject
     {
         /// <summary>
@@ -71,7 +77,13 @@ namespace JEM.QNet.UnityEngine.Objects
         /// <summary>
         ///     List of all QNetObject based component object of this Identity has.
         /// </summary>
-        public new List<QNetObject> Objects { get; } = new List<QNetObject>();
+        public new List<QNetObject> Objects { get; private set; } = new List<QNetObject>();
+
+        /// <summary>
+        ///     List of all custom components added to this QNetIdentity object.
+        ///     NOTE: Custom components are only ones added via AddComponent method runtime.
+        /// </summary>
+        internal Dictionary<byte, byte> CustomObjects { get; } = new Dictionary<byte, byte>();
 
         /// <summary>
         ///     True, if object is spawned (networked).
@@ -82,6 +94,24 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     True, if the object was predefined on current scene.
         /// </summary>
         public bool IsPredefined { get; private set; }
+
+        /// <summary>
+        ///     True, if this object is currently pooled.
+        /// </summary>
+        public bool IsPooled { get; private set; }
+
+        /// <summary>
+        ///     True if entity was in pool at least once.
+        /// </summary>
+        public bool WasPooled { get; private set; }
+
+        /// <summary>
+        ///     Defines a network active state of object of this <see cref="QNetIdentity"/> component.
+        ///     NOTE: Active state of root objects that contains <see cref="QNetIdentity"/> component should only be changed via
+        ///           <see cref="SetNetworkActive"/> method only on the server.
+        ///     Disabled objects does not receive any simulation from manager and are completely disabled.
+        /// </summary>
+        public new bool IsNetworkActive { get; private set; }
 
         /// <summary>
         ///     Invoke action for each object added to this Identity.
@@ -107,29 +137,29 @@ namespace JEM.QNet.UnityEngine.Objects
             }
         }
 
+#if DEBUG
         /// <summary>
-        ///     List of all custom components added to this QNetIdentity object.
-        ///     NOTE: Custom components are only ones added via AddComponent method runtime.
+        ///     Returns a string that represents list of <see cref="Objects"/> collection.
         /// </summary>
-        internal Dictionary<byte, byte> CustomComponentsAdded { get; } = new Dictionary<byte, byte>();
-
-        /// <summary>
-        ///     Returns a byte array of types of all custom components added to this Identity.
-        /// </summary>
-        internal byte[] GetArrayOfCustomComponentsTypes()
+        internal string GetStringOfCurrentObjects()
         {
-            byte[] array = new byte[CustomComponentsAdded.Count];
-            int index = 0;
-            foreach (var c in CustomComponentsAdded)
+            var sb = new StringBuilder();
+            for (var index = 0; index < Objects.Count; index++)
             {
-                array[index] = c.Value;
+                var obj = Objects[index];
+                sb.AppendLine($"\t{obj.GetType().Name}: {obj.ComponentIndex}");
             }
 
-            return array;
+            return sb.ToString();
         }
+#endif
 
-        private void Awake()
+        /// <inheritdoc />
+        protected override void Awake()
         {
+            // Invoke base method.
+            base.Awake();
+
             var isNetworkActive = QNetManager.Instance != null && QNetManager.Instance.IsNetworkActive;
             if (!isNetworkActive || !QNetNetworkScene.CanSpawnNetworkObjects)
             {
@@ -146,7 +176,7 @@ namespace JEM.QNet.UnityEngine.Objects
         }
 
         /// <inheritdoc />
-        internal override void InterpolateFrame()
+        public override void InterpolateFrame()
         {
             
         }
@@ -165,6 +195,8 @@ namespace JEM.QNet.UnityEngine.Objects
         /// </remarks>
         internal void LoadIdentity(ushort identity, QNetConnection ownerConnection, ushort owner, bool hasOwner)
         {
+            Profiler.BeginSample("QNetIdentity.LoadIdentity");
+
             Identity = identity;
             OwnerConnection = ownerConnection;
             Owner = owner;
@@ -175,6 +207,8 @@ namespace JEM.QNet.UnityEngine.Objects
 
             // Initialize objects
             InitializeObjects();
+
+            Profiler.EndSample();
         }
 
         /// <summary>
@@ -187,9 +221,10 @@ namespace JEM.QNet.UnityEngine.Objects
         private void TestGatherObjects()
         {
             var allObjects = GetComponents<QNetObject>();
-            for (var index = 0; index < allObjects.Length; index++)
+            var sortedList = allObjects.OrderBy(o => o.GetType().FullName).ToList();
+            for (var index = 0; index < sortedList.Count; index++)
             {
-                var obj = allObjects[index];
+                var obj = sortedList[index];
                 InitializeObject(obj);
             }
         }
@@ -205,19 +240,28 @@ namespace JEM.QNet.UnityEngine.Objects
                 if (obj.IsInitialized)
                     continue;
 
+                //// We have problems with objects baked in to the prefab.
+                //// We will force componentIndex by identity in sorted list.
+                if (!obj.IsCustomComponent)
+                {
+                    // NOTE: Only for non custom components
+                    obj.ComponentIndex = (byte) index;
+                }
+
+                // Initialize target object.
                 obj.Initialize(Prefab, PrefabIdentity, Identity, OwnerConnection, Owner);
             }
         }
 
         /// <summary>
-        ///     Generates new index for new object.
+        ///     Generates new unique index for new object.
         /// </summary>
-        private byte GenerateObjectIndex()
+        private byte GenerateObjectIndex(bool random)
         {
             byte index = 0;
             while (GetObjectByIndex(index) != null && index <= 250)
             {
-                index++;
+                index = !random ? (byte) (index + 1) : (byte) Random.Range(0, byte.MaxValue);
             }
 
             return index;
@@ -233,13 +277,17 @@ namespace JEM.QNet.UnityEngine.Objects
             if (Objects.Contains(obj)) return; // object already initialized, dont do anything
 
             // Update component index.
-            obj.ComponentIndex = GenerateObjectIndex();
+            // NOTE: For all objects before initialization, componentIndex should be predictable for both client&server peer.
+            obj.ComponentIndex = GenerateObjectIndex(IsInitialized);
+
             // Add new object.
             Objects.Add(obj);
 
-#if DEBUG
+            // Sort list of objects.
+            Objects = Objects.OrderBy(o => o.GetType().FullName).ToList();
+#if DEBUG && DEEP_DEBUG
             QNetManager.PrintLogMsc("New component added to QNetIdentity. " +
-                                   $"(Type: {obj.GetType().Name}) We have total of {Objects.Count} now.", this);
+                                   $"(Type: {obj.GetType().Name}, Index: {obj.ComponentIndex}) We have total of {Objects.Count} now.", this);
 #endif
 
             // Initialize new object if not already.
@@ -253,21 +301,106 @@ namespace JEM.QNet.UnityEngine.Objects
         ///     Returns the QNetObject based component added to this QNetIdentity by index in local array.
         /// </summary>
         [CanBeNull]
-        internal QNetObject GetObjectByIndex(byte index) => Objects.FirstOrDefault(obj => obj.ComponentIndex == index);    
+        internal QNetObject GetObjectByIndex(byte index)
+        {
+            for (var i = 0; i < Objects.Count; i++)
+            {
+                var obj = Objects[i];
+                if (obj.ComponentIndex != index) continue;
+                return obj;
+            }
+
+            return null;
+        }
 
         /// <summary>
         ///     Spawn the entity.
         /// </summary>
-        internal void Spawn(Vector3 position, Quaternion rotation, Vector3 scale)
+        internal void Spawn(Vector3 position, Quaternion rotation, Vector3 scale, bool activated)
         {
+#if DEBUG && DEEP_DEBUG
+            QNetManager.PrintLogMsc($"QNetIdentity.Spawn({position}, {rotation}, {scale}, {activated})", this);
+#endif
+
+            // Apply transform.
             transform.position = position;
             transform.rotation = rotation;
             transform.localScale = scale;
 
+            // Update the state.
+            IsPooled = false;
             IsSpawned = true;
 
+            // Activate object.
+            SetNetworkActive(activated);
+
             // call onNetworkSpawned.
-            ForEachBehaviour(e => e.CallOnNetworkSpawned());
+            ForEachBehaviour(b => b.CallOnNetworkSpawned());
+
+            if (IsServer)
+            {
+                // Call late spawn here cuz server will newer de-serialize objects :)
+                ForEachBehaviour(b => b.CallOnLateNetworkSpawned());
+            }
+        }
+
+        /// <summary>
+        ///     Instead of destroying entity, disable it and return to pool.
+        /// </summary>
+        internal void Pool()
+        {
+            if (IsPooled)
+            {
+                // Already pooled!
+                return;
+            }
+
+            WasPooled = true;
+            IsPooled = true;
+
+            // Disable object.
+            SetNetworkActive(false);
+
+            // call onPooled.
+            ForEachBehaviour(b => b.CallOnPooled());
+        }
+
+        /// <summary>
+        ///     Updates the active state of the object.
+        ///     NOTE: This method is always called by <see cref="Spawn"/> to activate or <see cref="Pool"/> to de-activate the object.
+        /// </summary>
+        public void SetNetworkActive(bool activeState)
+        {
+#if DEBUG && DEEP_DEBUG
+            QNetManager.PrintLogMsc($"QNetIdentity.SetNetworkActive({activeState})", this);
+#endif
+
+            if (IsNetworkActive == activeState && gameObject.activeSelf == activeState)
+            {
+                return;
+            }
+
+            // Set the state.
+            IsNetworkActive = activeState;
+
+            // Update object active state.
+            gameObject.SetActive(activeState);
+
+            // call onNetworkActiveChange.
+            ForEachBehaviour(b => b.CallOnNetworkActiveChange(activeState));
+
+            if (IsServer)
+            {
+                // Generate outgoing server message.
+                var outgoingMessage = QNetManager.GenerateServerMessage(QNetUnityHeader.OBJECT_ACTIVATION);
+
+                // Write activation state.
+                outgoingMessage.WriteUInt16(Identity);
+                outgoingMessage.WriteBool(activeState);
+
+                // Send server message to all clients.
+                QNetManager.SendToAll(QNetBaseChannel.DEFAULT, QNetMessageMethod.ReliableOrdered, outgoingMessage);
+            }
         }
 
         /// <summary>
@@ -299,8 +432,9 @@ namespace JEM.QNet.UnityEngine.Objects
         /// </summary>
         internal static QNetIdentity GetPredefinedObject(ushort objectIdentity)
         {
-            foreach (var pre in PredefinedObjects)
+            for (var index = 0; index < PredefinedObjects.Count; index++)
             {
+                var pre = PredefinedObjects[index];
                 if (pre.CustomIdentity == objectIdentity)
                     return pre;
             }
