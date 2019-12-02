@@ -23,5 +23,17 @@ namespace SimpleLUI.API
 
             return i;
         }
+
+        /// <summary/>
+        internal static Component CollectComponent([NotNull] this GameObject g, [NotNull] Type t)
+        {
+            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (t == null) throw new ArgumentNullException(nameof(t));
+            var i = g.GetComponent(t);
+            if (i == null)
+                i = g.AddComponent(t);
+
+            return i;
+        }
     }
 }

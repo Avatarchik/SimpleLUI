@@ -4,10 +4,12 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using SimpleLUI.Editor.API;
+using JetBrains.Annotations;
+using SimpleLUI.API;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SimpleLUI.Editor
@@ -29,20 +31,28 @@ namespace SimpleLUI.Editor
             ResourcesPathFull = resourcesPathFull;
 
             RegisterBuilders();
+
+            Debug.Log($"{Builders.Count} builders collected.");
         }
 
         private void RegisterBuilder<T1>(T1 builder) where T1 : SLUIBuilderObject
         {
-            builder.Parent = this;
+            builder.PrettyPrint = PrettyPrint;
+            builder.ResourcesPath = ResourcesPath;
+            builder.ResourcesPathFull = ResourcesPathFull;
             Builders.Add(builder);
         }
 
-        public bool CheckForSupport(Type t)
+        public bool CheckForSupport([NotNull] Type t)
         {
-            foreach (var b in Builders)
+            if (t == null) throw new ArgumentNullException(nameof(t));
+            for (var index = 0; index < Builders.Count; index++)
             {
-                if (b.Type != t) continue;
-                return true;
+                var b = Builders[index];
+                if (b.ResolveObjectType() == t)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -75,7 +85,7 @@ namespace SimpleLUI.Editor
         {
             foreach (var b in Builders)
             {
-                if (b.Type != t.GetType()) continue;
+                if (b.ResolveObjectType() != t.GetType()) continue;
                 b.String.Clear();
                 b.CollectObjectDefinition(t);
                 var str = b.String.ToString();
@@ -94,7 +104,7 @@ namespace SimpleLUI.Editor
         {
             foreach (var b in Builders)
             {
-                if (b.Type != t.GetType()) continue;
+                if (b.ResolveObjectType() != t.GetType()) continue;
                 b.String.Clear();
                 b.CollectObjectDefinitionExtras(t);
                 var str = b.String.ToString();
@@ -113,7 +123,7 @@ namespace SimpleLUI.Editor
         {
             foreach (var b in Builders)
             {
-                if (b.Type != t.GetType()) continue;
+                if (b.ResolveObjectType() != t.GetType()) continue;
                 b.String.Clear();
                 b.CollectObjectProperty(t);
                 var str = b.String.ToString();
@@ -132,7 +142,7 @@ namespace SimpleLUI.Editor
         {
             foreach (var b in Builders)
             {
-                if (b.Type != t.GetType()) continue;
+                if (b.ResolveObjectType() != t.GetType()) continue;
                 b.String.Clear();
                 b.CollectExtras(t);
                 var str = b.String.ToString();

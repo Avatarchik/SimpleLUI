@@ -11,7 +11,7 @@ namespace SimpleLUI.API.Core
     /// <summary>
     ///     Base class for all objects SLUI can reference.
     /// </summary>
-    public abstract class SLUIObject
+    public abstract class SLUIObject : SLUIBuilderObject
     {
         /// <summary>
         ///     The name of the object.

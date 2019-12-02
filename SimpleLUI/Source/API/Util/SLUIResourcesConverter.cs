@@ -4,12 +4,12 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using SimpleLUI.API.Core;
+using SimpleLUI.API.Core.Components;
 using SimpleLUI.API.Core.Math;
 using System.IO;
 using UnityEngine;
 
-namespace SimpleLUI.Editor.Util
+namespace SimpleLUI.API.Util
 {
     public static class SLUIResourcesConverter
     {

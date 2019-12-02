@@ -5,14 +5,16 @@
 //
 
 using SimpleLUI.API.Core.Math;
+using SimpleLUI.API.Util;
 using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
-namespace SimpleLUI.API.Core
+namespace SimpleLUI.API.Core.Components
 {
     /// <summary>
     ///     Import settings for image's sprites.
@@ -115,6 +117,9 @@ namespace SimpleLUI.API.Core
         public SLUIImage() { }
 
         /// <inheritdoc />
+        public override Type ResolveObjectType() => typeof(Image);
+
+        /// <inheritdoc />
         public override Component OnLoadOriginalComponent()
         {
             return Original = OriginalGameObject.CollectComponent<Image>();
@@ -158,5 +163,48 @@ namespace SimpleLUI.API.Core
                 }
             }
         }
+
+#if UNITY_EDITOR
+        /// <inheritdoc />
+        public override void CollectObjectDefinition(Object obj)
+        {
+            var i = (Image)obj;
+            var name = SLUILuaBuilderSyntax.CollectVar(i);
+            var parentName = SLUILuaBuilderSyntax.CollectVar(i.rectTransform);
+
+            String.AppendLine($"local {name} = {parentName}:AddComponent('Image')");
+        }
+
+        /// <inheritdoc />
+        public override void CollectObjectProperty(Object obj)
+        {
+            var i = (Image)obj;
+            var name = SLUILuaBuilderSyntax.CollectVar(i);
+
+            string sprite = null;
+            if (i.sprite != null)
+            {
+                sprite = SLUIResourcesConverter.CollectResourceName(i.sprite);
+                SLUIResourcesConverter.WriteSprite($"{ResourcesPathFull}\\{sprite}", i.sprite);
+                sprite = $"{ResourcesPath}\\{sprite}".Replace("\\", "//");
+            }
+
+            String.AppendLine($"{name}.imageType = '{i.type.ToString()}'");
+            if (i.color != Color.white)
+                String.AppendLine($"{name}.color = {SLUILuaBuilderSyntax.CollectColor(i.color)}");
+            if (!i.raycastTarget)
+                String.AppendLine($"{name}.raycastTarget = false");
+            if (i.preserveAspect)
+                String.AppendLine($"{name}.preserveAspect = true");
+            if (!i.fillCenter)
+                String.AppendLine($"{name}.fillCenter = false");
+            if (!string.IsNullOrEmpty(sprite))
+            {
+                //if (File.Exists(sprite))
+                String.AppendLine($"{name}.sprite = '{sprite}'");
+                //else Debug.LogError($"Sprite generation failed. Target file not exist. ({sprite})");
+            }
+        }
+#endif
     }
 }

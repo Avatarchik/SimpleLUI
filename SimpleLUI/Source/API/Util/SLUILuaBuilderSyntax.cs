@@ -7,11 +7,10 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using SimpleLUI.API.Util;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace SimpleLUI.Editor.Util
+namespace SimpleLUI.API.Util
 {
     public static class SLUILuaBuilderSyntax
     {
@@ -57,6 +56,19 @@ namespace SimpleLUI.Editor.Util
             if (!simple)
             {
                 str = $"SLUIVector2({str})";
+            }
+            return str;
+        }
+
+        public static string CollectRectOffset(RectOffset r, bool simple = false)
+        {
+            var str = $"{r.left.ToString(CultureInfo.InvariantCulture)}, " +
+                      $"{r.right.ToString(CultureInfo.InvariantCulture)}, " +
+                      $"{r.top.ToString(CultureInfo.InvariantCulture)}, " +
+                      $"{r.bottom.ToString(CultureInfo.InvariantCulture)}";
+            if (!simple)
+            {
+                str = $"SLUIRectOffset({str})";
             }
             return str;
         }

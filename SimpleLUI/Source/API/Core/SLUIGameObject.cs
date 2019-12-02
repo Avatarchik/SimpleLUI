@@ -58,7 +58,7 @@ namespace SimpleLUI.API.Core
                 localComponentName = $"SLUI{localComponentName}";
             }
 
-            var type = Type.GetType($"SimpleLUI.API.Core.{localComponentName}");
+            var type = Type.GetType($"SimpleLUI.API.Core.Components.{localComponentName}");
             if (type == null)
             {
                 if (SLUIWorker.CustomTypes.ContainsKey(componentName))
@@ -67,7 +67,7 @@ namespace SimpleLUI.API.Core
                 }
 
                 if (type == null)
-                    throw new ArgumentException($"Failed to find component of type {componentName}");
+                    throw new ArgumentException($"Failed to find component of type {localComponentName}");
             }
 
             return AddComponent(type);
@@ -97,5 +97,22 @@ namespace SimpleLUI.API.Core
         ///     Activates/Deactivates the GameObject, depending on the given true or false value.
         /// </summary>
         public void SetActive(bool activeState) => Original.SetActive(activeState);
+
+        /// <inheritdoc />
+        public override Type ResolveObjectType() => typeof(GameObject);
+
+#if UNITY_EDITOR
+        /// <inheritdoc />
+        public override void CollectObjectDefinition(Object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override void CollectObjectProperty(Object obj)
+        {
+            throw new NotImplementedException();
+        }
+#endif
     }
 }

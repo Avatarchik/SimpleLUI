@@ -30,11 +30,11 @@ namespace SimpleLUI.Editor.Util
                                     "design that is not allowing to get or set parameters.", MessageType.Info, true);
 
             EditorGUILayout.LabelField("Events", EditorStyles.boldLabel);
-            _target.Items = JEMBetterEditor.ContentList(_target.Items, _target, o =>
+            _target.Items = JEMBetterEditor.ExperimentalList(_target.Items, _target, o =>
             {
                 EditorGUILayout.BeginVertical();
                 GUILayout.Label("Parameters", EditorStyles.boldLabel);
-                o.obj = JEMBetterEditor.ContentList(o.obj, _target, s =>
+                o.obj = JEMBetterEditor.ExperimentalList(o.obj, _target, s =>
                 {
                     s = EditorGUILayout.TextField(s);
                     return s;

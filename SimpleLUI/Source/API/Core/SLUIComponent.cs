@@ -69,7 +69,7 @@ namespace SimpleLUI.API.Core
         }
 
         /// <summary/>
-        public abstract Component OnLoadOriginalComponent();
+        public virtual Component OnLoadOriginalComponent() => OriginalGameObject.CollectComponent(ResolveObjectType());
 
         /// <summary/>
         public virtual void OnComponentLoaded() { }

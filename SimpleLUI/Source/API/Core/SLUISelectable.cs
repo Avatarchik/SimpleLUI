@@ -4,6 +4,7 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
+using SimpleLUI.API.Core.Components;
 using SimpleLUI.API.Core.Math;
 using UnityEngine.UI;
 

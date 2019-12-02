@@ -45,7 +45,7 @@ namespace SimpleLUI
         {
             new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core"),
             new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Math"),
-            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Extras")
+            new KeyValuePair<string, string>("SimpleLUI", "SimpleLUI.API.Core.Components")
         };
 
         /// <summary>

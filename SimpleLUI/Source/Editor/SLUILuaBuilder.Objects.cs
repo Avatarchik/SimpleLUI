@@ -4,9 +4,8 @@
 // Copyright (c) 2019 ADAM MAJCHEREK ALL RIGHTS RESERVED
 //
 
-using SimpleLUI.Editor.API;
+using SimpleLUI.API;
 using System;
-using UnityEngine;
 
 namespace SimpleLUI.Editor
 {
@@ -14,44 +13,20 @@ namespace SimpleLUI.Editor
     {
         private void RegisterBuilders()
         {
-            RegisterBuilder(new SLUIBuilderRectTransform());
-            RegisterBuilder(new SLUIBuilderCanvasRenderer());
-            RegisterBuilder(new SLUIBuilderImage());
-            RegisterBuilder(new SLUIBuilderText());
-            RegisterBuilder(new SLUIBuilderButton());
-
-            try
+            var baseType = typeof(SLUIBuilderObject);
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (var i = 0; i < assemblies.Length; i++)
             {
-                foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+                var assembly = assemblies[i];
+                var types = assembly.GetTypes();
+                for (var index = 0; index < types.Length; index++)
                 {
-                    try
-                    {
-                        foreach (var t in a.GetTypes())
-                        {
-                            try
-                            {
-                                var attributes = t.GetCustomAttributes(typeof(SLUIBuilderObjectAttribute), true);
-                                if (attributes.Length > 0)
-                                {
-                                    var instance = (SLUIBuilderObject) Activator.CreateInstance(t);
-                                    RegisterBuilder(instance);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.LogException(e);
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
-                    }
+                    var t = types[index];
+                    if (!baseType.IsAssignableFrom(t)) continue;
+                    if (!t.IsSealed) continue; // only sealed type could be serialized by Lua Builder.
+                    var instance = Activator.CreateInstance(t) as SLUIBuilderObject;
+                    RegisterBuilder(instance);
                 }
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
             }
         }
     }
