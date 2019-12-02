@@ -56,7 +56,7 @@ namespace SimpleLUI.Editor
                 if (d == null || d.transform == null || d.transform.parent == null)
                     continue; // ignore root canvas
                 var t = d.GetType();
-                if (t == typeof(SLUIUnityEventHelper))
+                if (t == typeof(SLUIUnityEventHelper) || t == typeof(CanvasRenderer))
                     continue;
 
                 if (builder.CheckForSupport(t))
